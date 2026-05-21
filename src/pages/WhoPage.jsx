@@ -39,30 +39,50 @@ export function WhoPage({ setPage }) {
         </div>
       </section>
 
-      {/* Mission */}
-      <section className="twocol">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80 }}>
-          <div>
-            <span className="eyebrow">{mission.eyebrow}</span>
-            <h3 style={{ marginTop: 20 }}>{mission.heading}</h3>
-          </div>
-          <div className="twocol-body">
-            <p className="lede">{mission.lede}</p>
-            {mission.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+     {/* Mission */}
+      <section className="section">
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80, alignItems: 'start' }}>
+            <div>
+              <span className="eyebrow">{mission.eyebrow}</span>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
+                {mission.heading}
+              </h2>
+            </div>
+            <div>
+              <p style={{ fontFamily: 'var(--serif)', fontSize: '21px', lineHeight: 1.55, color: 'var(--citc-ink)', marginBottom: 24, maxWidth: 620 }}>
+                {mission.lede}
+              </p>
+              {mission.paragraphs.map((p, i) => (
+                <p key={i} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--citc-ink-soft)', maxWidth: 620, marginTop: 14 }}>
+                  {p}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Origin */}
-      <section className="twocol">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80 }}>
-          <div>
-            <span className="eyebrow">{origin.eyebrow}</span>
-            <h3 style={{ marginTop: 20 }}>{origin.heading}</h3>
-          </div>
-          <div className="twocol-body">
-            <p className="lede">{origin.lede}</p>
-            {origin.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+      <section className="section">
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80, alignItems: 'start' }}>
+            <div>
+              <span className="eyebrow">{origin.eyebrow}</span>
+              <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
+                {origin.heading}
+              </h2>
+            </div>
+            <div>
+              <p style={{ fontFamily: 'var(--serif)', fontSize: '21px', lineHeight: 1.55, color: 'var(--citc-ink)', marginBottom: 24, maxWidth: 620 }}>
+                {origin.lede}
+              </p>
+              {origin.paragraphs.map((p, i) => (
+                <p key={i} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--citc-ink-soft)', maxWidth: 620, marginTop: 14 }}>
+                  {p}
+                </p>
+              ))}
+            </div>
           </div>
         </div>
       </section>
