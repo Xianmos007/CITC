@@ -7,7 +7,7 @@ export const site = {
   // The top dark bar that runs above the navigation
   metaBar: {
     label: 'Church in the City · Titusville, FL · Est. 2019',
-    nextEvent: 'Saturday gathering · Apr 27 · 8am',
+    nextEvent: 'Pastors Breakfast · Jun 9 · 9am',
     scripture: 'Jer. 29:7',
   },
 
