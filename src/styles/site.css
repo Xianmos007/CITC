@@ -86,6 +86,7 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .hero-stat .num{font-family:var(--serif);font-size:46px;font-weight:500;line-height:1;}
 .hero-stat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-3);margin-top:10px;display:block;}
 .hero-photo{aspect-ratio:4/5;background:var(--citc-bone-warm);position:relative;overflow:hidden;border:1px solid var(--rule);}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1;}
 .hero-photo::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(20,18,15,0.04) 0 2px,transparent 2px 14px);}
 .hero-photo::after{content:'';position:absolute;left:50%;top:50%;width:80px;height:80px;transform:translate(-50%,-50%);background:url('../assets/flame.png') center/contain no-repeat;opacity:0.18;animation:flicker 3.2s ease-in-out infinite;transform-origin:50% 80%;}
 .hero-photo .ph-label{position:absolute;bottom:14px;left:14px;font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg-3);background:var(--citc-paper);padding:5px 9px;border:1px solid var(--rule);z-index:2;}
