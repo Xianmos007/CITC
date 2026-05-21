@@ -1,5 +1,6 @@
 import { home } from '../data/home.js';
 import { opportunities } from '../data/opportunities.js';
+import heroPhoto from '../assets/church in the city home.JPG';
 
 /* ============ Hero ============ */
 function Hero({ setPage }) {
@@ -40,8 +41,8 @@ function Hero({ setPage }) {
           </div>
           <aside className="hero-aside">
             <div className="hero-photo">
-              <span className="ph-label">{hero.photoLabel}</span>
-            </div>
+  <img src={heroPhoto} alt="church in the city home." />
+</div>
             <div className="hero-stats">
               {hero.stats.map((s, i) => (
                 <div key={i} className="hero-stat">
