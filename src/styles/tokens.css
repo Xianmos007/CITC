@@ -1,0 +1,214 @@
+/* ============================================
+   Church in the City — Colors & Type
+   Foundation tokens + semantic role classes.
+   Drop into <head>: <link rel="stylesheet" href="colors_and_type.css">
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ---------- Color: brand ---------- */
+  --citc-ink:        #14120F;   /* primary text, headlines, dark grounds */
+  --citc-ink-soft:   #2A2620;   /* secondary copy, sub-headings on cream */
+  --citc-bone:       #F3EEE4;   /* reverse text, section breaks */
+  --citc-bone-warm:  #EAE2D2;   /* warm card grounds, pending pills */
+  --citc-paper:      #FBF7EE;   /* default page background — the ground */
+  --citc-gold:       #B8923E;   /* the flame; one accent at a time */
+  --citc-gold-soft:  #D4B26A;   /* reverse-mode accents, quiet highlights */
+  --citc-sage:       #6B7A5F;   /* confirmed states, ministry health cues */
+  --citc-clay:       #A9622B;   /* urgency — real, not alarming */
+
+  --citc-line:       rgba(20, 18, 15, 0.14); /* default border / divider */
+  --citc-line-soft:  rgba(20, 18, 15, 0.08);
+  --citc-muted:      rgba(20, 18, 15, 0.55);
+
+  /* ---------- Color: semantic ---------- */
+  --fg-1:    var(--citc-ink);          /* primary text */
+  --fg-2:    var(--citc-ink-soft);     /* secondary text */
+  --fg-3:    var(--citc-muted);        /* muted / meta text */
+  --fg-on-ink: var(--citc-bone);       /* text on dark grounds */
+  --bg-1:    var(--citc-paper);        /* default page bg */
+  --bg-2:    var(--citc-bone);         /* alt section bg */
+  --bg-3:    var(--citc-bone-warm);    /* warm card / pill bg */
+  --bg-ink:  var(--citc-ink);          /* dark sections */
+  --accent:  var(--citc-gold);         /* the flame */
+  --accent-soft: var(--citc-gold-soft);
+  --ok:      var(--citc-sage);
+  --urgent:  var(--citc-clay);
+  --rule:    var(--citc-line);
+  --rule-soft: var(--citc-line-soft);
+
+  /* ---------- Color: tonal ramps ---------- */
+  --citc-gold-100: #F3E8CC;
+  --citc-gold-200: #E5D199;
+  --citc-gold-300: #D4B26A;
+  --citc-gold-400: #C9A961;
+  --citc-gold-500: #B8923E;
+  --citc-gold-600: #8C6E2C;
+  --citc-gold-700: #5C4719;
+
+  --citc-ink-100:  #F3EEE4;
+  --citc-ink-200:  #D9D2C2;
+  --citc-ink-300:  #8A8377;
+  --citc-ink-400:  #4A453D;
+  --citc-ink-500:  #2A2620;
+  --citc-ink-600:  #14120F;
+  --citc-ink-700:  #000000;
+
+  /* ---------- Type: families ---------- */
+  --serif-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --sans-body:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono-label:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* convenience aliases */
+  --serif: var(--serif-display);
+  --sans:  var(--sans-body);
+  --mono:  var(--mono-label);
+
+  /* ---------- Type: weights ---------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  /* ---------- Type: scale ---------- */
+  --fs-display: 96px;  --lh-display: 0.96;  --ls-display: -0.025em;
+  --fs-h1:      64px;  --lh-h1:      1.00;  --ls-h1:      -0.02em;
+  --fs-h2:      44px;  --lh-h2:      1.05;  --ls-h2:      -0.015em;
+  --fs-h3:      28px;  --lh-h3:      1.10;  --ls-h3:      -0.01em;
+  --fs-quote:   30px;  --lh-quote:   1.35;
+  --fs-lede:    22px;  --lh-lede:    1.40;
+  --fs-body:    16px;  --lh-body:    1.65;
+  --fs-small:   13px;  --lh-small:   1.50;
+  --fs-eyebrow: 11px;  --ls-eyebrow: 0.22em;
+  --fs-meta:    11px;  --ls-meta:    0.14em;
+
+  /* ---------- Spacing (8-pt) ---------- */
+  --space-1:   8px;
+  --space-2:  16px;
+  --space-3:  24px;
+  --space-4:  32px;
+  --space-6:  48px;
+  --space-8:  64px;
+  --space-12: 96px;
+  --space-15: 120px;
+
+  --section-pad-y:    120px;
+  --section-pad-y-md:  80px;
+  --section-pad-y-sm:  64px;
+  --gutter:            32px;
+
+  /* ---------- Radius ---------- */
+  --radius-0:    0px;
+  --radius-1:    2px;   /* max for non-circular elements */
+  --radius-full: 9999px;
+
+  /* ---------- Shadow ---------- */
+  --shadow-0: none;
+  --shadow-1: 0 1px 2px rgba(20, 18, 15, 0.06);
+  --shadow-2: 0 4px 12px rgba(20, 18, 15, 0.08);
+  --shadow-3: 0 12px 32px rgba(20, 18, 15, 0.12);
+
+  /* ---------- Motion ---------- */
+  --dur-fast:    200ms;
+  --dur-base:    300ms;
+  --dur-slow:    900ms;
+  --dur-ambient: 3200ms;
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-ambient:  ease-in-out;
+}
+
+/* ============================================
+   Semantic role classes — drop these on raw markup.
+   ============================================ */
+
+.display {
+  font-family: var(--serif);
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  font-weight: var(--fw-medium);
+}
+.display em, .display .gold {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: var(--fw-regular);
+}
+
+h1, .h1 {
+  font-family: var(--serif);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  font-weight: var(--fw-medium);
+}
+h2, .h2 {
+  font-family: var(--serif);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  font-weight: var(--fw-medium);
+}
+h3, .h3 {
+  font-family: var(--serif);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+  font-weight: var(--fw-medium);
+}
+
+.quote, blockquote {
+  font-family: var(--serif);
+  font-size: var(--fs-quote);
+  line-height: var(--lh-quote);
+  font-style: italic;
+  border-left: 2px solid var(--accent);
+  padding-left: var(--space-3);
+}
+
+.lede {
+  font-family: var(--serif);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  color: var(--fg-2);
+}
+
+p, .body {
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg-2);
+}
+
+.small {
+  font-family: var(--sans);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  font-weight: var(--fw-medium);
+  color: var(--fg-1);
+}
+.eyebrow.with-rule {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow.with-rule::before {
+  content: '';
+  width: 28px; height: 1px;
+  background: currentColor;
+}
+
+.meta, code, kbd {
+  font-family: var(--mono);
+  font-size: var(--fs-meta);
+  letter-spacing: var(--ls-meta);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
