@@ -77,18 +77,31 @@ async function upsertVolunteer({ name, email, phone, church }) {
 
 /**
  * Create a signup row linking the volunteer to an opportunity.
- * Returns the created signup row.
+ *
+ * IMPORTANT: we do NOT use .select() here. The `signups` table has a
+ * public INSERT policy but (by design, for privacy) NO public SELECT
+ * policy — volunteers must not be able to read signup rows. Postgres
+ * treats an insert-with-RETURNING as also needing SELECT visibility, so
+ * calling .select() as an anonymous user fails with an RLS error even
+ * though the insert itself is allowed. We avoid that by generating the
+ * id client-side and inserting without reading the row back.
+ *
+ * Returns a minimal signup object (the id is what the email function needs).
  */
 async function createSignup({ opportunityId, volunteerId, isWaitlist }) {
-  const { data, error } = await supabase
-    .from('signups')
-    .insert({
-      opportunity_id: opportunityId,
-      volunteer_id: volunteerId,
-      status: isWaitlist ? 'waitlist' : 'confirmed',
-    })
-    .select()
-    .single();
+  const id =
+    (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : undefined; // DB default fills it if crypto is unavailable
+
+  const row = {
+    ...(id ? { id } : {}),
+    opportunity_id: opportunityId,
+    volunteer_id: volunteerId,
+    status: isWaitlist ? 'waitlist' : 'confirmed',
+  };
+
+  const { error } = await supabase.from('signups').insert(row);
 
   if (error) {
     // Friendly handling for the duplicate signup case
@@ -97,7 +110,7 @@ async function createSignup({ opportunityId, volunteerId, isWaitlist }) {
     }
     throw new Error('Could not create signup: ' + error.message);
   }
-  return data;
+  return { id, opportunity_id: opportunityId, volunteer_id: volunteerId, status: row.status };
 }
 
 /**
