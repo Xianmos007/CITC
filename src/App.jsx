@@ -7,10 +7,28 @@ import { BlogPage } from './pages/BlogPage.jsx';
 import { GalleryPage } from './pages/GalleryPage.jsx';
 import { VolunteerPage } from './pages/volunteer/VolunteerPage.jsx';
 import { OppModal } from './pages/volunteer/OppModal.jsx';
+import { AdminPage } from './pages/AdminPage.jsx';
+import { useContent } from './hooks/useContent.js';
 
 export default function App() {
   const [page, setPage] = useState('home');
   const [oppId, setOppId] = useState(null);
+
+  // Admin panel lives at #admin — not linked in the public nav, but
+  // bookmarkable. We watch the hash so navigating to/from it works
+  // without a full page reload.
+  const [isAdmin, setIsAdmin] = useState(
+    () => typeof window !== 'undefined' && window.location.hash === '#admin'
+  );
+  useEffect(() => {
+    const onHash = () => setIsAdmin(window.location.hash === '#admin');
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  // Load opportunities + partners from the database once, shared by all
+  // pages. Falls back to bundled static data if the DB is unreachable.
+  const { opportunities, partners, loading } = useContent();
 
   // Reset scroll on page change
   useEffect(() => {
@@ -31,18 +49,31 @@ export default function App() {
 
   const openOpp = (id) => setOppId(id);
 
+  // Admin panel renders standalone — no public chrome, no content load.
+  if (isAdmin) return <AdminPage />;
+
   return (
     <div>
       <MetaBar />
       <SiteNav page={page} setPage={setPage} />
-      {page === 'home' && <HomePage setPage={setPage} openOpp={openOpp} />}
+      {page === 'home' && (
+        <HomePage setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
+      )}
       {page === 'who' && <WhoPage setPage={setPage} />}
-      {page === 'partners' && <PartnersPage />}
-      {page === 'volunteer' && <VolunteerPage openOpp={openOpp} />}
+      {page === 'partners' && <PartnersPage partners={partners} loading={loading} />}
+      {page === 'volunteer' && (
+        <VolunteerPage openOpp={openOpp} opportunities={opportunities} loading={loading} />
+      )}
       {page === 'blog' && <BlogPage />}
       {page === 'gallery' && <GalleryPage setPage={setPage} />}
       <Footer setPage={setPage} />
-      {oppId && <OppModal oppId={oppId} close={() => setOppId(null)} />}
+      {oppId && (
+        <OppModal
+          oppId={oppId}
+          opportunities={opportunities}
+          close={() => setOppId(null)}
+        />
+      )}
     </div>
   );
 }

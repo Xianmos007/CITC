@@ -1,13 +1,18 @@
 import { useState, useMemo } from 'react';
-import { opportunities, filterOptions } from '../../data/opportunities.js';
+import { deriveFilterOptions } from '../../lib/content.js';
 
-export function BrowseTab({ openOpp }) {
+export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
     partner: new Set(),
     type: new Set(),
     skill: new Set(),
   });
+
+  const filterOptions = useMemo(
+    () => deriveFilterOptions(opportunities),
+    [opportunities]
+  );
 
   const toggle = (group, value) => {
     setFilters((prev) => {
@@ -30,7 +35,7 @@ export function BrowseTab({ openOpp }) {
         if (filters.skill.size && !o.skills.some((s) => filters.skill.has(s))) return false;
         return true;
       }),
-    [search, filters]
+    [search, filters, opportunities]
   );
 
   return (
@@ -99,13 +104,28 @@ export function BrowseTab({ openOpp }) {
             </span>
           </div>
           <div className="opps">
-            {filtered.length === 0 && (
+            {loading && (
               <div className="empty-state" style={{ marginTop: 24 }}>
-                <h4>Nothing matches.</h4>
-                <p>Try fewer filters — or come to a Saturday and we'll find something.</p>
+                <h4>Loading needs…</h4>
+                <p>One moment while we pull the latest from the city.</p>
               </div>
             )}
-            {filtered.map((o) => (
+            {!loading && filtered.length === 0 && (
+              <div className="empty-state" style={{ marginTop: 24 }}>
+                {opportunities.length === 0 ? (
+                  <>
+                    <h4>No needs posted just yet.</h4>
+                    <p>We're lining up the next round of Saturdays. Check back soon — or come to a Sunday and we'll point you to something.</p>
+                  </>
+                ) : (
+                  <>
+                    <h4>Nothing matches.</h4>
+                    <p>Try fewer filters — or come to a Saturday and we'll find something.</p>
+                  </>
+                )}
+              </div>
+            )}
+            {!loading && filtered.map((o) => (
               <div
                 key={o.id}
                 className={`opp-row ${o.urgency === 'urgent' ? 'urgent' : ''}`}

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { volunteerPage, opportunities, mineDemo } from '../../data/opportunities.js';
+import { volunteerPage, mineDemo } from '../../data/opportunities.js';
 import { BrowseTab } from './BrowseTab.jsx';
 import { PostTab } from './PostTab.jsx';
 import { MineTab } from './MineTab.jsx';
 
-export function VolunteerPage({ openOpp }) {
+export function VolunteerPage({ openOpp, opportunities = [], loading = false }) {
   const [tab, setTab] = useState('browse');
   const { hero } = volunteerPage;
   const openCount = opportunities.filter((o) => o.filled < o.total).length;
@@ -48,7 +48,9 @@ export function VolunteerPage({ openOpp }) {
         </div>
       </div>
 
-      {tab === 'browse' && <BrowseTab openOpp={openOpp} />}
+      {tab === 'browse' && (
+        <BrowseTab openOpp={openOpp} opportunities={opportunities} loading={loading} />
+      )}
       {tab === 'post' && <PostTab />}
       {tab === 'mine' && <MineTab openOpp={openOpp} />}
     </div>

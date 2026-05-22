@@ -1,5 +1,4 @@
 import { home } from '../data/home.js';
-import { opportunities } from '../data/opportunities.js';
 import heroPhoto from '../assets/church in the city home.JPG';
 
 /* ============ Hero ============ */
@@ -138,11 +137,18 @@ function FeaturedPartners({ setPage }) {
 }
 
 /* ============ CurrentOpportunities ============ */
-function CurrentOpportunities({ setPage, openOpp }) {
-  // Pull only the IDs marked for the home preview
-  const opps = home.homeOppPreviewIds
-    .map((id) => opportunities.find((o) => o.id === id))
+function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
+  // Pull the opportunities marked for the home preview. DB rows carry the
+  // human id in `slug`; static fallback rows carry it in `id`. Match either.
+  // If none of the named previews are present (e.g. they were replaced in
+  // the admin panel), fall back to the soonest few so this never goes empty.
+  const wanted = home.homeOppPreviewIds;
+  let opps = wanted
+    .map((key) => opportunities.find((o) => o.slug === key || o.id === key))
     .filter(Boolean);
+  if (opps.length === 0) opps = opportunities.slice(0, 3);
+
+  const isEmpty = opps.length === 0;
   return (
     <section className="section">
       <div className="container">
@@ -150,6 +156,12 @@ function CurrentOpportunities({ setPage, openOpp }) {
           <h2>This week's<br />open hands.</h2>
           <p>A handful of small, specific ways to show up in Titusville this week.</p>
         </div>
+        {isEmpty ? (
+          <div className="empty-state">
+            <h4>The next round is coming together.</h4>
+            <p>We're lining up Saturdays with our partners now. Want a nudge when they're posted?</p>
+          </div>
+        ) : (
         <div className="opps">
           {opps.map((o) => (
             <div key={o.id} className="opp-row" onClick={() => openOpp(o.id)}>
@@ -174,6 +186,7 @@ function CurrentOpportunities({ setPage, openOpp }) {
             </div>
           ))}
         </div>
+        )}
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
           <button className="btn btn-ghost" onClick={() => setPage('volunteer')}>
             See all open needs <span className="arrow">→</span>
@@ -227,14 +240,14 @@ function Vision({ setPage }) {
 }
 
 /* ============ HomePage ============ */
-export function HomePage({ setPage, openOpp }) {
+export function HomePage({ setPage, openOpp, opportunities = [] }) {
   return (
     <div className="page">
       <Hero setPage={setPage} />
       <Marquee />
       <HowItWorks />
       <FeaturedPartners setPage={setPage} />
-      <CurrentOpportunities setPage={setPage} openOpp={openOpp} />
+      <CurrentOpportunities setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
       <Vision setPage={setPage} />
     </div>
   );

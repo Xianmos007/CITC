@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { partners, partnersPage } from '../data/partners.js';
+import { partnersPage } from '../data/partners.js';
 
 const statusClass = (s) =>
   s === 'Active' ? 'status-active' : s === 'In conversation' ? 'status-conv' : 'status-soon';
 
-export function PartnersPage() {
+export function PartnersPage({ partners = [], loading = false }) {
   const [filter, setFilter] = useState('all');
 
   const filtered = partners.filter(
@@ -46,7 +46,13 @@ export function PartnersPage() {
             </button>
           </div>
           <div className="partners-grid">
-            {filtered.map((p) => (
+            {loading && (
+              <div className="empty-state">
+                <h4>Loading partners…</h4>
+                <p>One moment while we pull the latest from the city.</p>
+              </div>
+            )}
+            {!loading && filtered.map((p) => (
               <div key={p.id} className="partner-full">
                 <div>
                   <span className={`status ${statusClass(p.status)}`}>{p.status}</span>

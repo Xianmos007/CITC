@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { opportunities } from '../../data/opportunities.js';
 import {
   findVolunteerByEmail,
   submitSignup,
@@ -16,7 +15,7 @@ import { isSupabaseReady } from '../../lib/supabase.js';
 //   'done'    — signup confirmed
 //   'error'   — something went wrong
 // =====================================================================
-export function OppModal({ oppId, close }) {
+export function OppModal({ oppId, opportunities = [], close }) {
   const [state, setState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -35,18 +34,19 @@ export function OppModal({ oppId, close }) {
   const [knownReturning, setKnownReturning] = useState(false);
 
   const o = opportunities.find((x) => x.id === oppId);
+  const oId = o?.id;
 
   // Fetch live signup count when modal opens
   useEffect(() => {
-    if (!o || !isSupabaseReady) return;
+    if (!oId || !isSupabaseReady) return;
     let cancelled = false;
-    getSignupCount(o.id).then((n) => {
+    getSignupCount(oId).then((n) => {
       if (!cancelled) setLiveFilled(n);
     });
     return () => {
       cancelled = true;
     };
-  }, [o?.id]);
+  }, [oId]);
 
   if (!o) return null;
 
