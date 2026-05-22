@@ -41,7 +41,7 @@ export const who = {
     lede:
       'A small local church aware of its limitations in the face of the needs of an entire city, and a question — what would it look like for our churches to act like one body?',
     paragraphs: [
-      "We started by identify individual needs in Titusville. We weren't trying to start anything. We were just looking for an effective way to have a greater impact in our city. We started with 2 small local churches, but now a few more are saying, we want to serve together.',
+      "We started by identifying individual needs in Titusville. We weren't trying to start anything. We were just looking for an effective way to have a greater impact in our city. We started with two small local churches, but now a few more are saying, 'We want to serve together.'",
     ],
   },
 
