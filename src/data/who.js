@@ -9,7 +9,7 @@ export const who = {
     headingEm: 'local',
     headingLine2: 'churches learning to stay.',
     sub:
-      "We started with a few pastors meeting weekly over coffee in 2019. We're now a small fellowship of congregations across Titusville, all anchored in one verse.",
+      "We started with a desire to see our neighbors cared for. We're now a small fellowship of congregations across Titusville, all anchored in one verse.",
   },
 
   foundation: {
