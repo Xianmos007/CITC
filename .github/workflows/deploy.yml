@@ -32,10 +32,13 @@ jobs:
 
       - name: Build the site
         # BASE_PATH tells Vite that the site will live at username.github.io/<repo-name>/
-        # GitHub provides the repo name automatically as github.event.repository.name.
+        # The VITE_* vars get baked into the JavaScript bundle at build time so the
+        # browser can talk to Supabase.
         run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Upload the built site as an artifact
         uses: actions/upload-pages-artifact@v3
