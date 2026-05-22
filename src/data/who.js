@@ -39,10 +39,9 @@ export const who = {
     eyebrow: '— Origin',
     heading: 'How this started.',
     lede:
-      'Six pastors, a back room at Sunrise Bread Co., and a question — what would it look like for our churches to act like one church, just for a season?',
+      'A small local church aware of its limitations in the face of the needs of an entire city, and a question — what would it look like for our churches to act like one body?',
     paragraphs: [
-      "We chose North Brevard Charities first. We weren't trying to start anything. We just took turns volunteering at the Tuesday pantry. Then someone from Cypress Community brought her teenagers. Then another church showed up on Saturday for the yard work behind the building.",
-      'By the time we had a name, the work was already five months old.',
+      "We started by identify individual needs in Titusville. We weren't trying to start anything. We were just looking for an effective way to have a greater impact in our city. We started with 2 small local churches, but now a few more are saying, we want to serve together.',
     ],
   },
 
