@@ -70,15 +70,15 @@ export const who = {
       },
       {
         roman: 'IV.',
-        title: 'Be small',
+        title: 'Build together',
         body:
-          'Resist the pull toward bigness. Small teams, small commitments, kept faithfully, for years.',
+          'The city is not served by isolated churches competing for attention, but by congregations learning to labor side by side.',
       },
       {
         roman: 'V.',
         title: 'Pray for it',
         body:
-          'Keep the city in our prayers — its mayor, its schools, its rivers, its broken porches.',
+          'Keep the city in our prayers — its leaders, its people, its schools, its broken porches.',
       },
       {
         roman: 'VI.',
