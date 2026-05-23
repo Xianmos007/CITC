@@ -139,10 +139,10 @@ export function OppModal({ oppId, opportunities = [], close }) {
           {state === 'done' && (
             <>
               <div className="success-banner" style={{ marginBottom: 24 }}>
-                <h4>You\u2019re in.</h4>
+                <h4>You&rsquo;re in.</h4>
                 <p>
                   We just sent a confirmation to <strong>{email}</strong> with the
-                  details. Bring what\u2019s on the list. Bring a friend if you can.
+                  details. Bring what&rsquo;s on the list. Bring a friend if you can.
                 </p>
               </div>
               <h4>What to bring</h4>
@@ -192,7 +192,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
                   placeholder="you@example.com"
                 />
                 {lookingUp && (
-                  <span className="hint">Checking if we\u2019ve met before\u2026</span>
+                  <span className="hint">Checking if we&rsquo;ve met before&hellip;</span>
                 )}
                 {knownReturning && !lookingUp && (
                   <span
