@@ -118,11 +118,23 @@ async function createSignup({ opportunityId, volunteerId, isWaitlist }) {
  * If the edge function fails, the signup still succeeded — we log
  * the error but don't fail the whole flow. Cristian can chase down
  * any missed emails from the admin panel later.
+ *
+ * We pass the publishable key explicitly in both the apikey and
+ * Authorization headers. New-format Supabase projects (sb_publishable_…)
+ * require the gateway to see a valid key on the function call; for an
+ * anonymous visitor the client may not auto-attach one, which causes a
+ * 401 before the function code runs. The publishable key is safe to
+ * expose in the browser (it's already baked into the build).
  */
 async function triggerEmails(signupId) {
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
   try {
     const { error } = await supabase.functions.invoke('send-signup-emails', {
       body: { signup_id: signupId },
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+      },
     });
     if (error) {
       console.warn('[CITC] Email send failed (signup still saved):', error);
