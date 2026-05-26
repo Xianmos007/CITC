@@ -134,3 +134,55 @@ export async function adminListSignups() {
   if (error) throw new Error(error.message);
   return data || [];
 }
+
+// ---- Gallery CRUD (admin) ------------------------------------------
+
+export async function adminListGalleryPhotos() {
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .select('*')
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function createGalleryPhoto(fields) {
+  const payload = {
+    image_url: fields.image_url,
+    caption: fields.caption?.trim() || null,
+    place: fields.place?.trim() || null,
+    date_label: fields.date_label?.trim() || null,
+    category: fields.category || 'saturday',
+    shape: fields.shape || 'square',
+    is_published: fields.is_published ?? true,
+    sort_order: Number(fields.sort_order) || 0,
+  };
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateGalleryPhoto(id, fields) {
+  const payload = { ...fields };
+  delete payload.id;
+  delete payload.created_at;
+  delete payload.updated_at;
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .update(payload)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteGalleryPhoto(id) {
+  const { error } = await supabase.from('gallery_photos').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}

@@ -28,7 +28,7 @@ export default function App() {
 
   // Load opportunities + partners from the database once, shared by all
   // pages. Falls back to bundled static data if the DB is unreachable.
-  const { opportunities, partners, loading } = useContent();
+  const { opportunities, partners, galleryPhotos, loading } = useContent();
 
   // Reset scroll on page change
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function App() {
         <VolunteerPage openOpp={openOpp} opportunities={opportunities} loading={loading} />
       )}
       {page === 'blog' && <BlogPage />}
-      {page === 'gallery' && <GalleryPage setPage={setPage} />}
+      {page === "gallery" && <GalleryPage setPage={setPage} photos={galleryPhotos} />}
       <Footer setPage={setPage} />
       {oppId && (
         <OppModal

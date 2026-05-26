@@ -12,7 +12,12 @@ import {
   updateOpportunity,
   unpublishOpportunity,
   updatePartner,
+  adminListGalleryPhotos,
+  createGalleryPhoto,
+  updateGalleryPhoto,
+  deleteGalleryPhoto,
 } from '../lib/admin.js';
+import { uploadGalleryImage, deleteGalleryImageByUrl } from '../lib/galleryUpload.js';
 import { isSupabaseReady } from '../lib/supabase.js';
 
 // =====================================================================
@@ -139,6 +144,7 @@ function Dashboard() {
           {[
             ['opportunities', 'Opportunities'],
             ['partners', 'Partners'],
+            ['gallery', 'Gallery'],
             ['signups', 'Signups'],
           ].map(([key, label]) => (
             <button
@@ -158,6 +164,7 @@ function Dashboard() {
       <div className="admin-main">
         {tab === 'opportunities' && <OpportunitiesView />}
         {tab === 'partners' && <PartnersView />}
+        {tab === 'gallery' && <GalleryAdminView />}
         {tab === 'signups' && <SignupsView />}
       </div>
     </div>
@@ -689,5 +696,248 @@ function SignupsView() {
         </table>
       )}
     </>
+  );
+}
+
+// ---------------------------------------------------------------------
+const GALLERY_CATS = [
+  { key: 'saturday', label: 'Saturdays' },
+  { key: 'pantry', label: 'Pantry' },
+  { key: 'yard', label: 'Yard work' },
+  { key: 'tutoring', label: 'Tutoring' },
+  { key: 'bridge', label: 'Under the bridge' },
+  { key: 'sunday', label: 'Sunday' },
+];
+const GALLERY_SHAPES = ['square', 'tall', 'wide', 'big'];
+
+function GalleryAdminView() {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [editing, setEditing] = useState(null); // row | 'new' | null
+
+  const load = useCallback(async () => {
+    setError('');
+    try {
+      setRows(await adminListGalleryPhotos());
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      await load();
+      if (!active) return;
+    })();
+    return () => { active = false; };
+  }, [load]);
+
+  const refresh = async () => {
+    setLoading(true);
+    await load();
+  };
+
+  const onDelete = async (row) => {
+    if (!confirm(`Delete this photo permanently? This removes it from the site and storage.`)) return;
+    try {
+      await deleteGalleryPhoto(row.id);
+      if (row.image_url) await deleteGalleryImageByUrl(row.image_url);
+      refresh();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  return (
+    <>
+      <div className="admin-head">
+        <h2>Gallery</h2>
+        <button className="btn btn-primary btn-sm" onClick={() => setEditing('new')}>
+          Add photo <span className="arrow">→</span>
+        </button>
+      </div>
+
+      {error && <div className="admin-error">{error}</div>}
+      {loading && <p>Loading…</p>}
+
+      {!loading && rows.length === 0 && (
+        <div className="empty-state">
+          <h4>No photos yet.</h4>
+          <p>Click "Add photo" to upload the first Saturday frame.</p>
+        </div>
+      )}
+
+      {!loading && rows.length > 0 && (
+        <div className="admin-photo-grid">
+          {rows.map((r) => (
+            <div key={r.id} className="admin-photo-card">
+              <div className="admin-photo-thumb" onClick={() => setEditing(r)}>
+                {r.image_url ? <img src={r.image_url} alt={r.caption || ''} loading="lazy" /> : <span>no image</span>}
+                {!r.is_published && <span className="admin-photo-badge">hidden</span>}
+              </div>
+              <div className="admin-photo-meta">
+                <span className="admin-photo-cap">{r.caption || '(no caption)'}</span>
+                <span className="admin-photo-sub">{r.date_label || ''} · {r.place || ''}</span>
+                <div className="admin-row-actions">
+                  <a onClick={() => setEditing(r)}>Edit</a>
+                  <a className="danger" onClick={() => onDelete(r)}>Delete</a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {editing && (
+        <GalleryEditor
+          photo={editing === 'new' ? null : editing}
+          close={() => setEditing(null)}
+          onSaved={() => { setEditing(null); refresh(); }}
+        />
+      )}
+    </>
+  );
+}
+
+function GalleryEditor({ photo, close, onSaved }) {
+  const isNew = !photo;
+  const [f, setF] = useState({
+    image_url: photo?.image_url || '',
+    caption: photo?.caption || '',
+    place: photo?.place || '',
+    date_label: photo?.date_label || '',
+    category: photo?.category || 'saturday',
+    shape: photo?.shape || 'square',
+    is_published: photo?.is_published ?? true,
+    sort_order: photo?.sort_order ?? 0,
+  });
+  const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const set = (k, v) => setF((prev) => ({ ...prev, [k]: v }));
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const { url } = await uploadGalleryImage(file);
+      set('image_url', url);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const save = async () => {
+    if (busy) return;
+    if (!f.image_url) {
+      setError('Please upload an image first.');
+      return;
+    }
+    setBusy(true);
+    setError('');
+    try {
+      if (isNew) await createGalleryPhoto(f);
+      else await updateGalleryPhoto(photo.id, f);
+      onSaved();
+    } catch (e) {
+      setError(e.message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="admin-drawer-scrim" onClick={close}>
+      <div className="admin-drawer" onClick={(e) => e.stopPropagation()}>
+        <h3>{isNew ? 'Add photo' : 'Edit photo'}</h3>
+        {error && <div className="admin-error">{error}</div>}
+
+        <div
+          className="admin-dropzone"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={onDrop}
+          onClick={() => document.getElementById('gallery-file-input').click()}
+        >
+          {f.image_url ? (
+            <img src={f.image_url} alt="preview" className="admin-dropzone-preview" />
+          ) : (
+            <div className="admin-dropzone-empty">
+              {uploading ? 'Uploading…' : 'Drag a photo here, or click to choose'}
+            </div>
+          )}
+          {uploading && f.image_url && <div className="admin-dropzone-overlay">Uploading…</div>}
+        </div>
+        <input
+          id="gallery-file-input"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={(e) => handleFile(e.target.files?.[0])}
+        />
+        {f.image_url && (
+          <button
+            className="btn btn-ghost btn-sm"
+            style={{ marginBottom: 16 }}
+            onClick={() => document.getElementById('gallery-file-input').click()}
+          >
+            Replace image
+          </button>
+        )}
+
+        <div className="field">
+          <label>Caption</label>
+          <textarea value={f.caption} onChange={(e) => set('caption', e.target.value)} placeholder="A short, true sentence about this frame." />
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label>Place</label>
+            <input value={f.place} onChange={(e) => set('place', e.target.value)} placeholder="Garden St., Titusville" />
+          </div>
+          <div className="field">
+            <label>Date label</label>
+            <input value={f.date_label} onChange={(e) => set('date_label', e.target.value)} placeholder="APR 13, 2026" />
+          </div>
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label>Category</label>
+            <select value={f.category} onChange={(e) => set('category', e.target.value)}>
+              {GALLERY_CATS.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label>Tile shape</label>
+            <select value={f.shape} onChange={(e) => set('shape', e.target.value)}>
+              {GALLERY_SHAPES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="field">
+          <label>
+            <input type="checkbox" checked={f.is_published} onChange={(e) => set('is_published', e.target.checked)} style={{ width: 'auto', marginRight: 8 }} />
+            Published (visible in the public gallery)
+          </label>
+        </div>
+
+        <div className="admin-drawer-foot">
+          <button className="btn btn-ghost" onClick={close} disabled={busy}>Cancel</button>
+          <button className="btn btn-primary" onClick={save} disabled={busy || uploading}>
+            {busy ? 'Saving…' : isNew ? 'Add to gallery' : 'Save changes'} <span className="arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

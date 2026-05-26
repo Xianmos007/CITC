@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
-import { galleryPage, photos, galleryCategories } from '../data/gallery.js';
+import { galleryPage, photos as staticPhotos, galleryCategories } from '../data/gallery.js';
 
-export function GalleryPage({ setPage }) {
+export function GalleryPage({ setPage, photos: dbPhotos }) {
   const [filter, setFilter] = useState('all');
   const [active, setActive] = useState(null);
+
+  // Use DB photos when present; fall back to the bundled set otherwise so
+  // the page is never blank (e.g. before any photos are uploaded, or if
+  // the DB is unreachable).
+  const photos = dbPhotos && dbPhotos.length ? dbPhotos : staticPhotos;
 
   const counts = Object.fromEntries(
     galleryCategories.map((c) => [
@@ -60,8 +65,14 @@ export function GalleryPage({ setPage }) {
             {filtered.map((p) => (
               <figure key={p.id} className={`tile tile-${p.shape}`} onClick={() => setActive(p)}>
                 <div className="tile-photo">
-                  <span className="ph-tag">PHOTO · {String(p.id).padStart(2, '0')}</span>
-                  <span className="ph-mark" aria-hidden="true"></span>
+                  {p.image ? (
+                    <img src={p.image} alt={p.caption || 'Church in the City'} loading="lazy" />
+                  ) : (
+                    <>
+                      <span className="ph-tag">PHOTO · {String(p.id).slice(0, 2).toUpperCase()}</span>
+                      <span className="ph-mark" aria-hidden="true"></span>
+                    </>
+                  )}
                 </div>
                 <figcaption>
                   <span className="cap-when">{p.when} · {p.place}</span>
@@ -74,7 +85,7 @@ export function GalleryPage({ setPage }) {
           {filtered.length === 0 && (
             <div className="empty-state">
               <h4>Nothing in the archive yet.</h4>
-              <p>We haven\u2019t filed anything under this one. Try another.</p>
+              <p>We haven&rsquo;t filed anything under this one. Try another.</p>
             </div>
           )}
         </div>
@@ -101,8 +112,14 @@ export function GalleryPage({ setPage }) {
           <div className="modal lightbox" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setActive(null)} aria-label="Close">✕</button>
             <div className="lb-photo">
-              <span className="ph-tag big">PHOTO · {String(active.id).padStart(2, '0')}</span>
-              <span className="ph-mark" aria-hidden="true"></span>
+              {active.image ? (
+                <img src={active.image} alt={active.caption || 'Church in the City'} />
+              ) : (
+                <>
+                  <span className="ph-tag big">PHOTO · {String(active.id).slice(0, 2).toUpperCase()}</span>
+                  <span className="ph-mark" aria-hidden="true"></span>
+                </>
+              )}
             </div>
             <div className="lb-foot">
               <div>

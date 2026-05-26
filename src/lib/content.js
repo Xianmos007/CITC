@@ -144,3 +144,37 @@ export function deriveFilterOptions(opps) {
   const skills = [...new Set(opps.flatMap((o) => o.skills || []))];
   return { partners, types, skills };
 }
+
+// ---- Gallery -------------------------------------------------------
+
+function mapGalleryPhoto(row) {
+  return {
+    id: row.id,
+    image: row.image_url,
+    caption: row.caption || '',
+    place: row.place || '',
+    when: row.date_label || '',
+    cat: row.category || 'saturday',
+    shape: row.shape || 'square',
+  };
+}
+
+/**
+ * Fetch published gallery photos, ordered for display.
+ * Returns [] on failure (caller falls back to static).
+ */
+export async function fetchGalleryPhotos() {
+  if (!isSupabaseReady) return [];
+  const { data, error } = await supabase
+    .from('gallery_photos')
+    .select('id, image_url, caption, place, date_label, category, shape, sort_order')
+    .eq('is_published', true)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[CITC] fetchGalleryPhotos error:', error);
+    return [];
+  }
+  return (data || []).map(mapGalleryPhoto);
+}

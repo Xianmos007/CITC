@@ -6,13 +6,14 @@
 //   source is 'db' when live data loaded, 'static' when we fell back.
 // =====================================================================
 import { useEffect, useState } from 'react';
-import { fetchOpportunities, fetchPartners } from '../lib/content.js';
+import { fetchOpportunities, fetchPartners, fetchGalleryPhotos } from '../lib/content.js';
 import { opportunities as staticOpps } from '../data/opportunities.js';
 import { partners as staticPartners } from '../data/partners.js';
 
 export function useContent() {
   const [opportunities, setOpportunities] = useState([]);
   const [partners, setPartners] = useState([]);
+  const [galleryPhotos, setGalleryPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [source, setSource] = useState('loading');
@@ -22,9 +23,10 @@ export function useContent() {
 
     (async () => {
       try {
-        const [opps, prts] = await Promise.all([
+        const [opps, prts, gallery] = await Promise.all([
           fetchOpportunities(),
           fetchPartners(),
+          fetchGalleryPhotos(),
         ]);
         if (cancelled) return;
 
@@ -35,12 +37,14 @@ export function useContent() {
         if (prts.length > 0) {
           setPartners(prts);
           setOpportunities(opps); // may legitimately be []
+          setGalleryPhotos(gallery); // may legitimately be []
           setSource('db');
         } else {
           // Partners empty too → DB is unreachable/unconfigured. Fall back
           // to bundled static content so the site is never blank.
           setPartners(staticPartners);
           setOpportunities(staticOpps);
+          setGalleryPhotos([]); // GalleryPage falls back to its own static set
           setSource('static');
         }
       } catch (e) {
@@ -48,6 +52,7 @@ export function useContent() {
         console.error('[CITC] useContent failed, using static fallback:', e);
         setOpportunities(staticOpps);
         setPartners(staticPartners);
+        setGalleryPhotos([]);
         setError(e);
         setSource('static');
       } finally {
@@ -60,5 +65,5 @@ export function useContent() {
     };
   }, []);
 
-  return { opportunities, partners, loading, error, source };
+  return { opportunities, partners, galleryPhotos, loading, error, source };
 }
