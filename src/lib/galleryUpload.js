@@ -129,6 +129,28 @@ export async function uploadGalleryImage(file) {
   return { url: data.publicUrl, path };
 }
 
+export async function uploadGalleryImages(files, onProgress) {
+  const list = Array.from(files || []);
+  const total = list.length;
+  const urls = [];
+  const errors = [];
+
+  for (const file of list) {
+    try {
+      const { url } = await uploadGalleryImage(file);
+      urls.push(url);
+    } catch (e) {
+      errors.push({
+        name: file?.name || 'Untitled image',
+        message: e.message || 'Upload failed.',
+      });
+    }
+    onProgress?.(urls.length + errors.length, total);
+  }
+
+  return { urls, errors };
+}
+
 /**
  * Delete an uploaded object by its public URL (best-effort).
  * Used when removing a photo so we don't leave orphaned files.

@@ -186,3 +186,62 @@ export async function deleteGalleryPhoto(id) {
   const { error } = await supabase.from('gallery_photos').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }
+
+// ---- Gallery categories CRUD (admin) -------------------------------
+
+function slugifyCategory(label) {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 30)
+    .replace(/-+$/g, '');
+}
+
+export async function adminListGalleryCategories() {
+  const { data, error } = await supabase
+    .from('gallery_categories')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function createGalleryCategory(label) {
+  const cleanLabel = label?.trim();
+  if (!cleanLabel) throw new Error('A category name is required.');
+
+  const key = slugifyCategory(cleanLabel);
+  if (!key) throw new Error('Please use at least one letter or number.');
+
+  const existing = await adminListGalleryCategories();
+  const maxSort = existing.reduce((max, row) => Math.max(max, Number(row.sort_order) || 0), -1);
+  const { data, error } = await supabase
+    .from('gallery_categories')
+    .insert({ key, label: cleanLabel, sort_order: maxSort + 1 })
+    .select()
+    .single();
+  if (error?.code === '23505') throw new Error('That category already exists.');
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateGalleryCategory(id, fields) {
+  const payload = { ...fields };
+  delete payload.id;
+  delete payload.created_at;
+  const { data, error } = await supabase
+    .from('gallery_categories')
+    .update(payload)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteGalleryCategory(id) {
+  const { error } = await supabase.from('gallery_categories').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { galleryPage, photos as staticPhotos, galleryCategories } from '../data/gallery.js';
 
-export function GalleryPage({ setPage, photos: dbPhotos }) {
+export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategories }) {
   const [filter, setFilter] = useState('all');
   const [active, setActive] = useState(null);
 
@@ -9,9 +9,13 @@ export function GalleryPage({ setPage, photos: dbPhotos }) {
   // the page is never blank (e.g. before any photos are uploaded, or if
   // the DB is unreachable).
   const photos = dbPhotos && dbPhotos.length ? dbPhotos : staticPhotos;
+  const categoryList =
+    dbCategories && dbCategories.length
+      ? [{ key: 'all', label: 'All' }, ...dbCategories]
+      : galleryCategories;
 
   const counts = Object.fromEntries(
-    galleryCategories.map((c) => [
+    categoryList.map((c) => [
       c.key,
       c.key === 'all' ? photos.length : photos.filter((p) => p.cat === c.key).length,
     ])
@@ -49,7 +53,7 @@ export function GalleryPage({ setPage, photos: dbPhotos }) {
               <span className="gi-count">{filtered.length} · of {photos.length} frames</span>
             </div>
             <div className="chips">
-              {galleryCategories.map((c) => (
+              {categoryList.map((c) => (
                 <button
                   key={c.key}
                   className={`chip ${filter === c.key ? 'active' : ''}`}
@@ -123,7 +127,7 @@ export function GalleryPage({ setPage, photos: dbPhotos }) {
             </div>
             <div className="lb-foot">
               <div>
-                <span className="eyebrow">— {galleryCategories.find((c) => c.key === active.cat)?.label}</span>
+                <span className="eyebrow">— {categoryList.find((c) => c.key === active.cat)?.label}</span>
                 <h3>{active.caption}</h3>
                 <div className="lb-meta">{active.when} · {active.place}</div>
               </div>

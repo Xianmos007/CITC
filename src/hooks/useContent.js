@@ -6,7 +6,12 @@
 //   source is 'db' when live data loaded, 'static' when we fell back.
 // =====================================================================
 import { useEffect, useState } from 'react';
-import { fetchOpportunities, fetchPartners, fetchGalleryPhotos } from '../lib/content.js';
+import {
+  fetchOpportunities,
+  fetchPartners,
+  fetchGalleryPhotos,
+  fetchGalleryCategories,
+} from '../lib/content.js';
 import { opportunities as staticOpps } from '../data/opportunities.js';
 import { partners as staticPartners } from '../data/partners.js';
 
@@ -14,6 +19,7 @@ export function useContent() {
   const [opportunities, setOpportunities] = useState([]);
   const [partners, setPartners] = useState([]);
   const [galleryPhotos, setGalleryPhotos] = useState([]);
+  const [galleryCategories, setGalleryCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [source, setSource] = useState('loading');
@@ -23,10 +29,11 @@ export function useContent() {
 
     (async () => {
       try {
-        const [opps, prts, gallery] = await Promise.all([
+        const [opps, prts, gallery, galleryCats] = await Promise.all([
           fetchOpportunities(),
           fetchPartners(),
           fetchGalleryPhotos(),
+          fetchGalleryCategories(),
         ]);
         if (cancelled) return;
 
@@ -38,6 +45,7 @@ export function useContent() {
           setPartners(prts);
           setOpportunities(opps); // may legitimately be []
           setGalleryPhotos(gallery); // may legitimately be []
+          setGalleryCategories(galleryCats); // may legitimately be []
           setSource('db');
         } else {
           // Partners empty too → DB is unreachable/unconfigured. Fall back
@@ -45,6 +53,7 @@ export function useContent() {
           setPartners(staticPartners);
           setOpportunities(staticOpps);
           setGalleryPhotos([]); // GalleryPage falls back to its own static set
+          setGalleryCategories([]);
           setSource('static');
         }
       } catch (e) {
@@ -53,6 +62,7 @@ export function useContent() {
         setOpportunities(staticOpps);
         setPartners(staticPartners);
         setGalleryPhotos([]);
+        setGalleryCategories([]);
         setError(e);
         setSource('static');
       } finally {
@@ -65,5 +75,5 @@ export function useContent() {
     };
   }, []);
 
-  return { opportunities, partners, galleryPhotos, loading, error, source };
+  return { opportunities, partners, galleryPhotos, galleryCategories, loading, error, source };
 }

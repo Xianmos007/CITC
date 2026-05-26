@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import '../styles/admin.css';
 import {
   getSession,
@@ -16,8 +16,16 @@ import {
   createGalleryPhoto,
   updateGalleryPhoto,
   deleteGalleryPhoto,
+  adminListGalleryCategories,
+  createGalleryCategory,
+  updateGalleryCategory,
+  deleteGalleryCategory,
 } from '../lib/admin.js';
-import { uploadGalleryImage, deleteGalleryImageByUrl } from '../lib/galleryUpload.js';
+import {
+  uploadGalleryImage,
+  uploadGalleryImages,
+  deleteGalleryImageByUrl,
+} from '../lib/galleryUpload.js';
 import { isSupabaseReady } from '../lib/supabase.js';
 
 // =====================================================================
@@ -700,26 +708,26 @@ function SignupsView() {
 }
 
 // ---------------------------------------------------------------------
-const GALLERY_CATS = [
-  { key: 'saturday', label: 'Saturdays' },
-  { key: 'pantry', label: 'Pantry' },
-  { key: 'yard', label: 'Yard work' },
-  { key: 'tutoring', label: 'Tutoring' },
-  { key: 'bridge', label: 'Under the bridge' },
-  { key: 'sunday', label: 'Sunday' },
-];
 const GALLERY_SHAPES = ['square', 'tall', 'wide', 'big'];
 
 function GalleryAdminView() {
   const [rows, setRows] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editing, setEditing] = useState(null); // row | 'new' | null
+  const [editing, setEditing] = useState(null);
+  const [batchOpen, setBatchOpen] = useState(false);
+  const [managingCategories, setManagingCategories] = useState(false);
 
   const load = useCallback(async () => {
     setError('');
     try {
-      setRows(await adminListGalleryPhotos());
+      const [photos, cats] = await Promise.all([
+        adminListGalleryPhotos(),
+        adminListGalleryCategories(),
+      ]);
+      setRows(photos);
+      setCategories(cats);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -741,6 +749,12 @@ function GalleryAdminView() {
     await load();
   };
 
+  const refreshCategories = async () => {
+    const cats = await adminListGalleryCategories();
+    setCategories(cats);
+    return cats;
+  };
+
   const onDelete = async (row) => {
     if (!confirm(`Delete this photo permanently? This removes it from the site and storage.`)) return;
     try {
@@ -756,9 +770,14 @@ function GalleryAdminView() {
     <>
       <div className="admin-head">
         <h2>Gallery</h2>
-        <button className="btn btn-primary btn-sm" onClick={() => setEditing('new')}>
-          Add photo <span className="arrow">→</span>
-        </button>
+        <div className="admin-row-actions">
+          <button className="btn btn-ghost btn-sm" onClick={() => setManagingCategories(true)}>
+            Categories
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={() => setBatchOpen(true)}>
+            Add photos <span className="arrow">→</span>
+          </button>
+        </div>
       </div>
 
       {error && <div className="admin-error">{error}</div>}
@@ -767,7 +786,7 @@ function GalleryAdminView() {
       {!loading && rows.length === 0 && (
         <div className="empty-state">
           <h4>No photos yet.</h4>
-          <p>Click "Add photo" to upload the first Saturday frame.</p>
+          <p>Click "Add photos" to upload the first Saturday frames.</p>
         </div>
       )}
 
@@ -794,23 +813,357 @@ function GalleryAdminView() {
 
       {editing && (
         <GalleryEditor
-          photo={editing === 'new' ? null : editing}
+          photo={editing}
+          categories={categories}
+          refreshCategories={refreshCategories}
           close={() => setEditing(null)}
           onSaved={() => { setEditing(null); refresh(); }}
+        />
+      )}
+      {batchOpen && (
+        <GalleryBatchAdd
+          categories={categories}
+          refreshCategories={refreshCategories}
+          close={() => setBatchOpen(false)}
+          onSaved={() => { setBatchOpen(false); refresh(); }}
+          onPartialSaved={refresh}
+        />
+      )}
+      {managingCategories && (
+        <CategoryManager
+          categories={categories}
+          refreshCategories={refreshCategories}
+          close={() => setManagingCategories(false)}
         />
       )}
     </>
   );
 }
 
-function GalleryEditor({ photo, close, onSaved }) {
+function CategorySelect({ value, onChange, categories, refreshCategories }) {
+  const addNew = async () => {
+    const label = prompt('New category name');
+    if (!label?.trim()) return;
+    try {
+      const created = await createGalleryCategory(label);
+      await refreshCategories();
+      onChange(created.key);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  return (
+    <select
+      value={value || ''}
+      onChange={(e) => {
+        if (e.target.value === '__new__') {
+          addNew();
+          return;
+        }
+        onChange(e.target.value);
+      }}
+    >
+      {categories.map((c) => (
+        <option key={c.id || c.key} value={c.key}>{c.label}</option>
+      ))}
+      <option value="__new__">+ Add new category…</option>
+    </select>
+  );
+}
+
+function CategoryManager({ categories, refreshCategories, close }) {
+  const [label, setLabel] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const add = async () => {
+    if (busy || !label.trim()) return;
+    setBusy(true);
+    setError('');
+    try {
+      await createGalleryCategory(label);
+      setLabel('');
+      await refreshCategories();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const rename = async (cat) => {
+    const next = prompt('Rename category', cat.label);
+    if (!next?.trim() || next.trim() === cat.label) return;
+    setError('');
+    try {
+      await updateGalleryCategory(cat.id, { label: next.trim() });
+      await refreshCategories();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  const remove = async (cat) => {
+    if (!confirm(`Remove "${cat.label}"? Existing photos keep their saved category key.`)) return;
+    setError('');
+    try {
+      await deleteGalleryCategory(cat.id);
+      await refreshCategories();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  return (
+    <div className="admin-drawer-scrim" onClick={close}>
+      <div className="admin-drawer" onClick={(e) => e.stopPropagation()}>
+        <h3>Categories</h3>
+        {error && <div className="admin-error">{error}</div>}
+
+        <div className="field-row">
+          <div className="field">
+            <label>New category</label>
+            <input
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && add()}
+              placeholder="Sunday lunch"
+            />
+          </div>
+          <div className="field" style={{ flex: '0 0 auto', alignSelf: 'end' }}>
+            <button className="btn btn-primary btn-sm" onClick={add} disabled={busy}>
+              {busy ? 'Adding…' : 'Add'}
+            </button>
+          </div>
+        </div>
+
+        {categories.length === 0 && (
+          <div className="empty-state">
+            <h4>No categories yet.</h4>
+            <p>Add one here, or use the inline category dropdown.</p>
+          </div>
+        )}
+
+        {categories.length > 0 && (
+          <table className="admin-table">
+            <thead>
+              <tr><th>Label</th><th>Key</th><th></th></tr>
+            </thead>
+            <tbody>
+              {categories.map((cat) => (
+                <tr key={cat.id}>
+                  <td className="row-title">{cat.label}</td>
+                  <td>{cat.key}</td>
+                  <td>
+                    <div className="admin-row-actions">
+                      <a onClick={() => rename(cat)}>Rename</a>
+                      <a className="danger" onClick={() => remove(cat)}>Remove</a>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <div className="admin-drawer-foot">
+          <button className="btn btn-primary" onClick={close}>Done</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GalleryBatchAdd({
+  categories,
+  refreshCategories,
+  close,
+  onSaved,
+  onPartialSaved,
+}) {
+  const [files, setFiles] = useState([]);
+  const [f, setF] = useState({
+    category: categories[0]?.key || 'saturday',
+    shape: 'square',
+    date_label: '',
+  });
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState('');
+  const [error, setError] = useState('');
+  const filesRef = useRef([]);
+
+  useEffect(() => {
+    filesRef.current = files;
+  }, [files]);
+
+  useEffect(() => {
+    return () => filesRef.current.forEach((item) => URL.revokeObjectURL(item.preview));
+  }, []);
+
+  const set = (k, v) => setF((prev) => ({ ...prev, [k]: v }));
+
+  const addFiles = (incoming) => {
+    const nextFiles = Array.from(incoming || []).filter((file) =>
+      file.type.startsWith('image/')
+    );
+    if (!nextFiles.length) return;
+    setFiles((prev) => [
+      ...prev,
+      ...nextFiles.map((file) => ({
+        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
+        file,
+        preview: URL.createObjectURL(file),
+      })),
+    ]);
+  };
+
+  const removeFile = (id) => {
+    setFiles((prev) => {
+      const item = prev.find((x) => x.id === id);
+      if (item) URL.revokeObjectURL(item.preview);
+      return prev.filter((x) => x.id !== id);
+    });
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    addFiles(e.dataTransfer?.files);
+  };
+
+  const save = async () => {
+    if (busy) return;
+    if (!files.length) {
+      setError('Choose at least one image.');
+      return;
+    }
+    setBusy(true);
+    setError('');
+    setProgress(`Uploading 0 of ${files.length}…`);
+    try {
+      const { urls, errors } = await uploadGalleryImages(
+        files.map((item) => item.file),
+        (done, total) => setProgress(`Uploading ${done} of ${total}…`)
+      );
+      for (const url of urls) {
+        await createGalleryPhoto({
+          image_url: url,
+          category: f.category,
+          shape: f.shape,
+          date_label: f.date_label,
+          is_published: true,
+        });
+      }
+
+      if (errors.length) {
+        const failedNames = new Set(errors.map((item) => item.name));
+        setFiles((prev) => {
+          prev
+            .filter((item) => !failedNames.has(item.file.name))
+            .forEach((item) => URL.revokeObjectURL(item.preview));
+          return prev.filter((item) => failedNames.has(item.file.name));
+        });
+        setError(
+          `Some uploads failed: ${errors
+            .map((item) => `${item.name} (${item.message})`)
+            .join(', ')}`
+        );
+        setProgress('');
+        await onPartialSaved();
+        setBusy(false);
+        return;
+      }
+
+      onSaved();
+    } catch (e) {
+      setError(e.message);
+      setBusy(false);
+      setProgress('');
+    }
+  };
+
+  return (
+    <div className="admin-drawer-scrim" onClick={close}>
+      <div className="admin-drawer" onClick={(e) => e.stopPropagation()}>
+        <h3>Add photos</h3>
+        {error && <div className="admin-error">{error}</div>}
+
+        <div
+          className="admin-dropzone"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={onDrop}
+          onClick={() => document.getElementById('gallery-batch-input').click()}
+        >
+          <div className="admin-dropzone-empty">
+            {progress || 'Drag photos here, or click to choose'}
+          </div>
+        </div>
+        <input
+          id="gallery-batch-input"
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={(e) => addFiles(e.target.files)}
+        />
+
+        {files.length > 0 && (
+          <div className="admin-batch-thumbs">
+            {files.map((item) => (
+              <div className="admin-batch-thumb" key={item.id}>
+                <img src={item.preview} alt={item.file.name} />
+                <button type="button" onClick={() => removeFile(item.id)}>✕</button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="field-row" style={{ marginTop: 18 }}>
+          <div className="field">
+            <label>Category</label>
+            <CategorySelect
+              value={f.category}
+              onChange={(value) => set('category', value)}
+              categories={categories}
+              refreshCategories={refreshCategories}
+            />
+          </div>
+          <div className="field">
+            <label>Tile shape</label>
+            <select value={f.shape} onChange={(e) => set('shape', e.target.value)}>
+              {GALLERY_SHAPES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="field">
+          <label>Date label</label>
+          <input
+            value={f.date_label}
+            onChange={(e) => set('date_label', e.target.value)}
+            placeholder="APR 13, 2026"
+          />
+        </div>
+
+        <div className="admin-drawer-foot">
+          <button className="btn btn-ghost" onClick={close} disabled={busy}>Cancel</button>
+          <button className="btn btn-primary" onClick={save} disabled={busy}>
+            {busy ? 'Saving…' : 'Add to gallery'} <span className="arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GalleryEditor({ photo, categories, refreshCategories, close, onSaved }) {
   const isNew = !photo;
   const [f, setF] = useState({
     image_url: photo?.image_url || '',
     caption: photo?.caption || '',
     place: photo?.place || '',
     date_label: photo?.date_label || '',
-    category: photo?.category || 'saturday',
+    category: photo?.category || categories[0]?.key || 'saturday',
     shape: photo?.shape || 'square',
     is_published: photo?.is_published ?? true,
     sort_order: photo?.sort_order ?? 0,
@@ -913,9 +1266,12 @@ function GalleryEditor({ photo, close, onSaved }) {
         <div className="field-row">
           <div className="field">
             <label>Category</label>
-            <select value={f.category} onChange={(e) => set('category', e.target.value)}>
-              {GALLERY_CATS.map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}
-            </select>
+            <CategorySelect
+              value={f.category}
+              onChange={(value) => set('category', value)}
+              categories={categories}
+              refreshCategories={refreshCategories}
+            />
           </div>
           <div className="field">
             <label>Tile shape</label>

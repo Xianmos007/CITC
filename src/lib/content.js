@@ -178,3 +178,17 @@ export async function fetchGalleryPhotos() {
   }
   return (data || []).map(mapGalleryPhoto);
 }
+
+export async function fetchGalleryCategories() {
+  if (!isSupabaseReady) return [];
+  const { data, error } = await supabase
+    .from('gallery_categories')
+    .select('key, label, sort_order')
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('[CITC] fetchGalleryCategories error:', error);
+    return [];
+  }
+  return (data || []).map((row) => ({ key: row.key, label: row.label }));
+}
