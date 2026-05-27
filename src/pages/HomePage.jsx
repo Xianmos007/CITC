@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { home } from '../data/home.js';
 import heroPhoto from '../assets/church in the city home.JPG';
 
@@ -243,6 +244,19 @@ function Vision({ setPage }) {
 export function HomePage({ setPage, openOpp, opportunities = [] }) {
   return (
     <div className="page">
+      <Helmet>
+        <title>Church in the City</title>
+        <meta name="description" content="A collaborative initiative of churches working together to love and serve our city." />
+        <meta property="og:title" content="Church in the City" />
+        <meta property="og:description" content="A collaborative initiative of churches working together to love and serve our city." />
+        <meta property="og:url" content="https://thechurchinthecity.org" />
+        <meta property="og:image" content="https://thechurchinthecity.org/og-default.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Church in the City" />
+        <meta name="twitter:description" content="A collaborative initiative of churches working together to love and serve our city." />
+        <meta name="twitter:image" content="https://thechurchinthecity.org/og-default.jpg" />
+      </Helmet>
       <Hero setPage={setPage} />
       <Marquee />
       <HowItWorks />

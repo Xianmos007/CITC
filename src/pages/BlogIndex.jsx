@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { blogPage, blogCategories, featuredPost, blogPosts } from '../data/blog.js';
 
 export function BlogIndex() {
@@ -20,6 +21,19 @@ export function BlogIndex() {
 
   return (
     <div className="page">
+      <Helmet>
+        <title>Blog · Church in the City</title>
+        <meta name="description" content="Stories, reflections, and updates from churches working together across our city." />
+        <meta property="og:title" content="Blog · Church in the City" />
+        <meta property="og:description" content="Stories, reflections, and updates from churches working together across our city." />
+        <meta property="og:url" content="https://thechurchinthecity.org/blog" />
+        <meta property="og:image" content="https://thechurchinthecity.org/og-default.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Blog · Church in the City" />
+        <meta name="twitter:description" content="Stories, reflections, and updates from churches working together across our city." />
+        <meta name="twitter:image" content="https://thechurchinthecity.org/og-default.jpg" />
+      </Helmet>
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>

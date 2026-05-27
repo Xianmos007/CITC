@@ -1,7 +1,9 @@
 import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { blogPosts, featuredPost } from '../data/blog.js';
 
 const allPosts = [featuredPost, ...blogPosts];
+const DEFAULT_OG_IMAGE = 'https://thechurchinthecity.org/og-default.jpg';
 
 function getBody(post) {
   return post.body || [
@@ -24,6 +26,21 @@ function MarkdownBody({ body }) {
   );
 }
 
+function getDescription(post) {
+  return post.excerpt
+    || post.dek
+    || (post.body || '').replace(/[#*_`>[\]()]/g, '').slice(0, 160).trim()
+    || post.title;
+}
+
+function getCoverImage(post) {
+  return post.cover_image_url || post.cover_url || DEFAULT_OG_IMAGE;
+}
+
+function getSlug(post) {
+  return post.slug || post.id;
+}
+
 export function BlogPost() {
   const { slug } = useParams();
   const post = allPosts.find((p) => p.id === slug || p.slug === slug);
@@ -31,6 +48,19 @@ export function BlogPost() {
   if (!post) {
     return (
       <div className="page">
+        <Helmet>
+          <title>Post not found · Church in the City</title>
+          <meta name="description" content="That field note may have moved, or it may not be published yet." />
+          <meta property="og:title" content="Post not found · Church in the City" />
+          <meta property="og:description" content="That field note may have moved, or it may not be published yet." />
+          <meta property="og:url" content={`https://thechurchinthecity.org/blog/${slug || ''}`} />
+          <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Post not found · Church in the City" />
+          <meta name="twitter:description" content="That field note may have moved, or it may not be published yet." />
+          <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
+        </Helmet>
         <section className="page-hero">
           <div className="container">
             <span className="label">Field Notes</span>
@@ -46,9 +76,26 @@ export function BlogPost() {
   }
 
   const read = post.readtime || post.read;
+  const description = getDescription(post);
+  const coverImage = getCoverImage(post);
+  const postSlug = getSlug(post);
 
   return (
     <div className="page">
+      <Helmet>
+        <title>{post.title} · Church in the City</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`https://thechurchinthecity.org/blog/${postSlug}`} />
+        <meta property="og:image" content={coverImage} />
+        <meta property="og:type" content="article" />
+        {post.published_at && <meta property="article:published_time" content={post.published_at} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={coverImage} />
+      </Helmet>
       <article className="blog-post">
         <div className="container">
           <Link className="blog-back" to="/blog">← Back to blog</Link>
