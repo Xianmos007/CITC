@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { MetaBar, SiteNav, Footer } from './components/Chrome.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { WhoPage } from './pages/WhoPage.jsx';
 import { PartnersPage } from './pages/PartnersPage.jsx';
-import { BlogPage } from './pages/BlogPage.jsx';
+import { BlogIndex } from './pages/BlogIndex.jsx';
+import { BlogPost } from './pages/BlogPost.jsx';
 import { GalleryPage } from './pages/GalleryPage.jsx';
 import { VolunteerPage } from './pages/volunteer/VolunteerPage.jsx';
 import { OppModal } from './pages/volunteer/OppModal.jsx';
@@ -13,6 +15,8 @@ import { useContent } from './hooks/useContent.js';
 export default function App() {
   const [page, setPage] = useState('home');
   const [oppId, setOppId] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Admin panel lives at #admin — not linked in the public nav, but
   // bookmarkable. We watch the hash so navigating to/from it works
@@ -33,7 +37,7 @@ export default function App() {
   // Reset scroll on page change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [page]);
+  }, [page, location.pathname]);
 
   // Close modal on Esc
   useEffect(() => {
@@ -48,31 +52,74 @@ export default function App() {
   }, [oppId]);
 
   const openOpp = (id) => setOppId(id);
+  const goPage = (nextPage) => {
+    if (nextPage === 'blog') {
+      navigate('/blog');
+      return;
+    }
+    setPage(nextPage);
+    setOppId(null);
+    if (location.pathname !== '/') navigate('/');
+  };
 
   // Admin panel renders standalone — no public chrome, no content load.
   if (isAdmin) return <AdminPage />;
 
   return (
     <div>
-      <MetaBar />
-      <SiteNav page={page} setPage={setPage} />
-      {page === 'home' && (
-        <HomePage setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
-      )}
-      {page === 'who' && <WhoPage setPage={setPage} />}
-      {page === 'partners' && <PartnersPage partners={partners} loading={loading} />}
-      {page === 'volunteer' && (
-        <VolunteerPage openOpp={openOpp} opportunities={opportunities} loading={loading} />
-      )}
-      {page === 'blog' && <BlogPage />}
-      {page === "gallery" && (
-        <GalleryPage
-          setPage={setPage}
-          photos={galleryPhotos}
-          categories={galleryCategories}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicFrame page={page} setPage={goPage}>
+              <SectionPage
+                page={page}
+                setPage={goPage}
+                openOpp={openOpp}
+                opportunities={opportunities}
+                partners={partners}
+                galleryPhotos={galleryPhotos}
+                galleryCategories={galleryCategories}
+                loading={loading}
+              />
+            </PublicFrame>
+          }
         />
-      )}
-      <Footer setPage={setPage} />
+        <Route
+          path="/blog"
+          element={
+            <PublicFrame page="blog" setPage={goPage}>
+              <BlogIndex />
+            </PublicFrame>
+          }
+        />
+        <Route
+          path="/blog/:slug"
+          element={
+            <PublicFrame page="blog" setPage={goPage}>
+              <BlogPost />
+            </PublicFrame>
+          }
+        />
+        <Route path="/admin" element={<Navigate to="/#admin" replace />} />
+        <Route
+          path="*"
+          element={
+            <PublicFrame page={page} setPage={goPage}>
+              <SectionPage
+                page={page}
+                setPage={goPage}
+                openOpp={openOpp}
+                opportunities={opportunities}
+                partners={partners}
+                galleryPhotos={galleryPhotos}
+                galleryCategories={galleryCategories}
+                loading={loading}
+              />
+            </PublicFrame>
+          }
+        />
+      </Routes>
       {oppId && (
         <OppModal
           oppId={oppId}
@@ -81,5 +128,47 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+function PublicFrame({ page, setPage, children }) {
+  return (
+    <>
+      <MetaBar />
+      <SiteNav page={page} setPage={setPage} />
+      {children}
+      <Footer setPage={setPage} />
+    </>
+  );
+}
+
+function SectionPage({
+  page,
+  setPage,
+  openOpp,
+  opportunities,
+  partners,
+  galleryPhotos,
+  galleryCategories,
+  loading,
+}) {
+  return (
+    <>
+      {page === 'home' && (
+        <HomePage setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
+      )}
+      {page === 'who' && <WhoPage setPage={setPage} />}
+      {page === 'partners' && <PartnersPage partners={partners} loading={loading} />}
+      {page === 'volunteer' && (
+        <VolunteerPage openOpp={openOpp} opportunities={opportunities} loading={loading} />
+      )}
+      {page === 'gallery' && (
+        <GalleryPage
+          setPage={setPage}
+          photos={galleryPhotos}
+          categories={galleryCategories}
+        />
+      )}
+    </>
   );
 }
