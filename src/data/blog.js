@@ -41,6 +41,7 @@ export const featuredPost = {
   title: 'What we learned in two years at Ms. Dorothy\u2019s.',
   dek:
     'Twenty-three Saturdays. A new mailbox post, a re-shingled shed, and the slow, plain discovery that showing up is most of the work.',
+  cover: '',
   author: 'Pastor James Holcomb',
   church: 'Park Avenue Baptist',
   photoLabel: 'Photo · Garden St., Saturday morning',
@@ -57,6 +58,7 @@ export const blogPosts = [
     title: 'A note from the pantry, on the Thursday no one came.',
     dek:
       'On the slow weeks, the chairs are still set out. The bread is still bagged. Someone is still glad you came.',
+    cover: '',
     author: 'Anita Reyes',
     church: 'North Brevard Charities',
   },
@@ -69,6 +71,7 @@ export const blogPosts = [
     title: 'On bringing teenagers along, badly.',
     dek:
       'Three Saturdays of phones-out, hood-up, mostly-unhelpful presence. And then, somewhere in the fourth, a quiet shift.',
+    cover: '',
     author: 'Drew Castillo',
     church: 'Cypress Community Church',
   },
@@ -81,6 +84,7 @@ export const blogPosts = [
     title: 'Six pastors at Sunrise Bread, five years on.',
     dek:
       'What began with a back-room Wednesday and weak coffee has become a small, slow, durable habit. A note for the anniversary.',
+    cover: '',
     author: 'Pastor Eli Vance',
     church: 'Riverside Fellowship',
   },
@@ -93,6 +97,7 @@ export const blogPosts = [
     title: 'Why we haven\u2019t started \u201csomething\u201d under the bridge yet.',
     dek:
       'The temptation is to launch. The discipline is to listen — to the men already there, and to the ministries already doing the work.',
+    cover: '',
     author: 'Pastor James Holcomb',
     church: 'Park Avenue Baptist',
   },
@@ -105,6 +110,7 @@ export const blogPosts = [
     title: 'The reading hour, in numbers we trust.',
     dek:
       'Twelve weeks. Four tutors. Eleven second-graders. The metric we keep is the one we can\u2019t graph: the question they ask when you sit down.',
+    cover: '',
     author: 'Maya Iwu',
     church: 'First Presbyterian, Titusville',
   },
@@ -117,6 +123,7 @@ export const blogPosts = [
     title: 'What \u201cpartner\u201d means to us (and what it doesn\u2019t).',
     dek:
       'A short letter to a new church asking how to plug in. Mostly about what we\u2019ve learned not to do.',
+    cover: '',
     author: 'Pastor Eli Vance',
     church: 'Riverside Fellowship',
   },
@@ -129,6 +136,7 @@ export const blogPosts = [
     title: 'A benediction for the Saturday volunteer.',
     dek:
       "For the one who showed up tired. For the one who didn\u2019t know what to do. For the one who came back the next week.",
+    cover: '',
     author: 'Pastor James Holcomb',
     church: 'Park Avenue Baptist',
   },
@@ -141,6 +149,7 @@ export const blogPosts = [
     title: 'Better Together: what a year of listening sounds like.',
     dek:
       'We haven\u2019t hosted yet. We haven\u2019t trained yet. We have sat in a circle, every month, with the people who do. Here\u2019s what we\u2019re hearing.',
+    cover: '',
     author: 'Sarah Whitcombe',
     church: 'Better Together · Brevard',
   },

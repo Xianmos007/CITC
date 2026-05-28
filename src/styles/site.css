@@ -409,9 +409,20 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .blog-post-meta .eyebrow{margin:0;font-size:10.5px;}
 .blog-post h1{font-family:var(--serif);font-size:clamp(42px,6vw,74px);line-height:0.98;letter-spacing:-0.02em;font-weight:500;max-width:920px;margin-bottom:22px;}
 .blog-post-dek{font-family:var(--serif);font-size:23px;line-height:1.45;color:var(--citc-ink-soft);max-width:760px;margin-bottom:24px;}
+.blog-post-cover{max-width:720px;margin-top:46px;border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--citc-bone-warm);aspect-ratio:4/5;}
+.blog-post-cover img{width:100%;height:100%;display:block;object-fit:cover;}
 .blog-post-body{max-width:720px;margin-top:54px;border-top:1px solid var(--rule);padding-top:42px;}
-.blog-post-body h2{font-family:var(--serif);font-size:32px;font-weight:500;letter-spacing:-0.012em;margin:34px 0 14px;}
-.blog-post-body p{font-family:var(--serif);font-size:20px;line-height:1.7;color:var(--citc-ink-soft);margin-bottom:24px;}
+.blog-post-body h2,.blog-post-body h3{font-family:var(--serif);font-weight:500;color:var(--citc-ink);letter-spacing:0;margin:34px 0 14px;}
+.blog-post-body h2{font-size:34px;line-height:1.12;}
+.blog-post-body h3{font-size:27px;line-height:1.18;}
+.blog-post-body p{font-family:var(--sans);font-size:18px;line-height:1.65;color:var(--citc-ink-soft);margin-bottom:24px;}
+.blog-post-body blockquote{margin:34px 0;padding:4px 0 4px 22px;border-left:2px solid var(--citc-gold);font-family:var(--serif);font-style:italic;color:var(--citc-ink);font-size:23px;line-height:1.5;}
+.blog-post-body blockquote p{font-family:inherit;font-size:inherit;line-height:inherit;color:inherit;margin:0;}
+.blog-post-body strong{font-weight:600;color:var(--citc-ink);}
+.blog-post-body em{font-style:italic;}
+.blog-post-body ul,.blog-post-body ol{font-family:var(--sans);font-size:18px;line-height:1.65;color:var(--citc-ink-soft);padding-left:24px;margin:0 0 26px;}
+.blog-post-body li{margin-bottom:8px;}
+.blog-post-body a{color:var(--citc-ink);text-decoration-color:var(--citc-gold);text-decoration-thickness:1px;text-underline-offset:4px;}
 
 /* newsletter form */
 .letter-form{display:flex;gap:0;border:1px solid var(--citc-ink);background:var(--citc-paper);max-width:420px;width:100%;}

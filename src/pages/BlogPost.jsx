@@ -1,27 +1,36 @@
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { blogPosts, featuredPost } from '../data/blog.js';
 
 const allPosts = [featuredPost, ...blogPosts];
 const DEFAULT_OG_IMAGE = 'https://thechurchinthecity.org/og-default.jpg';
+const SITE_URL = 'https://thechurchinthecity.org';
+const markdownBodies = import.meta.glob('../content/blog/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
 function getBody(post) {
-  return post.body || [
+  return getMarkdownBody(post) || post.body || [
     post.dek,
     'This field note is part of the Church in the City archive: a small record of pastors, partners, and neighbors learning to show up together.',
     'More posts are being prepared for this space. For now, keep the date, the author, and the invitation close.',
   ].join('\n\n');
 }
 
+function getMarkdownBody(post) {
+  return markdownBodies[`../content/blog/${post.id}.md`]
+    || markdownBodies[`../content/blog/${post.slug}.md`]
+    || '';
+}
+
 function MarkdownBody({ body }) {
   return (
     <div className="blog-post-body">
-      {body.split('\n\n').map((block) => {
-        if (block.startsWith('## ')) {
-          return <h2 key={block}>{block.slice(3)}</h2>;
-        }
-        return <p key={block}>{block}</p>;
-      })}
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
     </div>
   );
 }
@@ -34,7 +43,16 @@ function getDescription(post) {
 }
 
 function getCoverImage(post) {
-  return post.cover_image_url || post.cover_url || DEFAULT_OG_IMAGE;
+  const cover = post.cover || post.cover_image_url || post.cover_url;
+  if (!cover) return DEFAULT_OG_IMAGE;
+  if (/^https?:\/\//i.test(cover)) return cover;
+  if (cover.startsWith('/')) return `${SITE_URL}${cover}`;
+  return DEFAULT_OG_IMAGE;
+}
+
+function getCoverSrc(post) {
+  const cover = post.cover || post.cover_image_url || post.cover_url;
+  return cover && !/^https?:\/\//i.test(cover) ? cover : cover || '';
 }
 
 function getSlug(post) {
@@ -78,6 +96,7 @@ export function BlogPost() {
   const read = post.readtime || post.read;
   const description = getDescription(post);
   const coverImage = getCoverImage(post);
+  const coverSrc = getCoverSrc(post);
   const postSlug = getSlug(post);
 
   return (
@@ -113,6 +132,11 @@ export function BlogPost() {
             <span className="dot-sep">·</span>
             <span>{post.church}</span>
           </div>
+          {coverSrc && (
+            <div className="blog-post-cover">
+              <img src={coverSrc} alt="" />
+            </div>
+          )}
           <MarkdownBody body={getBody(post)} />
         </div>
       </article>
