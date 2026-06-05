@@ -50,6 +50,19 @@ export const featuredPost = {
 // The rest of the post list
 export const blogPosts = [
   {
+    id: 'let-justice-roll-down',
+    date: 'MAY 28, 2026',
+    read: '5 MIN',
+    cat: 'pastoral',
+    category: 'Pastoral notes',
+    title: 'Let justice roll down.',
+    dek:
+      'Amos 5:24 has become a politicized verse. But biblical justice is the fruit of transformed worship and the local church, working together, is uniquely positioned to live it out.',
+    author: 'Pastor Cristian Moscoso',
+    church: 'Trinity Church',
+    cover: '/blog-covers/let-justice-roll-down.jpg',
+  },
+  {
     id: 'pantry-thursday',
     date: 'APR 11, 2026',
     read: '4 MIN',
