@@ -65,23 +65,23 @@ export const home = {
       {
         status: 'Active',
         name: 'North Brevard Charities',
-        type: 'Food pantry · 30+ years in Titusville',
+        type: 'Community services · Titusville',
         body:
-          'Twice-weekly pantry distribution and a small wraparound services program for families on Park Ave.',
+          'Providing hope and help \u2014 empowering individuals to overcome hardships and rebuild stable, healthy lives.',
       },
       {
-        status: 'In conversation',
+        status: 'Active',
         name: 'Better Together',
-        type: 'Family preservation',
+        type: 'Family preservation · Volunteer training',
         body:
-          'Sitting down monthly with their team — listening to how the church can come alongside foster families, not invent something parallel.',
+          'Host families for short-term care, job fairs, and mentors who guide and encourage \u2014 so families stay together.',
       },
       {
-        status: 'On the horizon',
-        name: 'Under the Bridge Ministries',
-        type: 'Street outreach',
+        status: 'Active',
+        name: 'Hope for North Brevard',
+        type: 'Youth services · Food program',
         body:
-          'Saturday breakfast and laundry under the I-95 overpass. We are praying about how to step in.',
+          'A catalyst for restoring hope and unity to youth and families through counseling, community programs, and food delivery.',
       },
     ],
   },
