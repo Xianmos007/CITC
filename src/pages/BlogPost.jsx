@@ -116,8 +116,13 @@ export function BlogPost() {
         <meta name="twitter:image" content={coverImage} />
       </Helmet>
       <article className="blog-post">
-        <div className="container">
+        <div className="container" style={{ maxWidth: 720, margin: '0 auto' }}>
           <Link className="blog-back" to="/blog">← Back to blog</Link>
+          {coverSrc && (
+            <div className="blog-post-cover" style={{ aspectRatio: '16/9', overflow: 'hidden', marginBottom: 32 }}>
+              <img src={coverSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            </div>
+          )}
           <div className="blog-post-meta">
             <span className="eyebrow">— {post.category}</span>
             <span className="dot-sep">·</span>
@@ -132,11 +137,6 @@ export function BlogPost() {
             <span className="dot-sep">·</span>
             <span>{post.church}</span>
           </div>
-          {coverSrc && (
-            <div className="blog-post-cover">
-              <img src={coverSrc} alt="" />
-            </div>
-          )}
           <MarkdownBody body={getBody(post)} />
         </div>
       </article>

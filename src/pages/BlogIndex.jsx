@@ -8,10 +8,10 @@ export function BlogIndex() {
 
   const counts = {
     all: blogPosts.length + 1,
-    saturdays: 1 + blogPosts.filter((p) => p.cat === 'saturdays').length,
-    partners: blogPosts.filter((p) => p.cat === 'partners').length,
-    pastoral: blogPosts.filter((p) => p.cat === 'pastoral').length,
-    letters: blogPosts.filter((p) => p.cat === 'letters').length,
+    saturdays: (featuredPost.cat === 'saturdays' ? 1 : 0) + blogPosts.filter((p) => p.cat === 'saturdays').length,
+    partners: (featuredPost.cat === 'partners' ? 1 : 0) + blogPosts.filter((p) => p.cat === 'partners').length,
+    pastoral: (featuredPost.cat === 'pastoral' ? 1 : 0) + blogPosts.filter((p) => p.cat === 'pastoral').length,
+    letters: (featuredPost.cat === 'letters' ? 1 : 0) + blogPosts.filter((p) => p.cat === 'letters').length,
   };
 
   const visible = filter === 'all' ? blogPosts : blogPosts.filter((p) => p.cat === filter);
@@ -62,7 +62,11 @@ export function BlogIndex() {
           {showFeatured && (
             <article className="blog-feature">
               <div className="bf-photo">
-                <span className="ph-label">{featuredPost.photoLabel}</span>
+                {featuredPost.cover ? (
+                  <img src={featuredPost.cover} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                ) : (
+                  <span className="ph-label">{featuredPost.photoLabel}</span>
+                )}
               </div>
               <div className="bf-body">
                 <div className="bf-meta">
@@ -70,7 +74,7 @@ export function BlogIndex() {
                   <span className="dot-sep">·</span>
                   <span className="bf-date">{featuredPost.date}</span>
                   <span className="dot-sep">·</span>
-                  <span className="bf-read">{featuredPost.readtime} READ</span>
+                  <span className="bf-read">{featuredPost.readtime || featuredPost.read} READ</span>
                 </div>
                 <h2>{featuredPost.title}</h2>
                 <p className="bf-dek">{featuredPost.dek}</p>
