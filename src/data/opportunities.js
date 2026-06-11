@@ -147,26 +147,6 @@ export const filterOptions = {
   ],
 };
 
-// The synthetic "My sign-ups" preview content. Once accounts ship in
-// Phase 2, this will come from the logged-in user's database records.
-// For now, it shows a plausible preview so visitors can see the feature.
-export const mineDemo = {
-  user: { initial: 'D', name: 'Dorothy Lin · Cypress Community' },
-  confirmed: [
-    { id: 'yard-dorothy', when: 'SAT · APR 27 · 8:00AM', title: 'Yard cleanup for Ms. Dorothy on Garden St.', partner: 'North Brevard Charities', stat: 'Confirmed' },
-    { id: 'kids-closet', when: 'SAT · MAY 11 · 9:00AM', title: 'Spring kids closet refresh', partner: 'North Brevard Charities', stat: 'Confirmed' },
-  ],
-  pending: [
-    { id: 'tutoring', when: 'WED · MAY 01 · 3:15PM', title: 'Reading hour with 2nd graders', partner: 'Imperial Estates Elementary', stat: 'Awaiting background check' },
-  ],
-  completed: [
-    { id: 'past-1', when: 'SAT · APR 13', title: 'Pantry distribution — Saturday rush', partner: 'North Brevard Charities', stat: 'Completed · 3 hrs' },
-    { id: 'past-2', when: 'TUE · APR 02', title: 'Reading hour with 2nd graders', partner: 'Imperial Estates Elementary', stat: 'Completed · 1.5 hrs' },
-    { id: 'past-3', when: 'SAT · MAR 23', title: 'Yard help for the Hernandez family', partner: 'North Brevard Charities', stat: 'Completed · 4 hrs' },
-  ],
-  completedHoursLabel: '8.5 hours',
-};
-
 export const volunteerPage = {
   hero: {
     label: '04 · Volunteer Now',

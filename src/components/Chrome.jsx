@@ -8,7 +8,6 @@ export function MetaBar() {
       <div className="meta-bar-inner">
         <span className="meta-bar-label">{site.metaBar.label}</span>
         <div className="meta-bar-right">
-          <span className="live"><span className="ldot"></span>{site.metaBar.nextEvent}</span>
           <span>{site.metaBar.scripture}</span>
         </div>
       </div>

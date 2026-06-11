@@ -27,6 +27,7 @@ function mapOpportunity(row) {
   return {
     id: row.id, // UUID — this is what signups.opportunity_id references
     date: row.date_label,
+    date_label: row.date_label,
     time: row.time_label,
     dur: row.duration_label,
     title: row.title,

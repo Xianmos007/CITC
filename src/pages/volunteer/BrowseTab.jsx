@@ -13,6 +13,8 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     () => deriveFilterOptions(opportunities),
     [opportunities]
   );
+  const openCount = opportunities.filter((o) => o.filled < o.total).length;
+  const isLowCount = openCount <= 4;
 
   const toggle = (group, value) => {
     setFilters((prev) => {
@@ -21,6 +23,9 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
       else next.add(value);
       return { ...prev, [group]: next };
     });
+  };
+  const setPartnerFilter = (value) => {
+    setFilters((prev) => ({ ...prev, partner: value ? new Set([value]) : new Set() }));
   };
 
   const filtered = useMemo(
@@ -40,7 +45,25 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
 
   return (
     <div className="container">
-      <div className="browse-grid">
+      {isLowCount && (
+        <div className="compact-filters">
+          <div className="search-bar">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search needs…" />
+            <span className="meta">{filtered.length}</span>
+          </div>
+          <select
+            value={filters.partner.size === 1 ? [...filters.partner][0] : ''}
+            onChange={(e) => setPartnerFilter(e.target.value)}
+          >
+            <option value="">All partners</option>
+            {filterOptions.partners
+              .filter((p) => opportunities.some((o) => o.partner === p))
+              .map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      )}
+      <div className={`browse-grid ${isLowCount ? 'low-count' : ''}`}>
+        {!isLowCount && (
         <aside className="filters">
           <div className="search-bar" style={{ borderBottom: '1px solid var(--rule)', marginBottom: 0 }}>
             <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search needs…" />
@@ -50,6 +73,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
             <h5>Partner</h5>
             {filterOptions.partners.map((p) => {
               const ct = opportunities.filter((o) => o.partner === p).length;
+              if (ct === 0) return null;
               return (
                 <label key={p} className="filter-check">
                   <input
@@ -67,6 +91,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
             <h5>Kind of work</h5>
             {filterOptions.types.map((t) => {
               const ct = opportunities.filter((o) => o.type === t).length;
+              if (ct === 0) return null;
               return (
                 <label key={t} className="filter-check">
                   <input
@@ -82,18 +107,24 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
           </div>
           <div className="filter-group">
             <h5>Good fit</h5>
-            {filterOptions.skills.map((s) => (
-              <label key={s} className="filter-check">
-                <input
-                  type="checkbox"
-                  checked={filters.skill.has(s)}
-                  onChange={() => toggle('skill', s)}
-                />
-                {s}
-              </label>
-            ))}
+            {filterOptions.skills.map((s) => {
+              const ct = opportunities.filter((o) => o.skills?.includes(s)).length;
+              if (ct === 0) return null;
+              return (
+                <label key={s} className="filter-check">
+                  <input
+                    type="checkbox"
+                    checked={filters.skill.has(s)}
+                    onChange={() => toggle('skill', s)}
+                  />
+                  {s}
+                  <span className="ct">{ct}</span>
+                </label>
+              );
+            })}
           </div>
         </aside>
+        )}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, paddingBottom: 18, borderBottom: '1px solid var(--rule)' }}>
             <h3 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 500, letterSpacing: '-0.015em' }}>
@@ -132,12 +163,19 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
                 onClick={() => openOpp(o.id)}
               >
                 <div className="when">
-                  <span className="date">{o.date}</span>
-                  {o.time} · {o.dur.toUpperCase()}
+                  {o.date_label ? (
+                    <>{o.date_label} · {o.time} · {o.dur.toUpperCase()}</>
+                  ) : (
+                    <>
+                      <span className="date">{o.date}</span>
+                      {o.time} · {o.dur.toUpperCase()}
+                    </>
+                  )}
                 </div>
                 <div className="what">
                   <h4>{o.title}</h4>
                   <span className="partner">{o.partner}</span>
+                  {isLowCount && o.desc && <p>{o.desc}</p>}
                 </div>
                 <div className={`progress ${o.filled >= o.total ? 'full' : ''}`}>
                   <div className="bar">

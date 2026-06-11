@@ -17,6 +17,12 @@ export function PartnersPage({ partners = [], loading = false }) {
     conversation: partners.filter((p) => p.status === 'In conversation').length,
     horizon: partners.filter((p) => p.status === 'On the horizon').length,
   };
+  const chips = [
+    { key: 'all', label: 'All', count: counts.all },
+    { key: 'active', label: 'Active', count: counts.active },
+    { key: 'conversation', label: 'In conversation', count: counts.conversation },
+    { key: 'horizon', label: 'On the horizon', count: counts.horizon },
+  ];
 
   const { hero, cta } = partnersPage;
 
@@ -32,18 +38,11 @@ export function PartnersPage({ partners = [], loading = false }) {
       <section className="section">
         <div className="container">
           <div className="chips">
-            <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
-              All <span className="count">{counts.all}</span>
-            </button>
-            <button className={`chip ${filter === 'active' ? 'active' : ''}`} onClick={() => setFilter('active')}>
-              Active <span className="count">{counts.active}</span>
-            </button>
-            <button className={`chip ${filter === 'conversation' ? 'active' : ''}`} onClick={() => setFilter('conversation')}>
-              In conversation <span className="count">{counts.conversation}</span>
-            </button>
-            <button className={`chip ${filter === 'horizon' ? 'active' : ''}`} onClick={() => setFilter('horizon')}>
-              On the horizon <span className="count">{counts.horizon}</span>
-            </button>
+            {chips.filter((c) => c.count > 0).map((c) => (
+              <button key={c.key} className={`chip ${filter === c.key ? 'active' : ''}`} onClick={() => setFilter(c.key)}>
+                {c.label} <span className="count">{c.count}</span>
+              </button>
+            ))}
           </div>
           <div className="partners-grid">
             {loading && (
@@ -60,18 +59,24 @@ export function PartnersPage({ partners = [], loading = false }) {
                   <div className="type-line">{p.type}</div>
                   <p className="mission">{p.mission}</p>
                   <div className="meta">
-                    <div className="m">Partnership<strong>{p.since}</strong></div>
-                    <div className="m">Volunteers<strong>{p.vols}</strong></div>
+                    {p.since && <div className="m">Partnership<strong>{p.since}</strong></div>}
+                    {p.vols && p.vols !== '—' && <div className="m">Volunteers<strong>{p.vols}</strong></div>}
                   </div>
                 </div>
                 <div className="right">
-                  <h4>How we serve together</h4>
-                  {p.needs.map((n, j) => (
-                    <div key={j} className="need">
-                      <span className="tt">{n.title}</span>
-                      <span className="ct">{n.cadence}</span>
-                    </div>
-                  ))}
+                  {(p.needs || []).length > 0 ? (
+                    <>
+                      <h4>How we serve together</h4>
+                      {p.needs.map((n, j) => (
+                        <div key={j} className="need">
+                          <span className="tt">{n.title}</span>
+                          <span className="ct">{n.cadence}</span>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <p className="small muted">No open needs this week — check the portal Saturday.</p>
+                  )}
                 </div>
               </div>
             ))}
