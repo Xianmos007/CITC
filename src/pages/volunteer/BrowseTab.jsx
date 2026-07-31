@@ -43,6 +43,42 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     [search, filters, opportunities]
   );
 
+  const opportunityCard = (o) => {
+    const filled = Number(o.filled) || 0;
+    const total = Number(o.total) || 1;
+    const isFull = filled >= total;
+    const isFeatured = Boolean(o.is_featured ?? o.isFeatured);
+    const when = [o.date_label || o.date, o.time, o.dur?.toUpperCase()].filter(Boolean).join(' · ');
+
+    return (
+      <article
+        key={o.id}
+        className={`opp-card ${isFeatured ? 'featured' : ''}`}
+        onClick={() => openOpp(o.id)}
+      >
+        {isFeatured && <span className="opp-card-badge">Featured</span>}
+        <div className="opp-card-when">{when}</div>
+        <h4>{o.title}</h4>
+        <span className="opp-card-partner">{o.partner}</span>
+        {o.desc && <p>{o.desc}</p>}
+        <div className={`progress ${isFull ? 'full' : ''}`}>
+          <div className="bar">
+            <div style={{ width: `${Math.min((filled / total) * 100, 100)}%` }}></div>
+          </div>
+          <div className="lbl">
+            <span className="filled">
+              {isFull ? 'Full · waitlist' : `${filled} signed up`}
+            </span>
+            <span>of {total}</span>
+          </div>
+        </div>
+        <span className="opp-cta">
+          {isFull ? 'Waitlist' : 'Sign up'} <span className="arrow">→</span>
+        </span>
+      </article>
+    );
+  };
+
   return (
     <div className="container">
       {isLowCount && (
@@ -156,43 +192,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
                 )}
               </div>
             )}
-            {!loading && filtered.map((o) => (
-              <div
-                key={o.id}
-                className={`opp-row ${o.urgency === 'urgent' ? 'urgent' : ''}`}
-                onClick={() => openOpp(o.id)}
-              >
-                <div className="when">
-                  {o.date_label ? (
-                    <>{o.date_label} · {o.time} · {o.dur.toUpperCase()}</>
-                  ) : (
-                    <>
-                      <span className="date">{o.date}</span>
-                      {o.time} · {o.dur.toUpperCase()}
-                    </>
-                  )}
-                </div>
-                <div className="what">
-                  <h4>{o.title}</h4>
-                  <span className="partner">{o.partner}</span>
-                  {isLowCount && o.desc && <p>{o.desc}</p>}
-                </div>
-                <div className={`progress ${o.filled >= o.total ? 'full' : ''}`}>
-                  <div className="bar">
-                    <div style={{ width: `${Math.min((o.filled / o.total) * 100, 100)}%` }}></div>
-                  </div>
-                  <div className="lbl">
-                    <span className="filled">
-                      {o.filled >= o.total ? 'Full · waitlist' : `${o.filled} signed up`}
-                    </span>
-                    <span>of {o.total}</span>
-                  </div>
-                </div>
-                <span className="opp-cta">
-                  {o.filled >= o.total ? 'Waitlist' : 'Sign up'} <span className="arrow">→</span>
-                </span>
-              </div>
-            ))}
+            {!loading && filtered.map(opportunityCard)}
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ export const partnersPage = {
 export const partners = [
   {
     id: 'nbc',
+    kind: 'ministry',
     status: 'Active',
     name: 'North Brevard Charities',
     type: 'Food pantry · Wraparound services',
@@ -39,6 +40,7 @@ export const partners = [
   },
   {
     id: 'bt',
+    kind: 'ministry',
     status: 'In conversation',
     name: 'Better Together',
     type: 'Family preservation · Foster support',
@@ -53,6 +55,7 @@ export const partners = [
   },
   {
     id: 'utb',
+    kind: 'ministry',
     status: 'On the horizon',
     name: 'Under the Bridge Ministries',
     type: 'Street outreach · Hot meals',
@@ -67,6 +70,7 @@ export const partners = [
   },
   {
     id: 'champ',
+    kind: 'ministry',
     status: 'On the horizon',
     name: 'The CHAMP Program',
     type: 'Youth mentorship · After-school',
@@ -81,6 +85,7 @@ export const partners = [
   },
   {
     id: 'mh',
+    kind: 'ministry',
     status: 'On the horizon',
     name: "Matthew's Hope",
     type: 'Homeless transition · Job placement',

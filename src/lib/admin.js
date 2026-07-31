@@ -84,6 +84,29 @@ export async function createOpportunity(fields) {
   return data;
 }
 
+export async function createPartner(fields) {
+  const payload = {
+    kind: fields.kind || 'ministry',
+    name: fields.name?.trim(),
+    status: fields.status || 'On the horizon',
+    type: fields.type?.trim() || null,
+    since_text: fields.since_text?.trim() || null,
+    volunteers_text: fields.volunteers_text?.trim() || null,
+    mission: fields.mission?.trim() || null,
+    contact_name: fields.contact_name?.trim() || null,
+    contact_email: fields.contact_email?.trim() || null,
+    auto_notify: fields.auto_notify ?? false,
+    display_order: Number(fields.display_order) || 0,
+  };
+  const { data, error } = await supabase
+    .from('partners')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function updateOpportunity(id, fields) {
   const payload = { ...fields };
   delete payload.id;
@@ -111,6 +134,7 @@ export async function updatePartner(id, fields) {
   delete payload.id;
   delete payload.created_at;
   delete payload.updated_at;
+  delete payload.needs;
   const { data, error } = await supabase
     .from('partners')
     .update(payload)

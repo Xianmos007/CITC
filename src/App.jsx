@@ -157,7 +157,7 @@ function SectionPage({
       {page === 'home' && (
         <HomePage setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
       )}
-      {page === 'who' && <WhoPage setPage={setPage} />}
+      {page === 'who' && <WhoPage setPage={setPage} partners={partners} />}
       {page === 'partners' && <PartnersPage partners={partners} loading={loading} />}
       {page === 'volunteer' && (
         <VolunteerPage openOpp={openOpp} opportunities={opportunities} loading={loading} />

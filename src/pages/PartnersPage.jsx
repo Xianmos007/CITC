@@ -6,16 +6,17 @@ const statusClass = (s) =>
 
 export function PartnersPage({ partners = [], loading = false }) {
   const [filter, setFilter] = useState('all');
+  const ministryPartners = partners.filter((p) => (p.kind || 'ministry') !== 'church');
 
-  const filtered = partners.filter(
+  const filtered = ministryPartners.filter(
     (p) => filter === 'all' || p.status.toLowerCase().includes(filter)
   );
 
   const counts = {
-    all: partners.length,
-    active: partners.filter((p) => p.status === 'Active').length,
-    conversation: partners.filter((p) => p.status === 'In conversation').length,
-    horizon: partners.filter((p) => p.status === 'On the horizon').length,
+    all: ministryPartners.length,
+    active: ministryPartners.filter((p) => p.status === 'Active').length,
+    conversation: ministryPartners.filter((p) => p.status === 'In conversation').length,
+    horizon: ministryPartners.filter((p) => p.status === 'On the horizon').length,
   };
   const chips = [
     { key: 'all', label: 'All', count: counts.all },

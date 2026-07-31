@@ -38,6 +38,7 @@ function mapOpportunity(row) {
     total: row.total_spots,
     // The site styles an "urgent" accent; we map featured -> urgent.
     urgency: row.is_featured ? 'urgent' : 'open',
+    is_featured: row.is_featured,
     isFeatured: row.is_featured,
     type: row.kind,
     desc: row.description,
@@ -52,8 +53,11 @@ function mapPartner(row) {
   return {
     id: row.id,
     status: row.status,
+    kind: row.kind || 'ministry',
     name: row.name,
     type: row.type,
+    location: row.location || row.neighborhood || row.type || '',
+    logo: row.logo_url || row.image_url || '',
     since: row.since_text,
     vols: row.volunteers_text,
     mission: row.mission,
@@ -107,9 +111,7 @@ export async function fetchPartners() {
     await Promise.all([
       supabase
         .from('partners')
-        .select(
-          `id, status, name, type, since_text, volunteers_text, mission, display_order`
-        )
+        .select('*')
         .order('display_order', { ascending: true }),
       supabase
         .from('opportunities')

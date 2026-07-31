@@ -178,6 +178,19 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .isnt-col.not li{color:var(--fg-3);text-decoration:line-through;text-decoration-color:rgba(20,18,15,0.18);}
 .isnt-col.not li::before{content:'−';color:var(--fg-3);text-decoration:none;}
 
+/* ===== partner churches ===== */
+.partner-churches .section-head{align-items:start;}
+.partner-churches h2 em{color:var(--accent);font-style:italic;font-weight:400;}
+.church-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.church-card{min-height:100%;border:1px solid var(--rule);background:var(--bg-1);border-radius:2px;padding:var(--space-4);display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;}
+.church-card:hover{border-color:var(--citc-ink);transform:translateY(-2px);box-shadow:var(--shadow-2);}
+.church-card img{max-width:120px;max-height:52px;object-fit:contain;margin-bottom:8px;}
+.church-card h3{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.08;letter-spacing:-0.012em;}
+.church-card span{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-3);}
+.church-card p{font-size:13.5px;line-height:1.55;color:var(--citc-ink-soft);margin-top:4px;}
+.church-empty{color:var(--fg-3);border-top:1px solid var(--rule);padding-top:18px;margin:0;}
+.church-cta{margin-top:28px;}
+
 /* ===== full partner card ===== */
 .partners-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;}
 .partner-full{background:var(--citc-paper);border:1px solid var(--rule);padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:32px;transition:border-color 0.3s;}
@@ -255,7 +268,24 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .filter-check:hover{color:var(--citc-ink);}
 .filter-check .ct{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--fg-3);letter-spacing:0.1em;}
 
-.opps{display:flex;flex-direction:column;border-top:1px solid var(--rule);}
+.opps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;border-top:1px solid var(--rule);padding-top:20px;}
+.opp-card{min-height:100%;display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--bg-1);border:1px solid var(--rule);border-radius:2px;padding:var(--space-4);cursor:pointer;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;}
+.opp-card:hover{border-color:var(--citc-ink);transform:translateY(-2px);box-shadow:var(--shadow-2);}
+.opp-card-badge{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--citc-clay);background:rgba(169,98,43,0.1);padding:2px 7px;border-radius:2px;line-height:1.4;}
+.opp-card-when{font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-3);line-height:1.5;}
+.opp-card h4{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.08;letter-spacing:-0.012em;margin-top:4px;}
+.opp-card-partner{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-3);}
+.opp-card p{font-size:13.5px;line-height:1.55;color:var(--citc-ink-soft);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;}
+.opp-card .progress{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:12px;}
+.opp-card .progress .bar{height:4px;background:var(--citc-bone-warm);position:relative;}
+.opp-card .progress .bar > div{position:absolute;top:0;left:0;bottom:0;background:var(--accent);}
+.opp-card .progress .lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;color:var(--fg-3);display:flex;justify-content:space-between;}
+.opp-card .progress .lbl .filled{color:var(--accent);}
+.opp-card .progress.full .bar > div{background:var(--citc-sage);}
+.opp-card .progress.full .lbl .filled{color:var(--citc-sage);}
+.opp-card .opp-cta{font-family:var(--mono);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--citc-ink);display:inline-flex;align-items:center;gap:8px;margin-top:12px;}
+.opp-card:hover .opp-cta .arrow{transform:translateX(4px);color:var(--accent);}
+.opp-card .opp-cta .arrow{display:inline-block;transition:transform 0.25s ease,color 0.25s ease;}
 .opp-row{position:relative;display:grid;grid-template-columns:140px 1fr 200px 140px;gap:24px;padding:28px 0 28px 12px;border-bottom:1px solid var(--rule);cursor:pointer;align-items:center;transition:padding-left 0.2s,background 0.2s;}
 .opp-row:hover{padding-left:24px;background:rgba(184,146,62,0.04);}
 .opp-row:hover .opp-cta .arrow{transform:translateX(4px);color:var(--accent);}
@@ -327,7 +357,7 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--citc-ink);}
 .field textarea{min-height:120px;resize:vertical;font-family:var(--sans);line-height:1.55;}
 .field .hint{font-size:12px;color:var(--fg-3);line-height:1.5;}
-.field.error input, .field.error textarea{border-color:var(--citc-clay);}
+.field.error input, .field.error textarea, .field.error select{border-color:var(--citc-clay);}
 .field.error .hint{color:var(--citc-clay);}
 .form-actions{display:flex;gap:12px;padding-top:8px;border-top:1px solid var(--rule);margin-top:8px;flex-wrap:wrap;}
 .success-banner{padding:24px 28px;background:var(--citc-bone);border:1px solid var(--rule);border-left:2px solid var(--citc-sage);}
@@ -485,6 +515,8 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 @media (max-width:980px){
   .hero-grid,.section-head,.twocol,.vision-grid,.cta-band .grid{grid-template-columns:1fr;gap:40px;}
   .how-grid,.values,.partners-grid,.partners-preview,.isnt,.browse-grid,.form-grid,.signup-grid,.sitemap-grid{grid-template-columns:1fr;}
+  .church-grid{grid-template-columns:repeat(2,1fr);}
+  .opps{grid-template-columns:repeat(2,minmax(0,1fr));}
   .how-step{border-right:none;border-bottom:1px solid var(--rule);padding-right:0;padding-left:0 !important;}
   .opp-row{grid-template-columns:1fr;gap:14px;padding:24px 12px;}
   .nav-links{display:none;}
@@ -505,6 +537,11 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
   .tile-square .tile-photo,.tile-tall .tile-photo,.tile-wide .tile-photo,.tile-big .tile-photo{aspect-ratio:4/5;}
   .lb-foot{grid-template-columns:1fr;}
   .letter-form{max-width:none;}
+}
+
+@media (max-width:639px){
+  .opps{grid-template-columns:1fr;}
+  .church-grid{grid-template-columns:1fr;}
 }
 
 /* Gallery: real uploaded photos fill their tiles cleanly */
