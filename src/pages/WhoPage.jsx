@@ -20,7 +20,7 @@ export function WhoPage({ setPage, partners = [] }) {
       {/* Jer 29:7 Foundation */}
       <section className="section section-alt">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80, alignItems: 'start' }}>
+          <div className="who-split">
             <div>
               <span className="eyebrow">{foundation.eyebrow}</span>
               <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
@@ -47,7 +47,7 @@ export function WhoPage({ setPage, partners = [] }) {
      {/* Mission */}
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80, alignItems: 'start' }}>
+          <div className="who-split">
             <div>
               <span className="eyebrow">{mission.eyebrow}</span>
               <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
@@ -71,7 +71,7 @@ export function WhoPage({ setPage, partners = [] }) {
       {/* Origin */}
       <section className="section">
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 80, alignItems: 'start' }}>
+          <div className="who-split">
             <div>
               <span className="eyebrow">{origin.eyebrow}</span>
               <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>

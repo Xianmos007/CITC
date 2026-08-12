@@ -26,7 +26,14 @@ if (!url || !key) {
   );
 }
 
-export const supabase = createClient(url || '', key || '', {
+// createClient throws on an empty URL, which would take the whole app down
+// at import time. When the env vars are missing we hand it an unreachable
+// placeholder instead: the module loads, the static fallback in useContent
+// kicks in, and `isSupabaseReady` below keeps real queries from firing.
+const PLACEHOLDER_URL = 'https://unconfigured.invalid';
+const PLACEHOLDER_KEY = 'unconfigured';
+
+export const supabase = createClient(url || PLACEHOLDER_URL, key || PLACEHOLDER_KEY, {
   auth: {
     // We don't use Supabase Auth for public volunteers — they sign up
     // by email without a password. Stage 3 will add admin auth.

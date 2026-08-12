@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { site } from '../data/site.js';
 import flameUrl from '../assets/flame.png';
 
@@ -17,10 +18,27 @@ export function MetaBar() {
 
 /* ============ SiteNav ============ */
 export function SiteNav({ page, setPage }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Navigating always closes the panel, so the next page isn't hidden behind it.
+  const go = (key) => {
+    setPage(key);
+    setMenuOpen(false);
+  };
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
   return (
     <nav className="site-nav">
       <div className="site-nav-inner">
-        <button className="logo-mark" onClick={() => setPage('home')} aria-label="Home">
+        <button className="logo-mark" onClick={() => go('home')} aria-label="Home">
           <img src={flameUrl} alt="" />
           <div>
             <div className="logo-text">{site.brand.name}</div>
@@ -38,10 +56,39 @@ export function SiteNav({ page, setPage }) {
             </button>
           ))}
         </div>
-        <button className="nav-cta" onClick={() => setPage('volunteer')}>
+        <button className="nav-cta" onClick={() => go('volunteer')}>
           Find a need <span className="arrow">→</span>
         </button>
+        <button
+          className="nav-toggle"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span className={`nav-toggle-bars ${menuOpen ? 'open' : ''}`} aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        </button>
       </div>
+      {menuOpen && (
+        <div className="mobile-nav" id="mobile-nav">
+          {site.navLinks.map(({ key, label }) => (
+            <button
+              key={key}
+              className={`mobile-nav-link ${page === key ? 'active' : ''}`}
+              onClick={() => go(key)}
+            >
+              {label}
+            </button>
+          ))}
+          <button className="mobile-nav-cta" onClick={() => go('volunteer')}>
+            Find a need <span className="arrow">→</span>
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
