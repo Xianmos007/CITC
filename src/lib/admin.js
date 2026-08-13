@@ -75,6 +75,10 @@ export async function createOpportunity(fields) {
     skill_tags: fields.skill_tags || [],       // jsonb
     is_published: fields.is_published ?? true,
   };
+  // Only sent when a photo was actually attached. Including the key
+  // unconditionally would make every insert fail until migration 0009 adds
+  // the column, including the far more common no-photo case.
+  if (fields.image_url) payload.image_url = fields.image_url;
   const { data, error } = await supabase
     .from('opportunities')
     .insert(payload)

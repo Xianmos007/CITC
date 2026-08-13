@@ -19,6 +19,12 @@ export function OppModal({ oppId, opportunities = [], close }) {
   const [state, setState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // A photo is optional and most opportunities won't have one. If the URL is
+  // present but fails to load, we drop the element entirely rather than leave
+  // a broken-image icon behind. Storing the failed URL rather than a boolean
+  // means opening a different opportunity clears the state on its own.
+  const [failedImageSrc, setFailedImageSrc] = useState(null);
+
   // Live count of how many people have signed up for this opportunity.
   // We fetch this when the modal opens so the "filled" bar is real,
   // not the hardcoded number from opportunities.js.
@@ -259,6 +265,15 @@ export function OppModal({ oppId, opportunities = [], close }) {
           {/* IDLE STATE — opportunity details */}
           {state === 'idle' && (
             <>
+              {o.image && failedImageSrc !== o.image && (
+                <img
+                  className="modal-photo"
+                  src={o.image}
+                  alt={o.title}
+                  loading="lazy"
+                  onError={() => setFailedImageSrc(o.image)}
+                />
+              )}
               <p className="lede">{o.desc}</p>
               <h4>What to bring</h4>
               <ul>

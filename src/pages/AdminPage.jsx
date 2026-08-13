@@ -326,11 +326,33 @@ function OppEditor({ opp, partners, close, onSaved }) {
     bring_text: (opp?.bring_list || []).join('\n'),
     skills_text: (opp?.skill_tags || []).join(', '),
     is_published: opp?.is_published ?? true,
+    image_url: opp?.image_url || '',
   });
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
+  // adminListOpportunities selects `*`, so the key is present on a loaded row
+  // exactly when the column exists. That lets us clear a photo by sending null
+  // post-migration without breaking saves pre-migration.
+  const imageColumnExists =
+    !!opp && Object.prototype.hasOwnProperty.call(opp, 'image_url');
+
   const set = (k, v) => setF((prev) => ({ ...prev, [k]: v }));
+
+  const handleFile = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const { url } = await uploadGalleryImage(file);
+      set('image_url', url);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const save = async () => {
     if (busy) return;
@@ -356,6 +378,10 @@ function OppEditor({ opp, partners, close, onSaved }) {
       skill_tags: f.skills_text.split(',').map((s) => s.trim()).filter(Boolean),
       is_published: f.is_published,
     };
+    // A photo is optional: send the key only when there's a URL to store, or
+    // when the column is known to exist and we're clearing an existing photo.
+    if (f.image_url) payload.image_url = f.image_url;
+    else if (imageColumnExists) payload.image_url = null;
     try {
       if (isNew) await createOpportunity(payload);
       else await updateOpportunity(opp.id, payload);
@@ -439,6 +465,52 @@ function OppEditor({ opp, partners, close, onSaved }) {
         <div className="field">
           <label>Description</label>
           <textarea value={f.description} onChange={(e) => set('description', e.target.value)} placeholder="What people will do, who they'll meet…" />
+        </div>
+
+        <div className="field">
+          <label>Photo (optional)</label>
+          <div
+            className="admin-dropzone"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleFile(e.dataTransfer?.files?.[0]);
+            }}
+            onClick={() => document.getElementById('opp-file-input').click()}
+          >
+            {f.image_url ? (
+              <img src={f.image_url} alt="preview" className="admin-dropzone-preview" />
+            ) : (
+              <div className="admin-dropzone-empty">
+                {uploading ? 'Uploading…' : 'Drag a photo here, or click to choose'}
+              </div>
+            )}
+            {uploading && f.image_url && <div className="admin-dropzone-overlay">Uploading…</div>}
+          </div>
+          <input
+            id="opp-file-input"
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
+          <span className="hint">
+            Shown only when someone opens this opportunity. Leave it empty if there
+            isn&rsquo;t a real photo &mdash; most won&rsquo;t have one.
+          </span>
+          {f.image_url && (
+            <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => document.getElementById('opp-file-input').click()}
+              >
+                Replace photo
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => set('image_url', '')}>
+                Remove photo
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="field">

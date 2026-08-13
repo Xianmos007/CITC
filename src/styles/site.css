@@ -347,6 +347,9 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .modal-head h2{font-family:var(--serif);font-size:36px;font-weight:500;line-height:1.1;letter-spacing:-0.015em;margin-bottom:14px;}
 .modal-head .meta-row{display:flex;gap:24px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg-3);margin-top:6px;}
 .modal-body{padding:32px 40px;}
+/* Optional opportunity photo. Only ever rendered when a URL exists, so it
+   reserves no space and needs no empty state — the element is simply absent. */
+.modal-photo{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:2px;margin-bottom:24px;background:var(--citc-bone-warm);}
 .modal-body p{font-size:15.5px;line-height:1.7;color:var(--citc-ink-soft);margin-bottom:16px;max-width:640px;}
 .modal-body p.lede{font-family:var(--serif);font-size:21px;line-height:1.45;color:var(--citc-ink);margin-bottom:24px;}
 .modal-body h4{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;margin:24px 0 14px;color:var(--fg-3);}

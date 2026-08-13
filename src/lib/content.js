@@ -46,6 +46,8 @@ function mapOpportunity(row) {
     notes: row.coordinator_note,
     skills: asArray(row.skill_tags),
     eventDate: row.event_date,
+    // Absent column (pre-0009) and null both land here as null.
+    image: row.image_url || null,
   };
 }
 
@@ -79,14 +81,11 @@ export async function fetchOpportunities() {
   if (!isSupabaseReady) return [];
   const { data, error } = await supabase
     .from('opportunities')
-    .select(
-      `
-      id, partner_id, program_id, title, description, event_date,
-      date_label, time_label, duration_label, total_spots, bring_list,
-      coordinator_note, kind, skill_tags, is_published, is_featured,
-      partner:partners ( id, name )
-    `
-    )
+    // `*` rather than an explicit column list: naming `image_url` here would
+    // make PostgREST 400 the whole query until migration 0009 has been run,
+    // taking every opportunity down with it. A wildcard simply omits the
+    // column while it doesn't exist. Mirrors adminListOpportunities.
+    .select(`*, partner:partners ( id, name )`)
     .eq('is_published', true)
     .order('event_date', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true });
