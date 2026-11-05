@@ -128,9 +128,9 @@ export function BrowseTab({ opportunities = [], loading = false }) {
         )}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, paddingBottom: 18, borderBottom: '1px solid var(--rule)' }}>
-            <h3 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 500, letterSpacing: '-0.015em' }}>
+            <h2 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 500, letterSpacing: '-0.015em', lineHeight: 1.1 }}>
               Open this week & next
-            </h3>
+            </h2>
             <span className="meta" style={{ fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
               Sort · Date ↓
             </span>

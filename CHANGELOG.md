@@ -65,7 +65,11 @@ Claude Code: add an entry at the end of every phase or manual change.
   dialogs, form fields at 16 px so iPhones don't zoom, heading order
   (cards h3, footer and filter headings h2, partner names h2). Added
   `ai-design-check.json` (proper nouns). Live scan: 0 contrast, size or
-  heading-order findings; code check: 0 errors.
+  heading-order findings; code check: 0 errors. Deployed after
+  re-running a Pages deploy that GitHub had stuck behind PR #4's.
+- **PR #6 — Volunteer list heading** (merged). "Open this week & next"
+  is now an h2 (the live scan caught h1 → h3 when the filter sidebar is
+  hidden).
 
 ### Code (GitHub)
 - **PR #1 — Audit Phase 1** (merged). Nav cleanup (removed duplicate
