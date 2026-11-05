@@ -6,6 +6,52 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-05 (evening) — Phase 4 and lookup_my_signups
+
+### Code (GitHub)
+- **PR #3 — Close `lookup_my_signups`** (merged). Adds
+  `supabase/migrations/0012_close_lookup_my_signups.sql`; the spec's Phase 6
+  storage migration is renumbered to `0013_inbox_uploads.sql`.
+- **PR #4 — Audit Phase 4: admin opportunities** (merged, **not yet live** —
+  see Deploy below). Admin panel split into `src/pages/admin/` and loaded
+  only at `#admin`; admins stay signed in across refreshes. Opportunities
+  list with Upcoming / Ongoing / Past / Drafts, real signup counts, and Edit,
+  Duplicate, Roster, Copy link, Unpublish. Two-column editor with a live
+  preview of the public card and popup; date picker, start time, duration
+  presets, Ongoing, Online/location, what-to-bring and tag chips, partner
+  defaults, Repeat (weekly / every 2 weeks / monthly). Roster with copy
+  emails, CSV, move between confirmed and waitlist, copy text message.
+  Public popup: Add to calendar (Google + .ics) is back.
+- Checked before merging: build and lint clean; admin and public flows in a
+  browser at 375px and 1280px against test data; the public pages against
+  the live database (read-only, no signups); the combined code with PR #5.
+
+### Database (Supabase connector)
+- Applied `0012_close_lookup_my_signups` with `apply_migration`. Verified:
+  `anon` and `authenticated` can no longer run `lookup_my_signups`;
+  `submit_signup` and `get_signup_counts` still work for the public.
+- Read back the three NBC needs added earlier: each has a start time and no
+  text overrides, so they show the automatic date and calendar times.
+
+### Deploy (GitHub Pages)
+- The deploy for PR #4 (`886d4a9`) built fine but timed out on GitHub's side,
+  and GitHub Pages still holds it as "in progress". Every later deploy
+  (including PR #5, `ae7efbb`) is rejected with "due to in progress
+  deployment". The live site is still on the PR #3 build. Retried 3 times;
+  the proxy in Claude's session blocks the Pages API needed to cancel it.
+
+### Settings & services
+- New personal cloud environment **citc** for this repository, allowing
+  `thechurchinthecity.org` and the Supabase API host, so sessions can
+  smoke-test the live site.
+
+### Still to do
+- [ ] Unstick the GitHub Pages deploy, then smoke-test Phase 4 live
+- [ ] Phase 5 — admin partners
+- [ ] Phase 6 — inbox and public forms
+
+---
+
 ## 2026-11-05
 
 ### Code (GitHub)
@@ -71,9 +117,7 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ### Still to do
 - [x] Resend verified + confirmation email tested
-- [ ] Phase 4 — admin opportunities (also close `lookup_my_signups`)
-- [ ] Phase 5 — admin partners
-- [ ] Phase 6 — inbox and public forms
+- [x] Phase 4 — admin opportunities (also close `lookup_my_signups`) — see the evening entry
 
 ---
 
