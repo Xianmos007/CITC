@@ -400,7 +400,7 @@ replaces the form with a short sentence-case confirmation.
 
 Storage note for photo uploads: anon upload must be limited to the
 `submissions/` prefix — add the storage policy in a second migration
-`0012_inbox_uploads.sql` (anon `insert` on `storage.objects` where
+`0013_inbox_uploads.sql` (anon `insert` on `storage.objects` where
 `bucket_id = '<gallery bucket>' and name like 'submissions/%'`).
 
 ### 6.2 Admin "Inbox" tab (first tab, with a count badge of `new` items)
