@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { partnersPage } from '../data/partners.js';
+import { becomePartnerHref, emailTeamHref } from '../lib/mailto.js';
 
 const statusClass = (s) =>
   s === 'Active' ? 'status-active' : s === 'In conversation' ? 'status-conv' : 'status-soon';
@@ -92,8 +93,8 @@ export function PartnersPage({ partners = [], loading = false }) {
               <p>{cta.body}</p>
             </div>
             <div className="actions">
-              <button className="btn btn-primary">Become a partner <span className="arrow">→</span></button>
-              <button className="btn btn-ghost">Email the team</button>
+              <a className="btn btn-primary" href={becomePartnerHref}>Become a partner <span className="arrow">→</span></a>
+              <a className="btn btn-ghost" href={emailTeamHref}>Email the team</a>
             </div>
           </div>
         </div>

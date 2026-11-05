@@ -5,6 +5,7 @@ import {
   getSignupCount,
 } from '../../lib/signups.js';
 import { isSupabaseReady } from '../../lib/supabase.js';
+import { useDialog } from '../../hooks/useDialog.js';
 
 // =====================================================================
 // OppModal
@@ -18,6 +19,7 @@ import { isSupabaseReady } from '../../lib/supabase.js';
 export function OppModal({ oppId, opportunities = [], close }) {
   const [state, setState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const dialogRef = useDialog();
 
   // A photo is optional and most opportunities won't have one. If the URL is
   // present but fails to load, we drop the element entirely rather than leave
@@ -59,6 +61,8 @@ export function OppModal({ oppId, opportunities = [], close }) {
   // Use the live count if we have it, otherwise the static fallback
   const filled = liveFilled !== null ? liveFilled : o.filled;
   const full = filled >= o.total;
+  const bring = (o.bring || []).filter((b) => String(b).trim());
+  const notes = String(o.notes || '').trim();
 
   // -------------------------------------------------------------------
   // When the email changes, look up the volunteer to auto-fill the form.
@@ -118,7 +122,15 @@ export function OppModal({ oppId, opportunities = [], close }) {
   // -------------------------------------------------------------------
   return (
     <div className="modal-scrim" onClick={close}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="opp-modal-title"
+        tabIndex={-1}
+        ref={dialogRef}
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="modal-close" onClick={close} aria-label="Close">
           ✕
         </button>
@@ -130,13 +142,13 @@ export function OppModal({ oppId, opportunities = [], close }) {
           >
             — {o.partner}
           </span>
-          <h2>{o.title}</h2>
+          <h2 id="opp-modal-title">{o.title}</h2>
           <div className="meta-row">
-            <span>{o.date}</span>
-            <span>{o.time}</span>
-            <span>{o.dur}</span>
-            <span>Titusville, FL</span>
-            <span>{o.type}</span>
+            {[o.date, o.time, o.dur, 'Titusville, FL', o.type]
+              .filter(Boolean)
+              .map((item, i) => (
+                <span key={i}>{item}</span>
+              ))}
           </div>
         </div>
 
@@ -151,12 +163,16 @@ export function OppModal({ oppId, opportunities = [], close }) {
                   details. Bring what&rsquo;s on the list. Bring a friend if you can.
                 </p>
               </div>
-              <h4>What to bring</h4>
-              <ul>
-                {o.bring.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
+              {bring.length > 0 && (
+                <>
+                  <h4>What to bring</h4>
+                  <ul>
+                    {bring.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </>
           )}
 
@@ -179,10 +195,10 @@ export function OppModal({ oppId, opportunities = [], close }) {
 
           {/* FORM STATE */}
           {state === 'form' && (
-            <form onSubmit={handleSubmit} className="signup-form">
+            <form id="signup-form" onSubmit={handleSubmit} className="signup-form">
               <p className="lede" style={{ marginBottom: 20 }}>
                 {full
-                  ? 'This one is full. Join the waitlist and we\u2019ll text if a spot opens.'
+                  ? 'This one is full. Join the waitlist and we\u2019ll email you if a spot opens.'
                   : 'Tell us how to reach you. We\u2019ll send a confirmation and the meetup details.'}
               </p>
 
@@ -193,6 +209,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={handleEmailBlur}
+                  autoFocus
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
@@ -256,7 +273,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
                 }}
               >
                 By signing up, your contact info will be shared with the partner
-                ministry so they can coordinate with you. We don\u2019t share it
+                ministry so they can coordinate with you. We don’t share it
                 beyond that.
               </p>
             </form>
@@ -275,25 +292,33 @@ export function OppModal({ oppId, opportunities = [], close }) {
                 />
               )}
               <p className="lede">{o.desc}</p>
-              <h4>What to bring</h4>
-              <ul>
-                {o.bring.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
-              <h4>A note from the coordinator</h4>
-              <p
-                style={{
-                  fontFamily: 'var(--serif)',
-                  fontStyle: 'italic',
-                  fontSize: 18,
-                  lineHeight: 1.5,
-                  color: 'var(--citc-ink)',
-                  maxWidth: 580,
-                }}
-              >
-                "{o.notes}"
-              </p>
+              {bring.length > 0 && (
+                <>
+                  <h4>What to bring</h4>
+                  <ul>
+                    {bring.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {notes && (
+                <>
+                  <h4>A note from the coordinator</h4>
+                  <p
+                    style={{
+                      fontFamily: 'var(--serif)',
+                      fontStyle: 'italic',
+                      fontSize: 18,
+                      lineHeight: 1.5,
+                      color: 'var(--citc-ink)',
+                      maxWidth: 580,
+                    }}
+                  >
+                    "{notes}"
+                  </p>
+                </>
+              )}
             </>
           )}
         </div>
@@ -307,11 +332,9 @@ export function OppModal({ oppId, opportunities = [], close }) {
             {/* DONE — show close + calendar button */}
             {state === 'done' && (
               <>
-                <button className="btn btn-ghost" onClick={close}>
+                {/* "Add to calendar" returns in SPEC-audit-fixes Phase 4. */}
+                <button className="btn btn-primary" onClick={close}>
                   Close
-                </button>
-                <button className="btn btn-gold">
-                  Add to calendar <span className="arrow">→</span>
                 </button>
               </>
             )}
@@ -347,8 +370,8 @@ export function OppModal({ oppId, opportunities = [], close }) {
                 </button>
                 <button
                   type="submit"
+                  form="signup-form"
                   className="btn btn-primary"
-                  onClick={handleSubmit}
                   disabled={submitting}
                 >
                   {submitting

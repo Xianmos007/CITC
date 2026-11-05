@@ -48,6 +48,8 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .nav-cta:hover{background:var(--accent);color:var(--citc-ink);transform:translateY(-1px);}
 .nav-cta .arrow{display:inline-block;transition:transform 0.25s;}
 .nav-cta:hover .arrow{transform:translateX(4px);}
+/* On the volunteer page the CTA is the active nav item: a gold rule under the label. */
+.nav-cta.active,.mobile-nav-cta.active{box-shadow:inset 0 -2px 0 var(--accent);}
 
 /* Mobile nav: the toggle and panel only exist below 980px, where .nav-links hides. */
 .nav-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;margin-right:-10px;background:none;border:none;cursor:pointer;color:var(--citc-ink);}
@@ -85,8 +87,9 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 /* ===== hero ===== */
 .container{max-width:1400px;margin:0 auto;padding:0 32px;position:relative;z-index:2;}
 .container-narrow{max-width:960px;margin:0 auto;padding:0 32px;position:relative;z-index:2;}
-.hero{position:relative;padding:100px 0 90px;}
-.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:end;}
+/* Top-aligned with modest padding so the headline and CTAs sit above the fold at 1280x720. */
+.hero{position:relative;padding:56px 0 90px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:start;}
 .hero-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:32px;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(184,146,62,0.18);animation:pulse 2.4s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(184,146,62,0.18);}50%{box-shadow:0 0 0 9px rgba(184,146,62,0.05);}}
@@ -256,6 +259,11 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
 .footer-col a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13.5px;cursor:pointer;transition:color 0.2s;}
 .footer-col a:hover{color:var(--accent-soft);}
+@media (max-width:980px){
+  /* Comfortable tap targets: each footer link is at least 40px tall. */
+  .footer-col ul{gap:0;}
+  .footer-col a{display:inline-flex;align-items:center;min-height:40px;}
+}
 .footer-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:16px;}
 
 /* page anim */
@@ -582,3 +590,13 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .tile .tile-photo{position:relative;overflow:hidden;}
 .tile .tile-photo img{width:100%;height:100%;object-fit:cover;display:block;}
 .lb-photo img{width:100%;max-height:70vh;object-fit:contain;display:block;}
+
+/* Clickable cards: the title is a real <button> (keyboard reachable), and
+   its ::after stretches over the whole card so a click anywhere still works. */
+.has-card-link{position:relative;}
+.card-link{background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;letter-spacing:inherit;text-align:inherit;line-height:inherit;cursor:pointer;}
+.card-link::after{content:'';position:absolute;inset:0;z-index:3;}
+.card-link:focus{outline:none;}
+.card-link:focus-visible::after{outline:2px solid var(--accent);outline-offset:2px;}
+/* Dialogs take focus on open; the panel itself needs no ring. */
+.modal:focus{outline:none;}

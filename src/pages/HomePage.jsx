@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { home } from '../data/home.js';
-import heroPhoto from '../assets/church in the city home.JPG';
+import hero1600 from '../assets/hero/hero-1600.webp';
+import hero900 from '../assets/hero/hero-900.webp';
 
 /* ============ Hero ============ */
 function Hero({ setPage }) {
@@ -41,8 +42,18 @@ function Hero({ setPage }) {
           </div>
           <aside className="hero-aside">
             <div className="hero-photo">
-  <img src={heroPhoto} alt="church in the city home." />
-</div>
+              {/* The photo is cover-cropped from 4:3 into a 4:5 frame, so it
+                  needs ~1.67x the frame's width in source pixels. */}
+              <img
+                src={hero1600}
+                srcSet={`${hero900} 900w, ${hero1600} 1600w`}
+                sizes="(max-width: 980px) 140vw, 64vw"
+                width="1600"
+                height="1200"
+                fetchPriority="high"
+                alt="A smiling boy in a Church in the City T-shirt and work gloves holds a rake while clearing brush in an overgrown lot, another volunteer working behind him."
+              />
+            </div>
             <div className="hero-stats">
               {hero.stats.map((s, i) => (
                 <div key={i} className="hero-stat">
@@ -123,9 +134,13 @@ function FeaturedPartners({ setPage }) {
         </div>
         <div className="partners-preview">
           {featuredPartners.cards.map((c, i) => (
-            <div key={i} className="partner-card" onClick={() => setPage('partners')}>
+            <div key={i} className="partner-card has-card-link">
               <span className={`status ${statusClass(c.status)}`}>{c.status}</span>
-              <h3>{c.name}</h3>
+              <h3>
+                <button type="button" className="card-link" onClick={() => setPage('partners')}>
+                  {c.name}
+                </button>
+              </h3>
               <div className="type">{c.type}</div>
               <p>{c.body}</p>
               <span className="link">Read more <span className="arrow">→</span></span>
@@ -165,13 +180,17 @@ function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
         ) : (
         <div className="opps">
           {opps.map((o) => (
-            <div key={o.id} className="opp-row" onClick={() => openOpp(o.id)}>
+            <div key={o.id} className="opp-row has-card-link">
               <div className="when">
                 <span className="date">{o.date}</span>
                 {o.time} · TITUSVILLE
               </div>
               <div className="what">
-                <h4>{o.title}</h4>
+                <h4>
+                  <button type="button" className="card-link" onClick={() => openOpp(o.id)}>
+                    {o.title}
+                  </button>
+                </h4>
                 <span className="partner">{o.partner}</span>
               </div>
               <div className={`progress ${o.filled >= o.total ? 'full' : ''}`}>
