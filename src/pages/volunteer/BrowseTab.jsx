@@ -53,12 +53,15 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     return (
       <article
         key={o.id}
-        className={`opp-card ${isFeatured ? 'featured' : ''}`}
-        onClick={() => openOpp(o.id)}
+        className={`opp-card has-card-link ${isFeatured ? 'featured' : ''}`}
       >
         {isFeatured && <span className="opp-card-badge">Featured</span>}
         <div className="opp-card-when">{when}</div>
-        <h4>{o.title}</h4>
+        <h4>
+          <button type="button" className="card-link" onClick={() => openOpp(o.id)}>
+            {o.title}
+          </button>
+        </h4>
         <span className="opp-card-partner">{o.partner}</span>
         {o.desc && <p>{o.desc}</p>}
         <div className={`progress ${isFull ? 'full' : ''}`}>

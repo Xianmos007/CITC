@@ -123,9 +123,13 @@ function FeaturedPartners({ setPage }) {
         </div>
         <div className="partners-preview">
           {featuredPartners.cards.map((c, i) => (
-            <div key={i} className="partner-card" onClick={() => setPage('partners')}>
+            <div key={i} className="partner-card has-card-link">
               <span className={`status ${statusClass(c.status)}`}>{c.status}</span>
-              <h3>{c.name}</h3>
+              <h3>
+                <button type="button" className="card-link" onClick={() => setPage('partners')}>
+                  {c.name}
+                </button>
+              </h3>
               <div className="type">{c.type}</div>
               <p>{c.body}</p>
               <span className="link">Read more <span className="arrow">→</span></span>
@@ -165,13 +169,17 @@ function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
         ) : (
         <div className="opps">
           {opps.map((o) => (
-            <div key={o.id} className="opp-row" onClick={() => openOpp(o.id)}>
+            <div key={o.id} className="opp-row has-card-link">
               <div className="when">
                 <span className="date">{o.date}</span>
                 {o.time} · TITUSVILLE
               </div>
               <div className="what">
-                <h4>{o.title}</h4>
+                <h4>
+                  <button type="button" className="card-link" onClick={() => openOpp(o.id)}>
+                    {o.title}
+                  </button>
+                </h4>
                 <span className="partner">{o.partner}</span>
               </div>
               <div className={`progress ${o.filled >= o.total ? 'full' : ''}`}>

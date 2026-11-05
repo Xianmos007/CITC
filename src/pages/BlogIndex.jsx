@@ -16,8 +16,9 @@ export function BlogIndex() {
 
   const visible = filter === 'all' ? blogPosts : blogPosts.filter((p) => p.cat === filter);
   const showFeatured = filter === 'all' || filter === featuredPost.cat;
+  const pieceCount = visible.length + (showFeatured ? 1 : 0);
 
-  const { hero, letter } = blogPage;
+  const { hero } = blogPage;
 
   return (
     <div className="page">
@@ -45,7 +46,7 @@ export function BlogIndex() {
       <section className="section">
         <div className="container">
           <div className="chips">
-            {blogCategories.map((c) => (
+            {blogCategories.filter((c) => c.key === 'all' || counts[c.key] > 0).map((c) => (
               <button
                 key={c.key}
                 className={`chip ${filter === c.key ? 'active' : ''}`}
@@ -55,7 +56,7 @@ export function BlogIndex() {
               </button>
             ))}
             <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)', alignSelf: 'center' }}>
-              {visible.length + (showFeatured ? 1 : 0)} pieces
+              {pieceCount} {pieceCount === 1 ? 'piece' : 'pieces'}
             </div>
           </div>
 
@@ -123,25 +124,8 @@ export function BlogIndex() {
         </div>
       </section>
 
-      <section className="cta-band">
-        <div className="container">
-          <div className="grid">
-            <div>
-              <h3>{letter.headingLine1} <em>{letter.headingEm}</em></h3>
-              <p>{letter.body}</p>
-            </div>
-            <div className="actions" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-              <div className="letter-form">
-                <input type="email" placeholder="your.name@email" />
-                <button className="btn btn-primary">Subscribe <span className="arrow">→</span></button>
-              </div>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
-                {letter.note}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* The Saturday letter band is hidden until its signup form is real
+          (SPEC-audit-fixes Phase 6). Its copy is still in data/blog.js. */}
     </div>
   );
 }
