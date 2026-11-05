@@ -11,7 +11,8 @@ Claude Code: add an entry at the end of every phase or manual change.
 ### Database
 - Added partner **Royal Oak Ministries** (ministry, Active, "Partner since
   2026", visible), from royaloakministries.org: single mothers & families,
-  705 Harrison Street, Titusville; contact RoyalOakMinistries@gmail.com.
+  705 Harrison Street, Titusville; contact Brienne Robertson,
+  RoyalOakMinistries@gmail.com.
   No logo yet.
 
 ## 2026-11-05 (evening) — Phase 4 and lookup_my_signups
