@@ -37,6 +37,10 @@ create table if not exists public.inbox (
   created_at timestamptz not null default now()
 );
 alter table public.inbox enable row level security;
+-- Supabase normally grants these by default; spelled out so it doesn't
+-- depend on project settings. RLS below still decides what's allowed.
+grant insert on public.inbox to anon, authenticated;
+grant select, update, delete on public.inbox to authenticated;
 
 -- The public can add new items but never read them back. Same pattern as
 -- signups: the site inserts with its own UUID and no RETURNING.
