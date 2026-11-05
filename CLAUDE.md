@@ -39,19 +39,34 @@ anything he must do himself in plain steps; don't narrate work already done.
   `supabase/schema.sql` once Cristian exports it. Read it before writing SQL.
 
 ## How we work
-- **Cristian runs all SQL** in the Supabase SQL editor and manages data in the
-  dashboard. Write migrations as numbered files in `supabase/migrations/`,
-  idempotent (`if not exists`, `drop policy if exists`), wrapped in
-  `begin; … commit;`. Tell him clearly when one must be run, and in what order
-  relative to deploying code.
+Cristian wants Claude to carry work end to end, not hand him steps. Do the
+work yourself; only stop for him where marked **ask first**.
+
+- **Database:** use the Supabase connector (project `xsdnopfsmrabhhqwlmyr`).
+  Still write each migration as a numbered, idempotent file in
+  `supabase/migrations/` (`if not exists`, `drop policy if exists`,
+  `begin; … commit;`), commit it, then apply it yourself with
+  `apply_migration`. Get the order right relative to merging code (additive
+  changes before the deploy that needs them; closing/dropping after).
+- **Data:** add or edit opportunities, partners, gallery rows yourself with
+  `execute_sql` when Cristian gives you the details. Read back what you wrote.
+- **Edge functions:** deploy changed functions yourself with
+  `deploy_edge_function`, then check `query_logs` for errors after a test.
+- **Git:** work on a branch, commit in small steps, open a PR. When
+  `npm run build` and `npm run lint` pass and the change is checked at 375px
+  and 1280px, merge the PR yourself, wait for the GitHub Pages deploy, and
+  smoke-test the live site.
+- **Ask first** before: deleting rows or files, dropping tables/columns,
+  removing or loosening RLS policies, touching auth settings or secrets,
+  anything that emails real volunteers, or anything you can't undo.
+- **CHANGELOG.md:** at the end of every phase or change, add a dated entry
+  covering code, database, and any manual/service changes.
 - Code must keep working **before** a migration runs where reasonable (see the
   `image_url` handling in `content.js`/`admin.js` for the pattern).
-- Edge functions: Cristian deploys with `supabase functions deploy <name>`.
-  Say so when one changes.
-- Git: work on a branch, commit in small logical steps, open a PR to `main`.
-  Merging to `main` deploys to production — never push to `main` directly.
-- Before finishing any task: `npm run build` and `npm run lint` pass, and the
-  change is checked at 375px and 1280px widths.
+- If the Supabase connector isn't available in a session, say so and fall
+  back to giving Cristian the SQL to paste.
+- Things only Cristian can do (DNS at Namecheap, Resend dashboard, GitHub and
+  Supabase account settings): tell him in plain, numbered steps.
 
 ## Known gotchas (already solved — don't regress)
 - **RLS + RETURNING:** anon can insert into `signups` but not select, so
