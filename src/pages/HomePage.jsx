@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { home } from '../data/home.js';
-import heroPhoto from '../assets/church in the city home.JPG';
+import hero1600 from '../assets/hero/hero-1600.webp';
+import hero900 from '../assets/hero/hero-900.webp';
 
 /* ============ Hero ============ */
 function Hero({ setPage }) {
@@ -41,8 +42,18 @@ function Hero({ setPage }) {
           </div>
           <aside className="hero-aside">
             <div className="hero-photo">
-  <img src={heroPhoto} alt="church in the city home." />
-</div>
+              {/* The photo is cover-cropped from 4:3 into a 4:5 frame, so it
+                  needs ~1.67x the frame's width in source pixels. */}
+              <img
+                src={hero1600}
+                srcSet={`${hero900} 900w, ${hero1600} 1600w`}
+                sizes="(max-width: 980px) 140vw, 64vw"
+                width="1600"
+                height="1200"
+                fetchPriority="high"
+                alt="A smiling boy in a Church in the City T-shirt and work gloves holds a rake while clearing brush in an overgrown lot, another volunteer working behind him."
+              />
+            </div>
             <div className="hero-stats">
               {hero.stats.map((s, i) => (
                 <div key={i} className="hero-stat">
