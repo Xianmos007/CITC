@@ -1,0 +1,61 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2908
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 -- constraint admins_email_key on admins: UNIQUE (email)\
+-- constraint admins_pkey on admins: PRIMARY KEY (id)\
+-- constraint gallery_categories_key_key on gallery_categories: UNIQUE (key)\
+-- constraint gallery_categories_pkey on gallery_categories: PRIMARY KEY (id)\
+-- constraint gallery_photos_pkey on gallery_photos: PRIMARY KEY (id)\
+-- constraint opportunities_partner_id_fkey on opportunities: FOREIGN KEY (partner_id) REFERENCES partners(id) ON DELETE SET NULL\
+-- constraint opportunities_pkey on opportunities: PRIMARY KEY (id)\
+-- constraint opportunities_program_id_fkey on opportunities: FOREIGN KEY (program_id) REFERENCES programs(id) ON DELETE SET NULL\
+-- constraint partners_kind_check on partners: CHECK ((kind = ANY (ARRAY['ministry'::text, 'church'::text])))\
+-- constraint partners_pkey on partners: PRIMARY KEY (id)\
+-- constraint posted_needs_pkey on posted_needs: PRIMARY KEY (id)\
+-- constraint programs_partner_id_fkey on programs: FOREIGN KEY (partner_id) REFERENCES partners(id) ON DELETE CASCADE\
+-- constraint programs_pkey on programs: PRIMARY KEY (id)\
+-- constraint signups_opportunity_id_fkey on signups: FOREIGN KEY (opportunity_id) REFERENCES opportunities(id) ON DELETE CASCADE\
+-- constraint signups_opportunity_id_volunteer_id_key on signups: UNIQUE (opportunity_id, volunteer_id)\
+-- constraint signups_pkey on signups: PRIMARY KEY (id)\
+-- constraint signups_volunteer_id_fkey on signups: FOREIGN KEY (volunteer_id) REFERENCES volunteers(id) ON DELETE CASCADE\
+-- constraint volunteers_email_key on volunteers: UNIQUE (email)\
+-- constraint volunteers_pkey on volunteers: PRIMARY KEY (id)\
+-- function get_opportunity_signup_count(opp_id uuid)\
+-- function is_admin()\
+-- function lookup_my_signups(lookup_email text)\
+-- function touch_updated_at()\
+-- policy "admins_admin_all" on public.admins: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "gallery_admin_all" on public.gallery_photos: ALL to authenticated using (true) check (true)\
+-- policy "gallery_admin_delete" on storage.objects: DELETE to authenticated using ((bucket_id = 'gallery'::text)) check ()\
+-- policy "gallery_admin_insert" on storage.objects: INSERT to authenticated using () check ((bucket_id = 'gallery'::text))\
+-- policy "gallery_admin_update" on storage.objects: UPDATE to authenticated using ((bucket_id = 'gallery'::text)) check ((bucket_id = 'gallery'::text))\
+-- policy "gallery_cats_admin_all" on public.gallery_categories: ALL to authenticated using (true) check (true)\
+-- policy "gallery_cats_public_read" on public.gallery_categories: SELECT to public using (true) check ()\
+-- policy "gallery_public_read" on public.gallery_photos: SELECT to public using ((is_published = true)) check ()\
+-- policy "opportunities_admin_all" on public.opportunities: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "opportunities_public_read" on public.opportunities: SELECT to anon,authenticated using ((is_published = true)) check ()\
+-- policy "partners_admin_all" on public.partners: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "partners_public_read" on public.partners: SELECT to anon,authenticated using (true) check ()\
+-- policy "posted_needs_admin_all" on public.posted_needs: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "posted_needs_public_insert" on public.posted_needs: INSERT to anon,authenticated using () check (true)\
+-- policy "programs_admin_all" on public.programs: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "programs_public_read" on public.programs: SELECT to anon,authenticated using (true) check ()\
+-- policy "signups_admin_all" on public.signups: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "signups_public_insert" on public.signups: INSERT to anon,authenticated using () check (true)\
+-- policy "volunteers_admin_all" on public.volunteers: ALL to authenticated using (is_admin()) check (is_admin())\
+-- policy "volunteers_public_insert" on public.volunteers: INSERT to anon,authenticated using () check (true)\
+-- policy "volunteers_public_self_read" on public.volunteers: SELECT to anon,authenticated using (true) check ()\
+-- policy "volunteers_public_self_update" on public.volunteers: UPDATE to anon,authenticated using (true) check (true)\
+-- table admins: id uuid, email text, display_name text, created_at timestamp with time zone\
+-- table gallery_categories: id uuid, key text, label text, sort_order integer, created_at timestamp with time zone\
+-- table gallery_photos: id uuid, image_url text, caption text, place text, date_label text, category text, shape text, is_published boolean, sort_order integer, created_at timestamp with time zone, updated_at timestamp with time zone\
+-- table opportunities: id uuid, partner_id uuid, program_id uuid, title text, description text, date_label text, event_date date, time_label text, duration_label text, total_spots integer, bring_list jsonb, coordinator_note text, kind text, skill_tags jsonb, is_published boolean, is_featured boolean, created_at timestamp with time zone, updated_at timestamp with time zone, image_url text\
+-- table partners: id uuid, name text, type text, status text, mission text, since_text text, volunteers_text text, contact_name text, contact_email text, auto_notify boolean, display_order integer, created_at timestamp with time zone, updated_at timestamp with time zone, kind text\
+-- table posted_needs: id uuid, status text, org_name text, contact_name text, contact_email text, need_title text, description text, proposed_date date, proposed_time text, duration text, spots_needed integer, kind text, admin_notes text, created_at timestamp with time zone, reviewed_at timestamp with time zone\
+-- table programs: id uuid, partner_id uuid, name text, description text, created_at timestamp with time zone\
+-- table signups: id uuid, opportunity_id uuid, volunteer_id uuid, status text, created_at timestamp with time zone, cancelled_at timestamp with time zone\
+-- table volunteers: id uuid, email text, name text, phone text, church text, notes text, first_seen_at timestamp with time zone, last_seen_at timestamp with time zone}
