@@ -6,6 +6,7 @@ import {
   clearSavedVolunteer,
 } from '../../lib/signups.js';
 import { formatWhen } from '../../lib/format.js';
+import { canAddToCalendar, googleCalendarUrl, downloadIcs } from '../../lib/share.js';
 import { isSupabaseReady } from '../../lib/supabase.js';
 import { useDialog } from '../../hooks/useDialog.js';
 
@@ -205,6 +206,22 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
                   </>
                 )}
               </div>
+              {resultStatus !== 'waitlist' && canAddToCalendar(o) && (
+                <div className="calendar-actions">
+                  <span className="calendar-label">Add to calendar</span>
+                  <a
+                    className="btn btn-ghost btn-sm"
+                    href={googleCalendarUrl(o)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Google Calendar
+                  </a>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadIcs(o)}>
+                    Apple / Outlook (.ics)
+                  </button>
+                </div>
+              )}
               {bring.length > 0 && (
                 <>
                   <h4>What to bring</h4>
@@ -370,7 +387,6 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
             {/* DONE — show close + calendar button */}
             {state === 'done' && (
               <>
-                {/* "Add to calendar" returns in SPEC-audit-fixes Phase 4. */}
                 <button className="btn btn-primary" onClick={close}>
                   Close
                 </button>
