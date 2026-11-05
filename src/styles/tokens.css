@@ -20,7 +20,7 @@
 
   --citc-line:       rgba(20, 18, 15, 0.14); /* default border / divider */
   --citc-line-soft:  rgba(20, 18, 15, 0.08);
-  --citc-muted:      rgba(20, 18, 15, 0.55);
+  --citc-muted:      rgba(20, 18, 15, 0.68); /* 5.8:1+ on paper/bone (WCAG AA) */
 
   /* ---------- Color: semantic ---------- */
   --fg-1:    var(--citc-ink);          /* primary text */
@@ -33,7 +33,10 @@
   --bg-ink:  var(--citc-ink);          /* dark sections */
   --accent:  var(--citc-gold);         /* the flame */
   --accent-soft: var(--citc-gold-soft);
+  --accent-text: var(--citc-gold-650); /* gold for small text on light grounds */
+  --accent-display: var(--citc-gold-600); /* gold for large headline words (4.5:1) */
   --ok:      var(--citc-sage);
+  --ok-text: #59664E;                 /* darker sage step for small text: 5.7:1 on paper */
   --urgent:  var(--citc-clay);
   --rule:    var(--citc-line);
   --rule-soft: var(--citc-line-soft);
@@ -45,6 +48,7 @@
   --citc-gold-400: #C9A961;
   --citc-gold-500: #B8923E;
   --citc-gold-600: #8C6E2C;
+  --citc-gold-650: #7E6227; /* gold for small text: 5.3:1 on paper */
   --citc-gold-700: #5C4719;
 
   --citc-ink-100:  #F3EEE4;
@@ -80,8 +84,8 @@
   --fs-lede:    22px;  --lh-lede:    1.40;
   --fs-body:    16px;  --lh-body:    1.65;
   --fs-small:   13px;  --lh-small:   1.50;
-  --fs-eyebrow: 11px;  --ls-eyebrow: 0.22em;
-  --fs-meta:    11px;  --ls-meta:    0.14em;
+  --fs-eyebrow: 12px;  --ls-eyebrow: 0.22em;
+  --fs-meta:    12px;  --ls-meta:    0.14em;
 
   /* ---------- Spacing (8-pt) ---------- */
   --space-1:   8px;

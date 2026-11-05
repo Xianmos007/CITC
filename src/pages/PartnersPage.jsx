@@ -59,7 +59,7 @@ export function PartnersPage({ partners = [], loading = false }) {
               <div key={p.id} className="partner-full">
                 <div>
                   <span className={`status ${statusClass(p.status)}`}>{p.status}</span>
-                  <h3 style={{ marginTop: 18 }}>{p.name}</h3>
+                  <h2 style={{ marginTop: 18 }}>{p.name}</h2>
                   <div className="type-line">{p.type}</div>
                   <p className="mission">{p.mission}</p>
                   <div className="meta">
@@ -70,7 +70,7 @@ export function PartnersPage({ partners = [], loading = false }) {
                 <div className="right">
                   {(p.needs || []).length > 0 ? (
                     <>
-                      <h4>How we serve together</h4>
+                      <h3>How we serve together</h3>
                       {p.needs.map((n, j) => (
                         <div key={j} className="need">
                           <span className="tt">{n.title}</span>

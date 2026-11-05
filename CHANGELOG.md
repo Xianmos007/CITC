@@ -9,6 +9,19 @@ Claude Code: add an entry at the end of every phase or manual change.
 ## 2026-11-05
 
 ### Code (GitHub)
+- **PR #5 — Accessibility fixes from ai-design-check** (merged). Ran the
+  open-source ai-design-check scanner (enmerasoftware, MIT) on the live site
+  and the repo, then fixed: low-contrast text (muted text now 0.68 ink;
+  gold text uses a darker gold step `--citc-gold-650` for small text and
+  `--citc-gold-600` for headline accent words; darker sage for small
+  "full" labels; brighter muted text on dark grounds), minimum text size
+  raised to 12 px, keyboard focus rings restored on inputs, cards and
+  dialogs, form fields at 16 px so iPhones don't zoom, heading order
+  (cards h3, footer and filter headings h2, partner names h2). Added
+  `ai-design-check.json` (proper nouns). Live scan: 0 contrast, size or
+  heading-order findings; code check: 0 errors.
+
+### Code (GitHub)
 - **PR #1 — Audit Phase 1** (merged). Nav cleanup (removed duplicate
   "Volunteer Now"; "Find a need" is the single entry point; sentence-case
   labels), fixed literal `don’t`, hid empty modal sections, signup form

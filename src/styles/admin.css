@@ -171,7 +171,7 @@
 .admin-drawer select {
   width: 100%;
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 16px;
   padding: 10px 12px;
   border: 1px solid var(--rule);
   border-radius: var(--radius-1);
@@ -271,7 +271,7 @@
 .admin-segmented .count { opacity: 0.7; margin-left: 4px; }
 
 /* Drawer frame (title row, scrolling body, sticky footer) */
-.admin-drawer:focus { outline: none; }
+.admin-drawer:focus:not(:focus-visible) { outline: none; }
 .admin-drawer-framed { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
 .admin-drawer-wide { max-width: min(1100px, 100vw); }
 .admin-drawer-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 32px 0; }

@@ -109,7 +109,7 @@ function HowItWorks() {
         <div className="section-head">
           <h2>
             {howItWorks.headingLine1}<br />
-            <em style={{ color: 'var(--accent)', fontStyle: 'italic', fontWeight: 400 }}>
+            <em style={{ color: 'var(--accent-display)', fontStyle: 'italic', fontWeight: 400 }}>
               {howItWorks.headingLine2Em}
             </em>
           </h2>
@@ -145,7 +145,7 @@ function FeaturedPartners({ partners = [] }) {
           <h2>
             {featuredPartners.headingLine1}<br />
             {featuredPartners.headingLine2}{' '}
-            <em style={{ color: 'var(--accent)', fontStyle: 'italic', fontWeight: 400 }}>
+            <em style={{ color: 'var(--accent-display)', fontStyle: 'italic', fontWeight: 400 }}>
               {featuredPartners.headingLine2Em}
             </em>{' '}
             {featuredPartners.headingLine2End}
@@ -219,11 +219,11 @@ function CurrentOpportunities({ opportunities = [], loading = false }) {
                   {[time, place].filter(Boolean).join(' · ')}
                 </div>
                 <div className="what">
-                  <h4>
+                  <h3>
                     <Link className="card-link" to={`/volunteer/${o.id}`} state={{ fromSite: true }}>
                       {o.title}
                     </Link>
-                  </h4>
+                  </h3>
                   <span className="partner">{o.partner}</span>
                 </div>
                 <div className={`progress ${filled >= total ? 'full' : ''}`}>

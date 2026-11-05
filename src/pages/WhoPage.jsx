@@ -33,7 +33,7 @@ export function WhoPage({ partners = [] }) {
             <div>
               <blockquote style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: '30px', lineHeight: 1.4, borderLeft: '2px solid var(--accent)', paddingLeft: 32, color: 'var(--citc-ink)', marginBottom: 32 }}>
                 {foundation.quote}
-                <span style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--fg-3)', marginTop: 24 }}>
+                <span style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontSize: '12px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--fg-3)', marginTop: 24 }}>
                   {foundation.quoteAttribution}
                 </span>
               </blockquote>
@@ -106,7 +106,7 @@ export function WhoPage({ partners = [] }) {
             {values.items.map((v, i) => (
               <div key={i} className="value">
                 <div className="vnum">{v.roman}</div>
-                <h4>{v.title}</h4>
+                <h3>{v.title}</h3>
                 <p>{v.body}</p>
               </div>
             ))}
@@ -120,7 +120,7 @@ export function WhoPage({ partners = [] }) {
           <div className="section-head">
             <h2>
               {weAreNot.headingLine1}{' '}
-              <em style={{ color: 'var(--accent)', fontStyle: 'italic', fontWeight: 400 }}>
+              <em style={{ color: 'var(--accent-display)', fontStyle: 'italic', fontWeight: 400 }}>
                 {weAreNot.headingEm}
               </em>{' '}
               {weAreNot.headingLine2}
@@ -129,13 +129,13 @@ export function WhoPage({ partners = [] }) {
           </div>
           <div className="isnt">
             <div className="isnt-col we">
-              <h4>+ We are</h4>
+              <h3>+ We are</h3>
               <ul>
                 {weAreNot.weAre.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
             </div>
             <div className="isnt-col not">
-              <h4>− We are not</h4>
+              <h3>− We are not</h3>
               <ul>
                 {weAreNot.weAreNot.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
