@@ -2,13 +2,18 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { blogPosts, featuredPost } from '../src/data/blog.js';
+import { pageMeta, siteUrl, defaultImage } from '../src/data/pageMeta.js';
+
+// Writes dist/<page>/index.html for each top-level page and each blog post,
+// with that page's <title> and share-preview (OG/Twitter) tags baked in.
+// GitHub Pages serves these directly, so link previews in texts and social
+// posts show the right page. Dynamic URLs like /volunteer/<id> still go
+// through 404.html -> the app.
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 const indexPath = path.join(distDir, 'index.html');
-const siteUrl = 'https://thechurchinthecity.org';
-const defaultImage = `${siteUrl}/og-default.jpg`;
 const posts = [featuredPost, ...blogPosts];
 
 function escapeHtml(value) {
@@ -73,25 +78,44 @@ function stripManagedHeadTags(html) {
     );
 }
 
-async function writePostHtml(template, post) {
-  const slug = getSlug(post);
-  if (!slug) return false;
+function buildPageHead(route, meta) {
+  const url = `${siteUrl}${route}`;
+  return `    <title>${escapeHtml(meta.title)}</title>
+    <meta name="description" content="${escapeHtml(meta.description)}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Church in the City">
+    <meta property="og:title" content="${escapeHtml(meta.title)}">
+    <meta property="og:description" content="${escapeHtml(meta.description)}">
+    <meta property="og:url" content="${escapeHtml(url)}">
+    <meta property="og:image" content="${escapeHtml(defaultImage)}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${escapeHtml(meta.title)}">
+    <meta name="twitter:description" content="${escapeHtml(meta.description)}">
+    <meta name="twitter:image" content="${escapeHtml(defaultImage)}">`;
+}
 
-  const html = stripManagedHeadTags(template).replace(
-    /<head>/i,
-    `<head>\n${buildHead(post)}`
-  );
-  const outDir = path.join(distDir, 'blog', slug);
+async function writeHtml(template, relDir, head) {
+  const html = stripManagedHeadTags(template).replace(/<head>/i, `<head>\n${head}`);
+  const outDir = path.join(distDir, relDir);
   await mkdir(outDir, { recursive: true });
   await writeFile(path.join(outDir, 'index.html'), html, 'utf8');
-  return true;
 }
 
 const template = await readFile(indexPath, 'utf8');
-let count = 0;
 
-for (const post of posts) {
-  if (await writePostHtml(template, post)) count++;
+let pageCount = 0;
+for (const [route, meta] of Object.entries(pageMeta)) {
+  if (route === '/') continue; // dist/index.html already carries the home tags
+  await writeHtml(template, route.slice(1), buildPageHead(route, meta));
+  pageCount++;
 }
 
-console.log(`[prerender-blog] wrote ${count} blog post HTML files.`);
+let postCount = 0;
+for (const post of posts) {
+  const slug = getSlug(post);
+  if (!slug) continue;
+  await writeHtml(template, path.join('blog', slug), buildHead(post));
+  postCount++;
+}
+
+console.log(`[prerender] wrote ${pageCount} page and ${postCount} blog post HTML files.`);

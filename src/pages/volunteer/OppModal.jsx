@@ -18,10 +18,11 @@ import { useDialog } from '../../hooks/useDialog.js';
 //   'done'    — signup confirmed
 //   'error'   — something went wrong
 // =====================================================================
-export function OppModal({ oppId, opportunities = [], close }) {
+export function OppModal({ oppId, opportunities = [], loading = false, close }) {
   const [state, setState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const dialogRef = useDialog();
+  // Nothing renders while a shared link is still loading its need.
+  const dialogRef = useDialog(!loading || opportunities.some((x) => x.id === oppId));
 
   // A photo is optional and most opportunities won't have one. If the URL is
   // present but fails to load, we drop the element entirely rather than leave
@@ -68,7 +69,45 @@ export function OppModal({ oppId, opportunities = [], close }) {
     };
   }, [oId]);
 
-  if (!o) return null;
+  if (!o) {
+    // Still loading: show nothing yet. Loaded and not found: the link is to
+    // a need that has passed, filled and closed, or was unpublished.
+    if (loading) return null;
+    return (
+      <div className="modal-scrim" onClick={close}>
+        <div
+          className="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="opp-modal-title"
+          tabIndex={-1}
+          ref={dialogRef}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="modal-close" onClick={close} aria-label="Close">
+            ✕
+          </button>
+          <div className="modal-head">
+            <h2 id="opp-modal-title">This need isn&rsquo;t open anymore.</h2>
+          </div>
+          <div className="modal-body">
+            <p className="lede">
+              It may have already happened, or the ministry took it down. There
+              are other ways to show up this week.
+            </p>
+          </div>
+          <div className="modal-foot">
+            <span className="spots"></span>
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={close}>
+                See open needs <span className="arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Use the live count if we have it, otherwise the static fallback
   const filled = liveFilled !== null ? liveFilled : o.filled;

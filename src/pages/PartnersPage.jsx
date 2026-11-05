@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { partnersPage } from '../data/partners.js';
 import { becomePartnerHref, emailTeamHref } from '../lib/mailto.js';
+import { Seo } from '../components/Seo.jsx';
 
 const statusClass = (s) =>
   s === 'Active' ? 'status-active' : s === 'In conversation' ? 'status-conv' : 'status-soon';
@@ -30,6 +31,7 @@ export function PartnersPage({ partners = [], loading = false }) {
 
   return (
     <div className="page">
+      <Seo path="/partners" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>

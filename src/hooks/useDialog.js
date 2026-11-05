@@ -15,12 +15,14 @@ const FOCUSABLE = [
 //   - keeps Tab / Shift+Tab inside it
 //   - returns focus to whatever opened it when it closes
 // Attach the returned ref to the element with role="dialog".
-export function useDialog() {
+// Pass `active = false` while the dialog isn't rendered yet (e.g. still
+// loading); the behavior starts once it becomes true.
+export function useDialog(active = true) {
   const ref = useRef(null);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return undefined;
+    if (!active || !node) return undefined;
     const trigger = document.activeElement;
 
     const focusables = () =>
@@ -57,7 +59,7 @@ export function useDialog() {
         trigger.focus({ preventScroll: true });
       }
     };
-  }, []);
+  }, [active]);
 
   return ref;
 }

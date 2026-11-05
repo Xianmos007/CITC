@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Seo } from '../components/Seo.jsx';
 import { galleryPage, photos as staticPhotos, galleryCategories } from '../data/gallery.js';
 import { submitPhotoHref } from '../lib/mailto.js';
 import { useDialog } from '../hooks/useDialog.js';
@@ -6,7 +8,7 @@ import { useDialog } from '../hooks/useDialog.js';
 // "Saturday, Nov 8 · Titusville" — skip whichever half is missing.
 const whenWhere = (p) => [p.when, p.place].filter(Boolean).join(' · ');
 
-export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategories }) {
+export function GalleryPage({ photos: dbPhotos, categories: dbCategories }) {
   const [filter, setFilter] = useState('all');
   const [active, setActive] = useState(null);
 
@@ -46,6 +48,7 @@ export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategorie
 
   return (
     <div className="page">
+      <Seo path="/gallery" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>
@@ -120,7 +123,7 @@ export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategorie
             </div>
             <div className="actions">
               <a className="btn btn-primary" href={submitPhotoHref}>Submit a frame <span className="arrow">→</span></a>
-              <button className="btn btn-ghost" onClick={() => setPage('volunteer')}>Be there next Saturday</button>
+              <Link className="btn btn-ghost" to="/volunteer">Be there next Saturday</Link>
             </div>
           </div>
         </div>

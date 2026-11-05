@@ -19,14 +19,14 @@ export const site = {
     locationLong: 'Est. 2019 · Titusville, FL',
   },
 
-  // The navigation menu. The 'key' must match a page key in App.jsx.
+  // The navigation menu. `to` is the page's address (see routes in App.jsx).
   // The logo goes home, and the "Find a need" button is the volunteer link,
   // so neither appears here.
   navLinks: [
-    { key: 'who', label: 'Who we are' },
-    { key: 'partners', label: 'Partners' },
-    { key: 'blog', label: 'Field notes' },
-    { key: 'gallery', label: 'The Saturdays' },
+    { to: '/who', label: 'Who we are' },
+    { to: '/partners', label: 'Partners' },
+    { to: '/blog', label: 'Field notes' },
+    { to: '/gallery', label: 'The Saturdays' },
   ],
 
   // The footer
@@ -35,20 +35,20 @@ export const site = {
       '"May the church in our city become a people who seek its welfare — until its welfare is ours."',
     benedictionAttribution: '— A benediction · Jer. 29:7',
 
-    // Each link has either `page` (a page key in App.jsx) or `href`
+    // Each link has either `to` (a page on this site) or `href`
     // (a mailto: link, from src/lib/mailto.js).
     columns: [
       {
         heading: 'The church',
         links: [
-          { label: 'Who we are', page: 'who' },
-          { label: 'Ministry partners', page: 'partners' },
+          { label: 'Who we are', to: '/who' },
+          { label: 'Ministry partners', to: '/partners' },
         ],
       },
       {
         heading: 'The city',
         links: [
-          { label: 'Find a need', page: 'volunteer' },
+          { label: 'Find a need', to: '/volunteer' },
           { label: 'Post a need', href: postNeedHref },
           { label: 'Become a partner', href: becomePartnerHref },
         ],
@@ -56,8 +56,8 @@ export const site = {
       {
         heading: 'Read & see',
         links: [
-          { label: 'Field notes', page: 'blog' },
-          { label: 'The Saturdays', page: 'gallery' },
+          { label: 'Field notes', to: '/blog' },
+          { label: 'The Saturdays', to: '/gallery' },
           { label: 'Contact', href: contactHref },
         ],
       },
