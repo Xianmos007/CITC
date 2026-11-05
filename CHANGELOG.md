@@ -6,9 +6,24 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
-## 2026-11-05
+## 2026-11-05 (later)
 
 ### Code (GitHub)
+- **PR #3 — Close `lookup_my_signups`** (open). Migration
+  `0012_close_lookup_my_signups.sql` revokes public access to the function
+  that returned anyone's signups by email. The spec's Phase 6 storage
+  migration is renumbered to `0013_inbox_uploads.sql`.
+- **PR #4 — Audit Phase 4: admin opportunities** (open). Admin panel split
+  into `src/pages/admin/` and loaded only at `#admin`; admins stay signed in
+  across refreshes (own Supabase client). Opportunities list with Upcoming /
+  Ongoing / Past / Drafts and real signup counts; actions Edit, Duplicate,
+  Roster, Copy link, Unpublish. New two-column editor with a live preview of
+  the public card and popup: date picker, start time, duration presets,
+  Ongoing, Online/location, what-to-bring and tag chips, partner defaults
+  from their last need, Repeat (weekly / every 2 weeks / monthly). Roster:
+  confirmed + waitlist, copy emails, CSV, move between lists, copy a text
+  message. Public popup: Add to calendar (Google + .ics) is back.
+
 - **PR #1 — Audit Phase 1** (merged). Nav cleanup (removed duplicate
   "Volunteer Now"; "Find a need" is the single entry point; sentence-case
   labels), fixed literal `don’t`, hid empty modal sections, signup form
@@ -58,7 +73,8 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ### Still to do
 - [ ] Resend verified + confirmation email tested
-- [ ] Phase 4 — admin opportunities (also close `lookup_my_signups`)
+- [ ] Merge PR #3 and run `0012_close_lookup_my_signups.sql`
+- [ ] Phase 4 — admin opportunities (PR #4 open)
 - [ ] Phase 5 — admin partners
 - [ ] Phase 6 — inbox and public forms
 
