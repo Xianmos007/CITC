@@ -53,11 +53,11 @@ Claude Code: add an entry at the end of every phase or manual change.
   - TXT `_dmarc` → `v=DMARC1; p=none;`
   - Mail Settings → Custom MX; MX `send` → `feedback-smtp.us-east-1.amazonses.com`, priority 10
   - GitHub Pages A/CNAME records left unchanged.
-  Clicked Restart in Resend. **Pending:** confirm domain shows Verified, then
-  delete the test signup and re-test the confirmation email.
+  Clicked Restart in Resend. Domain verified; confirmation email tested and
+  received the same day.
 
 ### Still to do
-- [ ] Resend verified + confirmation email tested
+- [x] Resend verified + confirmation email tested
 - [ ] Phase 4 — admin opportunities (also close `lookup_my_signups`)
 - [ ] Phase 5 — admin partners
 - [ ] Phase 6 — inbox and public forms
