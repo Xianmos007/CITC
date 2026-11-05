@@ -87,8 +87,9 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 /* ===== hero ===== */
 .container{max-width:1400px;margin:0 auto;padding:0 32px;position:relative;z-index:2;}
 .container-narrow{max-width:960px;margin:0 auto;padding:0 32px;position:relative;z-index:2;}
-.hero{position:relative;padding:100px 0 90px;}
-.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:end;}
+/* Top-aligned with modest padding so the headline and CTAs sit above the fold at 1280x720. */
+.hero{position:relative;padding:56px 0 90px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:80px;align-items:start;}
 .hero-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:32px;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(184,146,62,0.18);animation:pulse 2.4s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(184,146,62,0.18);}50%{box-shadow:0 0 0 9px rgba(184,146,62,0.05);}}
