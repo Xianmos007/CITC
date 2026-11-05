@@ -297,7 +297,7 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
               <p
                 style={{
                   fontFamily: 'var(--mono)',
-                  fontSize: 11,
+                  fontSize: 12,
                   letterSpacing: '0.04em',
                   color: 'var(--fg-3)',
                   lineHeight: 1.5,
@@ -408,7 +408,7 @@ export function OppModalHead({ o, full = false, titleId }) {
   return (
     <div className="modal-head">
       {o.partner && (
-        <span className="eyebrow" style={{ color: full ? 'var(--citc-sage)' : 'var(--accent)' }}>
+        <span className="eyebrow" style={{ color: full ? 'var(--citc-sage)' : 'var(--accent-text)' }}>
           — {o.partner}
         </span>
       )}

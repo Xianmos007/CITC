@@ -15,7 +15,7 @@ export function OppCard({ o, preview = false }) {
     <article className={`opp-card ${preview ? '' : 'has-card-link'} ${isFeatured ? 'featured' : ''}`}>
       {isFeatured && <span className="opp-card-badge">Featured</span>}
       <div className="opp-card-when">{when}</div>
-      <h4>
+      <h3>
         {preview ? (
           o.title
         ) : (
@@ -23,7 +23,7 @@ export function OppCard({ o, preview = false }) {
             {o.title}
           </Link>
         )}
-      </h4>
+      </h3>
       <span className="opp-card-partner">{o.partner}</span>
       {o.desc && <p>{o.desc}</p>}
       <div className={`progress ${isFull ? 'full' : ''}`}>

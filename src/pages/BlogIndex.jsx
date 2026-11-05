@@ -43,7 +43,7 @@ export function BlogIndex() {
                 {c.label} <span className="count">{counts[c.key]}</span>
               </button>
             ))}
-            <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)', alignSelf: 'center' }}>
+            <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)', alignSelf: 'center' }}>
               {pieceCount} {pieceCount === 1 ? 'piece' : 'pieces'}
             </div>
           </div>

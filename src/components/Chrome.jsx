@@ -124,7 +124,7 @@ export function Footer() {
           </div>
           {site.footer.columns.map((col) => (
             <div key={col.heading} className="footer-col">
-              <h4>{col.heading}</h4>
+              <h2>{col.heading}</h2>
               <ul>
                 {col.links.map((l) => (
                   <li key={l.label}>

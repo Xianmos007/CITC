@@ -71,7 +71,7 @@ export function BrowseTab({ opportunities = [], loading = false }) {
             <span className="meta">{filtered.length}</span>
           </div>
           <div className="filter-group">
-            <h5>Partner</h5>
+            <h2>Partner</h2>
             {filterOptions.partners.map((p) => {
               const ct = opportunities.filter((o) => o.partner === p).length;
               if (ct === 0) return null;
@@ -89,7 +89,7 @@ export function BrowseTab({ opportunities = [], loading = false }) {
             })}
           </div>
           <div className="filter-group">
-            <h5>Kind of work</h5>
+            <h2>Kind of work</h2>
             {filterOptions.types.map((t) => {
               const ct = opportunities.filter((o) => o.type === t).length;
               if (ct === 0) return null;
@@ -107,7 +107,7 @@ export function BrowseTab({ opportunities = [], loading = false }) {
             })}
           </div>
           <div className="filter-group">
-            <h5>Good fit</h5>
+            <h2>Good fit</h2>
             {filterOptions.skills.map((s) => {
               const ct = opportunities.filter((o) => o.skills?.includes(s)).length;
               if (ct === 0) return null;
@@ -131,7 +131,7 @@ export function BrowseTab({ opportunities = [], loading = false }) {
             <h3 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 500, letterSpacing: '-0.015em' }}>
               Open this week & next
             </h3>
-            <span className="meta" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
+            <span className="meta" style={{ fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
               Sort · Date ↓
             </span>
           </div>
