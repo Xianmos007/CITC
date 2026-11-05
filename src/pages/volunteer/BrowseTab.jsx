@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { deriveFilterOptions } from '../../lib/content.js';
+import { formatWhen } from '../../lib/format.js';
 
 export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
   const [search, setSearch] = useState('');
@@ -48,7 +49,8 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     const total = Number(o.total) || 1;
     const isFull = filled >= total;
     const isFeatured = Boolean(o.is_featured ?? o.isFeatured);
-    const when = [o.date_label || o.date, o.time, o.dur?.toUpperCase()].filter(Boolean).join(' · ');
+    const { date, time, place } = formatWhen(o);
+    const when = [date, time, o.dur, place].filter(Boolean).join(' · ');
 
     return (
       <article
