@@ -10,7 +10,7 @@ import { BlogPost } from './pages/BlogPost.jsx';
 import { GalleryPage } from './pages/GalleryPage.jsx';
 import { VolunteerPage } from './pages/volunteer/VolunteerPage.jsx';
 import { OppModal } from './pages/volunteer/OppModal.jsx';
-import { AdminPage } from './pages/AdminPage.jsx';
+import { AdminPage } from './pages/admin/AdminPage.jsx';
 import { useContent } from './hooks/useContent.js';
 
 // /volunteer and /volunteer/<id> are the same page (the id just opens the
