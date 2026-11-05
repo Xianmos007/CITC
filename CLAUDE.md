@@ -17,8 +17,9 @@ anything he must do himself in plain steps; don't narrate work already done.
 
 ## Commands
 - `npm run dev` — local dev
-- `npm run build` — Vite build + `scripts/prerender-blog.mjs` (writes
-  `dist/blog/<slug>/index.html` with OG tags)
+- `npm run build` — Vite build + `scripts/prerender.mjs` (writes
+  `dist/<page>/index.html` and `dist/blog/<slug>/index.html` with per-page
+  title + OG tags from `src/data/pageMeta.js` and the blog data)
 - `npm run lint`
 
 ## Layout

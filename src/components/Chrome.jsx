@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { site } from '../data/site.js';
 import flameUrl from '../assets/flame.png';
 
@@ -17,17 +18,19 @@ export function MetaBar() {
 }
 
 /* ============ SiteNav ============ */
-export function SiteNav({ page, setPage }) {
+const linkClass = (base) => ({ isActive }) => `${base} ${isActive ? 'active' : ''}`;
+
+export function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false);
-  // "Find a need" is the only nav entry for the volunteer page, so it
-  // carries the active state there.
-  const onVolunteer = page === 'volunteer';
+  const { pathname } = useLocation();
 
   // Navigating always closes the panel, so the next page isn't hidden behind it.
-  const go = (key) => {
-    setPage(key);
+  // Adjusting state during render (not in an effect) when the path changes.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setMenuOpen(false);
-  };
+  }
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -41,32 +44,26 @@ export function SiteNav({ page, setPage }) {
   return (
     <nav className="site-nav">
       <div className="site-nav-inner">
-        <button className="logo-mark" onClick={() => go('home')} aria-label="Home">
+        <Link className="logo-mark" to="/" aria-label="Church in the City, home">
           <img src={flameUrl} alt="" />
           <div>
             <div className="logo-text">{site.brand.name}</div>
             <div className="logo-sub">{site.brand.location}</div>
           </div>
-        </button>
+        </Link>
         <div className="nav-links">
-          {site.navLinks.map(({ key, label }) => (
-            <button
-              key={key}
-              className={`nav-link ${page === key ? 'active' : ''}`}
-              aria-current={page === key ? 'page' : undefined}
-              onClick={() => setPage(key)}
-            >
+          {site.navLinks.map(({ to, label }) => (
+            <NavLink key={to} to={to} className={linkClass('nav-link')}>
               {label}
-            </button>
+            </NavLink>
           ))}
         </div>
-        <button
-          className={`nav-cta ${onVolunteer ? 'active' : ''}`}
-          aria-current={onVolunteer ? 'page' : undefined}
-          onClick={() => go('volunteer')}
-        >
+        {/* "Find a need" is the only nav entry for the volunteer page, so it
+            carries the active state there (NavLink adds .active and
+            aria-current, including on /volunteer/<id>). */}
+        <NavLink to="/volunteer" className={linkClass('nav-cta')}>
           Find a need <span className="arrow">→</span>
-        </button>
+        </NavLink>
         <button
           className="nav-toggle"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -83,23 +80,23 @@ export function SiteNav({ page, setPage }) {
       </div>
       {menuOpen && (
         <div className="mobile-nav" id="mobile-nav">
-          {site.navLinks.map(({ key, label }) => (
-            <button
-              key={key}
-              className={`mobile-nav-link ${page === key ? 'active' : ''}`}
-              aria-current={page === key ? 'page' : undefined}
-              onClick={() => go(key)}
+          {site.navLinks.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={linkClass('mobile-nav-link')}
+              onClick={() => setMenuOpen(false)}
             >
               {label}
-            </button>
+            </NavLink>
           ))}
-          <button
-            className={`mobile-nav-cta ${onVolunteer ? 'active' : ''}`}
-            aria-current={onVolunteer ? 'page' : undefined}
-            onClick={() => go('volunteer')}
+          <NavLink
+            to="/volunteer"
+            className={linkClass('mobile-nav-cta')}
+            onClick={() => setMenuOpen(false)}
           >
             Find a need <span className="arrow">→</span>
-          </button>
+          </NavLink>
         </div>
       )}
     </nav>
@@ -107,10 +104,7 @@ export function SiteNav({ page, setPage }) {
 }
 
 /* ============ Footer ============ */
-// Blog has a real route already; other pages live at "/" until Phase 3.
-const pageHref = (key) => (key === 'blog' ? '/blog' : '/');
-
-export function Footer({ setPage }) {
+export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
@@ -134,23 +128,7 @@ export function Footer({ setPage }) {
               <ul>
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    {l.href ? (
-                      <a href={l.href}>{l.label}</a>
-                    ) : (
-                      <a
-                        href={pageHref(l.page)}
-                        onClick={(e) => {
-                          // Pages are still in-app state until real URLs land
-                          // (SPEC-audit-fixes Phase 3), so handle plain clicks
-                          // here and let modified clicks fall through.
-                          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                          e.preventDefault();
-                          setPage(l.page);
-                        }}
-                      >
-                        {l.label}
-                      </a>
-                    )}
+                    {l.to ? <Link to={l.to}>{l.label}</Link> : <a href={l.href}>{l.label}</a>}
                   </li>
                 ))}
               </ul>

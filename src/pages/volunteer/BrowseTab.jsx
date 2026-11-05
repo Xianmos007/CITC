@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { deriveFilterOptions } from '../../lib/content.js';
+import { formatWhen } from '../../lib/format.js';
 
-export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
+export function BrowseTab({ opportunities = [], loading = false }) {
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
     partner: new Set(),
@@ -48,7 +50,8 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     const total = Number(o.total) || 1;
     const isFull = filled >= total;
     const isFeatured = Boolean(o.is_featured ?? o.isFeatured);
-    const when = [o.date_label || o.date, o.time, o.dur?.toUpperCase()].filter(Boolean).join(' · ');
+    const { date, time, place } = formatWhen(o);
+    const when = [date, time, o.dur, place].filter(Boolean).join(' · ');
 
     return (
       <article
@@ -58,9 +61,9 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
         {isFeatured && <span className="opp-card-badge">Featured</span>}
         <div className="opp-card-when">{when}</div>
         <h4>
-          <button type="button" className="card-link" onClick={() => openOpp(o.id)}>
+          <Link className="card-link" to={`/volunteer/${o.id}`} state={{ fromSite: true }}>
             {o.title}
-          </button>
+          </Link>
         </h4>
         <span className="opp-card-partner">{o.partner}</span>
         {o.desc && <p>{o.desc}</p>}

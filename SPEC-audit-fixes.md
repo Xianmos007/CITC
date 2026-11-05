@@ -104,9 +104,14 @@ top padding / vertical centering so the `h1` and CTAs sit above the fold.
 
 ---
 
-## Phase 2 — Database migration `supabase/migrations/0010_audit.sql`
+## Phase 2 — Database migrations `0010_audit.sql` + `0011_close_volunteers.sql`
 
-Claude writes it; Cristian runs it in the SQL editor. Reconcile with
+Split in two so nothing breaks mid-deploy:
+- `0010_audit.sql` — sections 2.1–2.5. Additive only; run before the Phase 3 code ships.
+- `0011_close_volunteers.sql` — section 2.6. Run after the Phase 3 code (signups via
+  `submit_signup`) is live.
+
+Claude writes them; Cristian runs them in the SQL editor. Reconcile with
 `supabase/schema.sql`: use the **actual** existing policy names when dropping,
 and skip `add column` for any column that already exists. Wrap in a transaction.
 
@@ -395,7 +400,7 @@ replaces the form with a short sentence-case confirmation.
 
 Storage note for photo uploads: anon upload must be limited to the
 `submissions/` prefix — add the storage policy in a second migration
-`0011_inbox_uploads.sql` (anon `insert` on `storage.objects` where
+`0012_inbox_uploads.sql` (anon `insert` on `storage.objects` where
 `bucket_id = '<gallery bucket>' and name like 'submissions/%'`).
 
 ### 6.2 Admin "Inbox" tab (first tab, with a count badge of `new` items)

@@ -1,11 +1,26 @@
-import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { home } from '../data/home.js';
+import { Seo } from '../components/Seo.jsx';
+import { formatWhen, todayLocalISO, compareOpportunities } from '../lib/format.js';
 import hero1600 from '../assets/hero/hero-1600.webp';
 import hero900 from '../assets/hero/hero-900.webp';
 
 /* ============ Hero ============ */
-function Hero({ setPage }) {
+function Hero({ partners = [], loading = false }) {
   const { hero } = home;
+  // Live counts; a stat with nothing to count yet is hidden.
+  const stats = loading
+    ? []
+    : [
+        {
+          num: partners.filter((p) => p.kind !== 'church' && p.status === 'Active').length,
+          label: hero.statLabels.ministries,
+        },
+        {
+          num: partners.filter((p) => p.kind === 'church').length,
+          label: hero.statLabels.congregations,
+        },
+      ].filter((st) => st.num > 0);
   return (
     <section className="hero">
       <div className="container">
@@ -32,12 +47,12 @@ function Hero({ setPage }) {
               <span className="attr">{hero.scriptureAttribution}</span>
             </div>
             <div className="hero-ctas">
-              <button className="btn btn-primary" onClick={() => setPage('volunteer')}>
+              <Link className="btn btn-primary" to="/volunteer">
                 Find a need <span className="arrow">→</span>
-              </button>
-              <button className="btn btn-ghost" onClick={() => setPage('who')}>
+              </Link>
+              <Link className="btn btn-ghost" to="/who">
                 Who we are
-              </button>
+              </Link>
             </div>
           </div>
           <aside className="hero-aside">
@@ -54,14 +69,16 @@ function Hero({ setPage }) {
                 alt="A smiling boy in a Church in the City T-shirt and work gloves holds a rake while clearing brush in an overgrown lot, another volunteer working behind him."
               />
             </div>
-            <div className="hero-stats">
-              {hero.stats.map((s, i) => (
-                <div key={i} className="hero-stat">
-                  <div className="num">{s.num}</div>
-                  <span className="lbl">{s.label}</span>
-                </div>
-              ))}
-            </div>
+            {stats.length > 0 && (
+              <div className="hero-stats">
+                {stats.map((st) => (
+                  <div key={st.label} className="hero-stat">
+                    <div className="num">{st.num}</div>
+                    <span className="lbl">{st.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </aside>
         </div>
       </div>
@@ -114,10 +131,13 @@ function HowItWorks() {
 }
 
 /* ============ FeaturedPartners ============ */
-function FeaturedPartners({ setPage }) {
+function FeaturedPartners({ partners = [] }) {
   const { featuredPartners } = home;
-  const statusClass = (s) =>
-    s === 'Active' ? 'status-active' : s === 'In conversation' ? 'status-conv' : 'status-soon';
+  // First three active ministry partners, in their display order.
+  const cards = partners
+    .filter((p) => p.kind !== 'church' && p.status === 'Active')
+    .slice(0, 3);
+  if (cards.length === 0) return null;
   return (
     <section className="section section-alt">
       <div className="container">
@@ -133,16 +153,16 @@ function FeaturedPartners({ setPage }) {
           <p>{featuredPartners.sub}</p>
         </div>
         <div className="partners-preview">
-          {featuredPartners.cards.map((c, i) => (
-            <div key={i} className="partner-card has-card-link">
-              <span className={`status ${statusClass(c.status)}`}>{c.status}</span>
+          {cards.map((p) => (
+            <div key={p.id} className="partner-card has-card-link">
+              <span className="status status-active">{p.status}</span>
               <h3>
-                <button type="button" className="card-link" onClick={() => setPage('partners')}>
-                  {c.name}
-                </button>
+                <Link className="card-link" to="/partners">
+                  {p.name}
+                </Link>
               </h3>
-              <div className="type">{c.type}</div>
-              <p>{c.body}</p>
+              {p.type && <div className="type">{p.type}</div>}
+              {p.mission && <p>{p.mission}</p>}
               <span className="link">Read more <span className="arrow">→</span></span>
             </div>
           ))}
@@ -153,18 +173,27 @@ function FeaturedPartners({ setPage }) {
 }
 
 /* ============ CurrentOpportunities ============ */
-function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
-  // Pull the opportunities marked for the home preview. DB rows carry the
-  // human id in `slug`; static fallback rows carry it in `id`. Match either.
-  // If none of the named previews are present (e.g. they were replaced in
-  // the admin panel), fall back to the soonest few so this never goes empty.
-  const wanted = home.homeOppPreviewIds;
-  let opps = wanted
-    .map((key) => opportunities.find((o) => o.slug === key || o.id === key))
-    .filter(Boolean);
-  if (opps.length === 0) opps = opportunities.slice(0, 3);
+const addDays = (iso, n) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+};
 
-  const isEmpty = opps.length === 0;
+// Next 3 dated needs in the coming two weeks; else the next 3 dated
+// needs at all; else ongoing / undated ones.
+function pickPreview(opportunities) {
+  const today = todayLocalISO();
+  const soon = addDays(today, 14);
+  const sorted = [...opportunities].sort(compareOpportunities);
+  const dated = sorted.filter((o) => !o.isOngoing && o.eventDate && o.eventDate >= today);
+  const within = dated.filter((o) => o.eventDate <= soon);
+  if (within.length) return within.slice(0, 3);
+  if (dated.length) return dated.slice(0, 3);
+  return sorted.filter((o) => o.isOngoing || !o.eventDate).slice(0, 3);
+}
+
+function CurrentOpportunities({ opportunities = [], loading = false }) {
+  const opps = pickPreview(opportunities);
+  const isEmpty = !loading && opps.length === 0;
   return (
     <section className="section">
       <div className="container">
@@ -175,42 +204,47 @@ function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
         {isEmpty ? (
           <div className="empty-state">
             <h4>The next round is coming together.</h4>
-            <p>We're lining up Saturdays with our partners now. Want a nudge when they're posted?</p>
+            <p>We're lining up Saturdays with our partners now. Check back soon.</p>
           </div>
         ) : (
-        <div className="opps">
-          {opps.map((o) => (
-            <div key={o.id} className="opp-row has-card-link">
-              <div className="when">
-                <span className="date">{o.date}</span>
-                {o.time} · TITUSVILLE
-              </div>
-              <div className="what">
-                <h4>
-                  <button type="button" className="card-link" onClick={() => openOpp(o.id)}>
-                    {o.title}
-                  </button>
-                </h4>
-                <span className="partner">{o.partner}</span>
-              </div>
-              <div className={`progress ${o.filled >= o.total ? 'full' : ''}`}>
-                <div className="bar">
-                  <div style={{ width: `${(o.filled / o.total) * 100}%` }}></div>
+        <div className="opps opps-rows">
+          {opps.map((o) => {
+            const { date, time, place } = formatWhen(o);
+            const filled = Number(o.filled) || 0;
+            const total = Number(o.total) || 1;
+            return (
+              <div key={o.id} className="opp-row has-card-link">
+                <div className="when">
+                  {date && <span className="date">{date}</span>}
+                  {[time, place].filter(Boolean).join(' · ')}
                 </div>
-                <div className="lbl">
-                  <span className="filled">{o.filled} signed up</span>
-                  <span>of {o.total}</span>
+                <div className="what">
+                  <h4>
+                    <Link className="card-link" to={`/volunteer/${o.id}`} state={{ fromSite: true }}>
+                      {o.title}
+                    </Link>
+                  </h4>
+                  <span className="partner">{o.partner}</span>
                 </div>
+                <div className={`progress ${filled >= total ? 'full' : ''}`}>
+                  <div className="bar">
+                    <div style={{ width: `${Math.min((filled / total) * 100, 100)}%` }}></div>
+                  </div>
+                  <div className="lbl">
+                    <span className="filled">{filled >= total ? 'Full · waitlist' : `${filled} signed up`}</span>
+                    <span>of {total}</span>
+                  </div>
+                </div>
+                <span className="opp-cta">View <span className="arrow">→</span></span>
               </div>
-              <span className="opp-cta">View <span className="arrow">→</span></span>
-            </div>
-          ))}
+            );
+          })}
         </div>
         )}
         <div style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end' }}>
-          <button className="btn btn-ghost" onClick={() => setPage('volunteer')}>
+          <Link className="btn btn-ghost" to="/volunteer">
             See all open needs <span className="arrow">→</span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>
@@ -218,7 +252,7 @@ function CurrentOpportunities({ setPage, openOpp, opportunities = [] }) {
 }
 
 /* ============ Vision ============ */
-function Vision({ setPage }) {
+function Vision() {
   const { vision } = home;
   return (
     <section className="vision">
@@ -245,12 +279,12 @@ function Vision({ setPage }) {
               </div>
             </div>
             <div style={{ marginTop: 32, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button className="btn btn-gold" onClick={() => setPage('volunteer')}>
+              <Link className="btn btn-gold" to="/volunteer">
                 Find a need <span className="arrow">→</span>
-              </button>
-              <button className="btn btn-ghost-light" onClick={() => setPage('who')}>
+              </Link>
+              <Link className="btn btn-ghost-light" to="/who">
                 Read our story
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -260,28 +294,16 @@ function Vision({ setPage }) {
 }
 
 /* ============ HomePage ============ */
-export function HomePage({ setPage, openOpp, opportunities = [] }) {
+export function HomePage({ opportunities = [], partners = [], loading = false }) {
   return (
     <div className="page">
-      <Helmet>
-        <title>Church in the City</title>
-        <meta name="description" content="A collaborative initiative of churches working together to love and serve our city." />
-        <meta property="og:title" content="Church in the City" />
-        <meta property="og:description" content="A collaborative initiative of churches working together to love and serve our city." />
-        <meta property="og:url" content="https://thechurchinthecity.org" />
-        <meta property="og:image" content="https://thechurchinthecity.org/og-default.jpg" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Church in the City" />
-        <meta name="twitter:description" content="A collaborative initiative of churches working together to love and serve our city." />
-        <meta name="twitter:image" content="https://thechurchinthecity.org/og-default.jpg" />
-      </Helmet>
-      <Hero setPage={setPage} />
+      <Seo path="/" />
+      <Hero partners={partners} loading={loading} />
       <Marquee />
       <HowItWorks />
-      <FeaturedPartners setPage={setPage} />
-      <CurrentOpportunities setPage={setPage} openOpp={openOpp} opportunities={opportunities} />
-      <Vision setPage={setPage} />
+      <FeaturedPartners partners={partners} />
+      <CurrentOpportunities opportunities={opportunities} loading={loading} />
+      <Vision />
     </div>
   );
 }

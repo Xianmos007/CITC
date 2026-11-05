@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
-  findVolunteerByEmail,
   submitSignup,
   getSignupCount,
+  loadSavedVolunteer,
+  clearSavedVolunteer,
 } from '../../lib/signups.js';
+import { formatWhen } from '../../lib/format.js';
 import { isSupabaseReady } from '../../lib/supabase.js';
 import { useDialog } from '../../hooks/useDialog.js';
 
@@ -16,10 +18,11 @@ import { useDialog } from '../../hooks/useDialog.js';
 //   'done'    — signup confirmed
 //   'error'   — something went wrong
 // =====================================================================
-export function OppModal({ oppId, opportunities = [], close }) {
+export function OppModal({ oppId, opportunities = [], loading = false, close }) {
   const [state, setState] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const dialogRef = useDialog();
+  // Nothing renders while a shared link is still loading its need.
+  const dialogRef = useDialog(!loading || opportunities.some((x) => x.id === oppId));
 
   // A photo is optional and most opportunities won't have one. If the URL is
   // present but fails to load, we drop the element entirely rather than leave
@@ -32,14 +35,24 @@ export function OppModal({ oppId, opportunities = [], close }) {
   // not the hardcoded number from opportunities.js.
   const [liveFilled, setLiveFilled] = useState(null);
 
-  // Form state
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [church, setChurch] = useState('');
+  // Form state, pre-filled from this device's last signup (if any).
+  const [saved, setSaved] = useState(loadSavedVolunteer);
+  const [name, setName] = useState(saved?.name || '');
+  const [email, setEmail] = useState(saved?.email || '');
+  const [phone, setPhone] = useState(saved?.phone || '');
+  const [church, setChurch] = useState(saved?.church || '');
   const [submitting, setSubmitting] = useState(false);
-  const [lookingUp, setLookingUp] = useState(false);
-  const [knownReturning, setKnownReturning] = useState(false);
+  // 'confirmed' or 'waitlist', as decided by the server.
+  const [resultStatus, setResultStatus] = useState(null);
+
+  const forgetMe = () => {
+    clearSavedVolunteer();
+    setSaved(null);
+    setName('');
+    setEmail('');
+    setPhone('');
+    setChurch('');
+  };
 
   const o = opportunities.find((x) => x.id === oppId);
   const oId = o?.id;
@@ -56,36 +69,52 @@ export function OppModal({ oppId, opportunities = [], close }) {
     };
   }, [oId]);
 
-  if (!o) return null;
+  if (!o) {
+    // Still loading: show nothing yet. Loaded and not found: the link is to
+    // a need that has passed, filled and closed, or was unpublished.
+    if (loading) return null;
+    return (
+      <div className="modal-scrim" onClick={close}>
+        <div
+          className="modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="opp-modal-title"
+          tabIndex={-1}
+          ref={dialogRef}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="modal-close" onClick={close} aria-label="Close">
+            ✕
+          </button>
+          <div className="modal-head">
+            <h2 id="opp-modal-title">This need isn&rsquo;t open anymore.</h2>
+          </div>
+          <div className="modal-body">
+            <p className="lede">
+              It may have already happened, or the ministry took it down. There
+              are other ways to show up this week.
+            </p>
+          </div>
+          <div className="modal-foot">
+            <span className="spots"></span>
+            <div className="modal-actions">
+              <button className="btn btn-primary" onClick={close}>
+                See open needs <span className="arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Use the live count if we have it, otherwise the static fallback
   const filled = liveFilled !== null ? liveFilled : o.filled;
   const full = filled >= o.total;
   const bring = (o.bring || []).filter((b) => String(b).trim());
   const notes = String(o.notes || '').trim();
-
-  // -------------------------------------------------------------------
-  // When the email changes, look up the volunteer to auto-fill the form.
-  // We do this on blur (when the user tabs out of the field) to avoid
-  // hammering the database on every keystroke.
-  // -------------------------------------------------------------------
-  const handleEmailBlur = async () => {
-    if (!email || !email.includes('@')) return;
-    setLookingUp(true);
-    try {
-      const v = await findVolunteerByEmail(email);
-      if (v) {
-        if (!name) setName(v.name || '');
-        if (!phone) setPhone(v.phone || '');
-        if (!church) setChurch(v.church || '');
-        setKnownReturning(true);
-      } else {
-        setKnownReturning(false);
-      }
-    } finally {
-      setLookingUp(false);
-    }
-  };
+  const when = formatWhen(o);
 
   // -------------------------------------------------------------------
   // Submit the signup form.
@@ -97,14 +126,15 @@ export function OppModal({ oppId, opportunities = [], close }) {
     setErrorMessage('');
 
     try {
-      await submitSignup({
+      const result = await submitSignup({
         opportunityId: o.id,
         name,
         email,
         phone,
         church,
-        isWaitlist: full,
       });
+      setResultStatus(result.status);
+      setSaved(loadSavedVolunteer());
       setState('done');
       // Refresh the count
       const newCount = await getSignupCount(o.id);
@@ -144,7 +174,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
           </span>
           <h2 id="opp-modal-title">{o.title}</h2>
           <div className="meta-row">
-            {[o.date, o.time, o.dur, 'Titusville, FL', o.type]
+            {[when.date, when.time, o.dur, when.place, o.type]
               .filter(Boolean)
               .map((item, i) => (
                 <span key={i}>{item}</span>
@@ -157,11 +187,23 @@ export function OppModal({ oppId, opportunities = [], close }) {
           {state === 'done' && (
             <>
               <div className="success-banner" style={{ marginBottom: 24 }}>
-                <h4>You&rsquo;re in.</h4>
-                <p>
-                  We just sent a confirmation to <strong>{email}</strong> with the
-                  details. Bring what&rsquo;s on the list. Bring a friend if you can.
-                </p>
+                {resultStatus === 'waitlist' ? (
+                  <>
+                    <h4>You&rsquo;re on the waitlist.</h4>
+                    <p>
+                      This one filled up. We sent a note to <strong>{email}</strong>,
+                      and we&rsquo;ll email you if a spot opens.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h4>You&rsquo;re in.</h4>
+                    <p>
+                      We just sent a confirmation to <strong>{email}</strong> with the
+                      details. Bring what&rsquo;s on the list. Bring a friend if you can.
+                    </p>
+                  </>
+                )}
               </div>
               {bring.length > 0 && (
                 <>
@@ -208,21 +250,17 @@ export function OppModal({ oppId, opportunities = [], close }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onBlur={handleEmailBlur}
                   autoFocus
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
                 />
-                {lookingUp && (
-                  <span className="hint">Checking if we&rsquo;ve met before&hellip;</span>
-                )}
-                {knownReturning && !lookingUp && (
-                  <span
-                    className="hint"
-                    style={{ color: 'var(--accent)' }}
-                  >
-                    Welcome back. We filled in what we knew.
+                {saved && (
+                  <span className="hint">
+                    Filled in from your last signup on this device.{' '}
+                    <button type="button" className="text-link" onClick={forgetMe}>
+                      Not you? Clear
+                    </button>
                   </span>
                 )}
               </div>

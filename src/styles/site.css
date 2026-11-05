@@ -297,6 +297,8 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .filter-check .ct{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--fg-3);letter-spacing:0.1em;}
 
 .opps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;border-top:1px solid var(--rule);padding-top:20px;}
+/* Home page preview: full-width rows, not the two-column card grid. */
+.opps.opps-rows{grid-template-columns:1fr;gap:0;padding-top:0;}
 .opp-card{min-height:100%;display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--bg-1);border:1px solid var(--rule);border-radius:2px;padding:var(--space-4);cursor:pointer;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;}
 .opp-card:hover{border-color:var(--citc-ink);transform:translateY(-2px);box-shadow:var(--shadow-2);}
 .opp-card-badge{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--citc-clay);background:rgba(169,98,43,0.1);padding:2px 7px;border-radius:2px;line-height:1.4;}
@@ -388,6 +390,9 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--citc-ink);}
 .field textarea{min-height:120px;resize:vertical;font-family:var(--sans);line-height:1.55;}
 .field .hint{font-size:12px;color:var(--fg-3);line-height:1.5;}
+/* Inline text button, e.g. "Not you? Clear" under a field. */
+.text-link{background:none;border:0;padding:0;font:inherit;color:var(--citc-ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer;}
+.text-link:hover{color:var(--accent);}
 .field.error input, .field.error textarea, .field.error select{border-color:var(--citc-clay);}
 .field.error .hint{color:var(--citc-clay);}
 .form-actions{display:flex;gap:12px;padding-top:8px;border-top:1px solid var(--rule);margin-top:8px;flex-wrap:wrap;}
@@ -600,3 +605,6 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .card-link:focus-visible::after{outline:2px solid var(--accent);outline-offset:2px;}
 /* Dialogs take focus on open; the panel itself needs no ring. */
 .modal:focus{outline:none;}
+
+/* Nav, logo and card triggers are real links now (SPEC-audit-fixes 3.1). */
+a.logo-mark,a.nav-link,a.nav-cta,a.mobile-nav-link,a.mobile-nav-cta,a.card-link{text-decoration:none;}
