@@ -19,6 +19,9 @@ export function MetaBar() {
 /* ============ SiteNav ============ */
 export function SiteNav({ page, setPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  // "Find a need" is the only nav entry for the volunteer page, so it
+  // carries the active state there.
+  const onVolunteer = page === 'volunteer';
 
   // Navigating always closes the panel, so the next page isn't hidden behind it.
   const go = (key) => {
@@ -50,13 +53,18 @@ export function SiteNav({ page, setPage }) {
             <button
               key={key}
               className={`nav-link ${page === key ? 'active' : ''}`}
+              aria-current={page === key ? 'page' : undefined}
               onClick={() => setPage(key)}
             >
               {label}
             </button>
           ))}
         </div>
-        <button className="nav-cta" onClick={() => go('volunteer')}>
+        <button
+          className={`nav-cta ${onVolunteer ? 'active' : ''}`}
+          aria-current={onVolunteer ? 'page' : undefined}
+          onClick={() => go('volunteer')}
+        >
           Find a need <span className="arrow">→</span>
         </button>
         <button
@@ -79,12 +87,17 @@ export function SiteNav({ page, setPage }) {
             <button
               key={key}
               className={`mobile-nav-link ${page === key ? 'active' : ''}`}
+              aria-current={page === key ? 'page' : undefined}
               onClick={() => go(key)}
             >
               {label}
             </button>
           ))}
-          <button className="mobile-nav-cta" onClick={() => go('volunteer')}>
+          <button
+            className={`mobile-nav-cta ${onVolunteer ? 'active' : ''}`}
+            aria-current={onVolunteer ? 'page' : undefined}
+            onClick={() => go('volunteer')}
+          >
             Find a need <span className="arrow">→</span>
           </button>
         </div>
@@ -94,6 +107,9 @@ export function SiteNav({ page, setPage }) {
 }
 
 /* ============ Footer ============ */
+// Blog has a real route already; other pages live at "/" until Phase 3.
+const pageHref = (key) => (key === 'blog' ? '/blog' : '/');
+
 export function Footer({ setPage }) {
   return (
     <footer className="site-footer">
@@ -116,9 +132,25 @@ export function Footer({ setPage }) {
             <div key={col.heading} className="footer-col">
               <h4>{col.heading}</h4>
               <ul>
-                {col.links.map((l, i) => (
-                  <li key={i}>
-                    <a onClick={l.page ? () => setPage(l.page) : undefined}>{l.label}</a>
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    {l.href ? (
+                      <a href={l.href}>{l.label}</a>
+                    ) : (
+                      <a
+                        href={pageHref(l.page)}
+                        onClick={(e) => {
+                          // Pages are still in-app state until real URLs land
+                          // (SPEC-audit-fixes Phase 3), so handle plain clicks
+                          // here and let modified clicks fall through.
+                          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                          e.preventDefault();
+                          setPage(l.page);
+                        }}
+                      >
+                        {l.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { volunteerPage } from '../../data/opportunities.js';
 import { BrowseTab } from './BrowseTab.jsx';
-
-const encodeMailto = (value) => encodeURIComponent(value).replace(/'/g, '%27');
-const postNeedHref = `mailto:cristian.m@trinityfla.org?subject=${encodeMailto('New need for the CITC portal')}&body=${encodeMailto("Ministry:\nWhat's the need:\nDate and time:\nVolunteers needed:\nAnything else:")}`;
+import { postNeedHref } from '../../lib/mailto.js';
 
 export function VolunteerPage({ openOpp, opportunities = [], loading = false }) {
   const [tab, setTab] = useState('browse');

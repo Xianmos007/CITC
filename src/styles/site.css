@@ -48,6 +48,8 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .nav-cta:hover{background:var(--accent);color:var(--citc-ink);transform:translateY(-1px);}
 .nav-cta .arrow{display:inline-block;transition:transform 0.25s;}
 .nav-cta:hover .arrow{transform:translateX(4px);}
+/* On the volunteer page the CTA is the active nav item: a gold rule under the label. */
+.nav-cta.active,.mobile-nav-cta.active{box-shadow:inset 0 -2px 0 var(--accent);}
 
 /* Mobile nav: the toggle and panel only exist below 980px, where .nav-links hides. */
 .nav-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;margin-right:-10px;background:none;border:none;cursor:pointer;color:var(--citc-ink);}
@@ -256,6 +258,11 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
 .footer-col a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13.5px;cursor:pointer;transition:color 0.2s;}
 .footer-col a:hover{color:var(--accent-soft);}
+@media (max-width:980px){
+  /* Comfortable tap targets: each footer link is at least 40px tall. */
+  .footer-col ul{gap:0;}
+  .footer-col a{display:inline-flex;align-items:center;min-height:40px;}
+}
 .footer-bottom{padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4);flex-wrap:wrap;gap:16px;}
 
 /* page anim */

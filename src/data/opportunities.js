@@ -149,7 +149,7 @@ export const filterOptions = {
 
 export const volunteerPage = {
   hero: {
-    label: '04 · Volunteer Now',
+    label: '04 · Find a need',
     headingLine1: 'Find a',
     headingEm: 'need',
     headingLine2: '. Show up Saturday.',
