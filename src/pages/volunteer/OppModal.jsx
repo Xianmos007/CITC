@@ -6,6 +6,7 @@ import {
   clearSavedVolunteer,
 } from '../../lib/signups.js';
 import { formatWhen } from '../../lib/format.js';
+import { canAddToCalendar, googleCalendarUrl, downloadIcs } from '../../lib/share.js';
 import { isSupabaseReady } from '../../lib/supabase.js';
 import { useDialog } from '../../hooks/useDialog.js';
 
@@ -24,11 +25,6 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
   // Nothing renders while a shared link is still loading its need.
   const dialogRef = useDialog(!loading || opportunities.some((x) => x.id === oppId));
 
-  // A photo is optional and most opportunities won't have one. If the URL is
-  // present but fails to load, we drop the element entirely rather than leave
-  // a broken-image icon behind. Storing the failed URL rather than a boolean
-  // means opening a different opportunity clears the state on its own.
-  const [failedImageSrc, setFailedImageSrc] = useState(null);
 
   // Live count of how many people have signed up for this opportunity.
   // We fetch this when the modal opens so the "filled" bar is real,
@@ -113,8 +109,6 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
   const filled = liveFilled !== null ? liveFilled : o.filled;
   const full = filled >= o.total;
   const bring = (o.bring || []).filter((b) => String(b).trim());
-  const notes = String(o.notes || '').trim();
-  const when = formatWhen(o);
 
   // -------------------------------------------------------------------
   // Submit the signup form.
@@ -165,22 +159,7 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
           ✕
         </button>
 
-        <div className="modal-head">
-          <span
-            className="eyebrow"
-            style={{ color: full ? 'var(--citc-sage)' : 'var(--accent)' }}
-          >
-            — {o.partner}
-          </span>
-          <h2 id="opp-modal-title">{o.title}</h2>
-          <div className="meta-row">
-            {[when.date, when.time, o.dur, when.place, o.type]
-              .filter(Boolean)
-              .map((item, i) => (
-                <span key={i}>{item}</span>
-              ))}
-          </div>
-        </div>
+        <OppModalHead o={o} full={full} titleId="opp-modal-title" />
 
         <div className="modal-body">
           {/* DONE STATE */}
@@ -205,6 +184,22 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
                   </>
                 )}
               </div>
+              {resultStatus !== 'waitlist' && canAddToCalendar(o) && (
+                <div className="calendar-actions">
+                  <span className="calendar-label">Add to calendar</span>
+                  <a
+                    className="btn btn-ghost btn-sm"
+                    href={googleCalendarUrl(o)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Google Calendar
+                  </a>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => downloadIcs(o)}>
+                    Apple / Outlook (.ics)
+                  </button>
+                </div>
+              )}
               {bring.length > 0 && (
                 <>
                   <h4>What to bring</h4>
@@ -318,47 +313,7 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
           )}
 
           {/* IDLE STATE — opportunity details */}
-          {state === 'idle' && (
-            <>
-              {o.image && failedImageSrc !== o.image && (
-                <img
-                  className="modal-photo"
-                  src={o.image}
-                  alt={o.title}
-                  loading="lazy"
-                  onError={() => setFailedImageSrc(o.image)}
-                />
-              )}
-              <p className="lede">{o.desc}</p>
-              {bring.length > 0 && (
-                <>
-                  <h4>What to bring</h4>
-                  <ul>
-                    {bring.map((b, i) => (
-                      <li key={i}>{b}</li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {notes && (
-                <>
-                  <h4>A note from the coordinator</h4>
-                  <p
-                    style={{
-                      fontFamily: 'var(--serif)',
-                      fontStyle: 'italic',
-                      fontSize: 18,
-                      lineHeight: 1.5,
-                      color: 'var(--citc-ink)',
-                      maxWidth: 580,
-                    }}
-                  >
-                    "{notes}"
-                  </p>
-                </>
-              )}
-            </>
-          )}
+          {state === 'idle' && <OppDetailsBody o={o} />}
         </div>
 
         <div className="modal-foot">
@@ -370,7 +325,6 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
             {/* DONE — show close + calendar button */}
             {state === 'done' && (
               <>
-                {/* "Add to calendar" returns in SPEC-audit-fixes Phase 4. */}
                 <button className="btn btn-primary" onClick={close}>
                   Close
                 </button>
@@ -441,5 +395,82 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
         </div>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Pieces shared with the admin editor's live preview.
+// ---------------------------------------------------------------------
+
+/** Partner eyebrow, title and the date / time / place line. */
+export function OppModalHead({ o, full = false, titleId }) {
+  const when = formatWhen(o);
+  return (
+    <div className="modal-head">
+      {o.partner && (
+        <span className="eyebrow" style={{ color: full ? 'var(--citc-sage)' : 'var(--accent)' }}>
+          — {o.partner}
+        </span>
+      )}
+      <h2 id={titleId}>{o.title}</h2>
+      <div className="meta-row">
+        {[when.date, when.time, o.dur, when.place, o.type]
+          .filter(Boolean)
+          .map((item, i) => (
+            <span key={i}>{item}</span>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+/** Photo, description, what to bring, coordinator note. */
+export function OppDetailsBody({ o }) {
+  // A photo is optional and most opportunities won't have one. If the URL
+  // fails to load, drop the element rather than leave a broken-image icon.
+  // Storing the failed URL (not a boolean) resets it for a new photo.
+  const [failedImageSrc, setFailedImageSrc] = useState(null);
+  const bring = (o.bring || []).filter((b) => String(b).trim());
+  const notes = String(o.notes || '').trim();
+  return (
+    <>
+      {o.image && failedImageSrc !== o.image && (
+        <img
+          className="modal-photo"
+          src={o.image}
+          alt={o.title}
+          loading="lazy"
+          onError={() => setFailedImageSrc(o.image)}
+        />
+      )}
+      {o.desc && <p className="lede">{o.desc}</p>}
+      {bring.length > 0 && (
+        <>
+          <h4>What to bring</h4>
+          <ul>
+            {bring.map((b, i) => (
+              <li key={i}>{b}</li>
+            ))}
+          </ul>
+        </>
+      )}
+      {notes && (
+        <>
+          <h4>A note from the coordinator</h4>
+          <p
+            style={{
+              fontFamily: 'var(--serif)',
+              fontStyle: 'italic',
+              fontSize: 18,
+              lineHeight: 1.5,
+              color: 'var(--citc-ink)',
+              maxWidth: 580,
+            }}
+          >
+            "{notes}"
+          </p>
+        </>
+      )}
+    </>
   );
 }

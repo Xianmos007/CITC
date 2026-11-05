@@ -608,3 +608,7 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 
 /* Nav, logo and card triggers are real links now (SPEC-audit-fixes 3.1). */
 a.logo-mark,a.nav-link,a.nav-cta,a.mobile-nav-link,a.mobile-nav-cta,a.card-link{text-decoration:none;}
+
+/* Signup done state: add-to-calendar row (SPEC-audit-fixes 4.6). */
+.calendar-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 28px;}
+.calendar-label{font-family:var(--mono);font-size:10.5px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-3);margin-right:6px;}

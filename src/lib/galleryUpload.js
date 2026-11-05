@@ -11,7 +11,8 @@
 //   - Re-encoding through a canvas also normalizes EXIF orientation, so
 //     photos don't show up sideways.
 // =====================================================================
-import { supabase } from './supabase.js';
+// Admin panel only: uses the admin client, which keeps the session.
+import { supabaseAdmin as supabase } from './supabaseAdmin.js';
 
 const BUCKET = 'gallery';
 const MAX_DIM = 2000; // longest edge, px — plenty sharp for web, much smaller than raw

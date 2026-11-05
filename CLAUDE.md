@@ -26,10 +26,16 @@ anything he must do himself in plain steps; don't narrate work already done.
 - `src/App.jsx` — routing + public frame. Admin renders at `/#admin`.
 - `src/components/Chrome.jsx` — meta bar, nav, footer
 - `src/pages/` — public pages; `volunteer/` has BrowseTab + OppModal
-- `src/pages/AdminPage.jsx` — whole admin panel (opportunities, partners,
-  gallery, signups)
-- `src/lib/` — `supabase.js` (client), `content.js` (public reads + row
-  mappers), `signups.js`, `admin.js` (admin CRUD), `galleryUpload.js`
+- `src/pages/admin/` — admin panel, lazy-loaded at `#admin`: `AdminPage.jsx`
+  (auth gate + tabs), one file per view (`OpportunitiesView`, `OppEditor`,
+  `RosterDrawer`, `PartnersView`, `GalleryView`, `SignupsView`), shared
+  pieces in `components/` (`Drawer`, `ChipInput`, `PhotoDropzone`)
+- `src/components/OppCard.jsx` — the public opportunity card, also used by the
+  admin editor's live preview (as are `OppModalHead`/`OppDetailsBody`)
+- `src/lib/` — `supabase.js` (public client, no session), `supabaseAdmin.js`
+  (admin client, persisted session), `content.js` (public reads + row
+  mappers), `format.js` (`formatWhen`), `share.js` (links, text message,
+  calendar), `signups.js`, `admin.js` (admin CRUD), `galleryUpload.js`
 - `src/hooks/useContent.js` — loads DB content once; falls back to
   `src/data/*.js` static content if the DB is unreachable
 - `src/data/` — editable copy for each page (headings, nav, footer)

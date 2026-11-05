@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { Link, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MetaBar, SiteNav, Footer } from './components/Chrome.jsx';
 import { Seo } from './components/Seo.jsx';
@@ -10,8 +10,12 @@ import { BlogPost } from './pages/BlogPost.jsx';
 import { GalleryPage } from './pages/GalleryPage.jsx';
 import { VolunteerPage } from './pages/volunteer/VolunteerPage.jsx';
 import { OppModal } from './pages/volunteer/OppModal.jsx';
-import { AdminPage } from './pages/AdminPage.jsx';
 import { useContent } from './hooks/useContent.js';
+
+// The admin panel is its own bundle, loaded only at #admin.
+const AdminPage = lazy(() =>
+  import('./pages/admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage }))
+);
 
 // /volunteer and /volunteer/<id> are the same page (the id just opens the
 // modal), so they count as one place for scroll-to-top.
@@ -48,7 +52,13 @@ export default function App() {
   }, [location.pathname]);
 
   // Admin panel renders standalone — no public chrome.
-  if (isAdmin) return <AdminPage />;
+  if (isAdmin) {
+    return (
+      <Suspense fallback={null}>
+        <AdminPage />
+      </Suspense>
+    );
+  }
 
   const { opportunities, partners, galleryPhotos, galleryCategories, loading } = content;
 

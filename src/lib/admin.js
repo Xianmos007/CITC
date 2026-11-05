@@ -8,7 +8,8 @@
 //
 // Column names match the EXISTING Stage 1 schema (see content.js header).
 // =====================================================================
-import { supabase } from './supabase.js';
+// Admin panel only: uses the admin client, which keeps the session.
+import { supabaseAdmin as supabase } from './supabaseAdmin.js';
 
 // ---- Auth ----
 
@@ -42,7 +43,7 @@ export async function signOut() {
 export async function adminListOpportunities() {
   const { data, error } = await supabase
     .from('opportunities')
-    .select(`*, partner:partners ( id, name )`)
+    .select(`*, partner:partners ( * )`)
     .order('event_date', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true });
   if (error) throw new Error(error.message);
@@ -58,34 +59,51 @@ export async function adminListPartners() {
   return data || [];
 }
 
-export async function createOpportunity(fields) {
+// Columns an opportunity save writes. The editor builds this shape;
+// see OppEditor.formToPayload.
+function oppPayload(fields) {
   const payload = {
     partner_id: fields.partner_id || null,
     title: fields.title?.trim(),
     description: fields.description?.trim() || null,
     event_date: fields.event_date || null,
+    start_time: fields.start_time || null,
     date_label: fields.date_label?.trim() || null,
     time_label: fields.time_label?.trim() || null,
     duration_label: fields.duration_label?.trim() || null,
+    location: fields.location?.trim() || null,
+    is_virtual: Boolean(fields.is_virtual),
+    is_ongoing: Boolean(fields.is_ongoing),
     kind: fields.kind?.trim() || null,
     is_featured: fields.is_featured ?? false,
     total_spots: Number(fields.total_spots) || 1,
-    bring_list: fields.bring_list || [],       // jsonb
+    bring_list: fields.bring_list || [], // jsonb
     coordinator_note: fields.coordinator_note?.trim() || null,
-    skill_tags: fields.skill_tags || [],       // jsonb
+    skill_tags: fields.skill_tags || [], // jsonb
     is_published: fields.is_published ?? true,
   };
-  // Only sent when a photo was actually attached. Including the key
-  // unconditionally would make every insert fail until migration 0009 adds
-  // the column, including the far more common no-photo case.
-  if (fields.image_url) payload.image_url = fields.image_url;
+  if ('image_url' in fields) payload.image_url = fields.image_url || null;
+  return payload;
+}
+
+export async function createOpportunity(fields) {
   const { data, error } = await supabase
     .from('opportunities')
-    .insert(payload)
+    .insert(oppPayload(fields))
     .select()
     .single();
   if (error) throw new Error(error.message);
   return data;
+}
+
+/** Insert several opportunities at once (the editor's "Repeat" option). */
+export async function createOpportunities(list) {
+  const { data, error } = await supabase
+    .from('opportunities')
+    .insert(list.map(oppPayload))
+    .select();
+  if (error) throw new Error(error.message);
+  return data || [];
 }
 
 export async function createPartner(fields) {
@@ -109,6 +127,10 @@ export async function createPartner(fields) {
     .single();
   if (error) throw new Error(error.message);
   return data;
+}
+
+export async function saveOpportunity(id, fields) {
+  return updateOpportunity(id, oppPayload(fields));
 }
 
 export async function updateOpportunity(id, fields) {
@@ -161,6 +183,39 @@ export async function adminListSignups() {
     .order('created_at', { ascending: false });
   if (error) throw new Error(error.message);
   return data || [];
+}
+
+/**
+ * Signup counts for every opportunity (published or not, past or not):
+ * { [opportunity_id]: { confirmed, waitlist } }. Admins can read signups
+ * directly through the signups_admin_all policy.
+ */
+export async function adminSignupCounts() {
+  const { data, error } = await supabase.from('signups').select('opportunity_id, status');
+  if (error) throw new Error(error.message);
+  const counts = {};
+  (data || []).forEach(({ opportunity_id: id, status }) => {
+    const c = (counts[id] ||= { confirmed: 0, waitlist: 0 });
+    if (status === 'confirmed') c.confirmed++;
+    else if (status === 'waitlist') c.waitlist++;
+  });
+  return counts;
+}
+
+/** Everyone signed up for one opportunity, oldest first. */
+export async function adminListRoster(opportunityId) {
+  const { data, error } = await supabase
+    .from('signups')
+    .select('id, status, created_at, volunteer:volunteers ( name, email, phone, church )')
+    .eq('opportunity_id', opportunityId)
+    .order('created_at', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function updateSignupStatus(signupId, status) {
+  const { error } = await supabase.from('signups').update({ status }).eq('id', signupId);
+  if (error) throw new Error(error.message);
 }
 
 // ---- Gallery CRUD (admin) ------------------------------------------

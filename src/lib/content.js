@@ -16,7 +16,9 @@ const asArray = (v) => (Array.isArray(v) ? v : []);
 
 // ---- Row mappers: DB shape -> the shape the components already use ----
 
-function mapOpportunity(row) {
+// Exported for the admin editor's live preview, which renders the public
+// card from form values.
+export function mapOpportunity(row) {
   const partner = row.partner || {};
   return {
     id: row.id, // UUID — this is what signups.opportunity_id references
