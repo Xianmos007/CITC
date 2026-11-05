@@ -67,7 +67,7 @@ Claude Code: add an entry at the end of every phase or manual change.
   `ai-design-check.json` (proper nouns). Live scan: 0 contrast, size or
   heading-order findings; code check: 0 errors. Deployed after
   re-running a Pages deploy that GitHub had stuck behind PR #4's.
-- **PR #6 — Volunteer list heading** (merged). "Open this week & next"
+- **PR #7 — Volunteer list heading** (merged). "Open this week & next"
   is now an h2 (the live scan caught h1 → h3 when the filter sidebar is
   hidden).
 
