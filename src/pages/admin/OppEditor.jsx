@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createOpportunity, createOpportunities, saveOpportunity } from '../../lib/admin.js';
 import { mapOpportunity } from '../../lib/content.js';
 import { copyText, textMessage } from '../../lib/share.js';
@@ -110,6 +110,13 @@ export function OppEditor({ opp, copyFrom, presetPartnerId, rows = [], partners 
   const touched = useRef(new Set());
   const dateRef = useRef(null);
 
+  // Duplicating: the date is the one thing to change, so start there.
+  // (An effect rather than autoFocus, so it runs after the drawer's own
+  // focus handling.)
+  useEffect(() => {
+    if (copyFrom) dateRef.current?.focus();
+  }, [copyFrom]);
+
   const set = (k, v) => {
     touched.current.add(k);
     setF((prev) => ({ ...prev, [k]: v }));
@@ -125,20 +132,25 @@ export function OppEditor({ opp, copyFrom, presetPartnerId, rows = [], partners 
     set('partner_id', id);
     setErrors((e) => ({ ...e, partner_id: undefined }));
     if (!isNew || copyFrom || !id) return;
-    const last = rows
+    // Most recently created first. Each field comes from the newest of
+    // this partner's needs that actually has a value for it.
+    const history = rows
       .filter((r) => r.partner_id === id)
-      .sort((a, b) => (b.event_date || b.created_at || '').localeCompare(a.event_date || a.created_at || ''))[0];
-    if (!last) {
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    if (!history.length) {
       setDefaultsHint('');
       return;
     }
-    const fill = {
-      location: last.location || '',
-      bring_list: Array.isArray(last.bring_list) ? last.bring_list : [],
-      kind: last.kind || '',
-      coordinator_note: last.coordinator_note || '',
-      total_spots: last.total_spots ?? 6,
-    };
+    const pick = (get) => history.map(get).find((v) => (Array.isArray(v) ? v.length : v)) ?? null;
+    const fill = Object.fromEntries(
+      Object.entries({
+        location: pick((r) => r.location),
+        bring_list: pick((r) => r.bring_list),
+        kind: pick((r) => r.kind),
+        coordinator_note: pick((r) => r.coordinator_note),
+        total_spots: pick((r) => r.total_spots),
+      }).filter(([, v]) => v !== null)
+    );
     setF((prev) => {
       const next = { ...prev, partner_id: id };
       Object.entries(fill).forEach(([k, v]) => {
@@ -276,7 +288,6 @@ export function OppEditor({ opp, copyFrom, presetPartnerId, rows = [], partners 
                     id="oe-date"
                     ref={dateRef}
                     type="date"
-                    autoFocus={Boolean(copyFrom)}
                     value={f.event_date}
                     onChange={(e) => {
                       set('event_date', e.target.value);

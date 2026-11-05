@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const FOCUSABLE = [
   'a[href]',
@@ -19,18 +19,21 @@ const FOCUSABLE = [
 // loading); the behavior starts once it becomes true.
 export function useDialog(active = true) {
   const ref = useRef(null);
+  // Remember what opened the dialog on first render, before any autoFocus
+  // field inside it takes focus.
+  const [trigger] = useState(() => (typeof document === 'undefined' ? null : document.activeElement));
 
   useEffect(() => {
     const node = ref.current;
     if (!active || !node) return undefined;
-    const trigger = document.activeElement;
 
     const focusables = () =>
       [...node.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
 
     // Focus the dialog itself (it has tabIndex=-1) so screen readers start
-    // at the title, and the first Tab lands on the first control.
-    node.focus({ preventScroll: true });
+    // at the title, and the first Tab lands on the first control — unless a
+    // field inside already took focus (autoFocus).
+    if (!node.contains(document.activeElement)) node.focus({ preventScroll: true });
 
     const onKey = (e) => {
       if (e.key !== 'Tab') return;
@@ -59,7 +62,7 @@ export function useDialog(active = true) {
         trigger.focus({ preventScroll: true });
       }
     };
-  }, [active]);
+  }, [active, trigger]);
 
   return ref;
 }
