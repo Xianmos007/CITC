@@ -8,7 +8,8 @@
 //
 // Column names match the EXISTING Stage 1 schema (see content.js header).
 // =====================================================================
-import { supabase } from './supabase.js';
+// Admin panel only: uses the admin client, which keeps the session.
+import { supabaseAdmin as supabase } from './supabaseAdmin.js';
 
 // ---- Auth ----
 
