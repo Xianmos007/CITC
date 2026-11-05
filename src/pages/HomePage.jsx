@@ -207,7 +207,7 @@ function CurrentOpportunities({ opportunities = [], loading = false }) {
             <p>We're lining up Saturdays with our partners now. Check back soon.</p>
           </div>
         ) : (
-        <div className="opps">
+        <div className="opps opps-rows">
           {opps.map((o) => {
             const { date, time, place } = formatWhen(o);
             const filled = Number(o.filled) || 0;

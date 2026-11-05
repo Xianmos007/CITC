@@ -297,6 +297,8 @@ body[data-motion="off"] *, body[data-motion="off"] *::before, body[data-motion="
 .filter-check .ct{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--fg-3);letter-spacing:0.1em;}
 
 .opps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;border-top:1px solid var(--rule);padding-top:20px;}
+/* Home page preview: full-width rows, not the two-column card grid. */
+.opps.opps-rows{grid-template-columns:1fr;gap:0;padding-top:0;}
 .opp-card{min-height:100%;display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--bg-1);border:1px solid var(--rule);border-radius:2px;padding:var(--space-4);cursor:pointer;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;}
 .opp-card:hover{border-color:var(--citc-ink);transform:translateY(-2px);box-shadow:var(--shadow-2);}
 .opp-card-badge{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--citc-clay);background:rgba(169,98,43,0.1);padding:2px 7px;border-radius:2px;line-height:1.4;}
