@@ -56,6 +56,12 @@ work yourself; only stop for him where marked **ask first**.
   changes before the deploy that needs them; closing/dropping after).
 - **Data:** add or edit opportunities, partners, gallery rows yourself with
   `execute_sql` when Cristian gives you the details. Read back what you wrote.
+- **Spots filled outside the site:** when Cristian says a need is full or
+  that N people signed up elsewhere, don't lower `total_spots`. Add confirmed
+  signups from the placeholder volunteers "Filled elsewhere 1"–"10"
+  (`filled-elsewhere-N@placeholder.invalid`; add more numbers if ever
+  needed). Insert them with SQL so no email is sent. Anything that emails or
+  exports a roster must skip `@placeholder.invalid` addresses.
 - **Edge functions:** deploy changed functions yourself with
   `deploy_edge_function`, then check `query_logs` for errors after a test.
 - **Git:** work on a branch, commit in small steps, open a PR. When

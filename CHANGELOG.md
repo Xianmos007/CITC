@@ -9,8 +9,12 @@ Claude Code: add an entry at the end of every phase or manual change.
 ## 2026-11-09
 
 ### Database
-- **Food Pantry Donation Sorting** (Nov 16) marked full: `total_spots` 4 → 2
-  to match its 2 confirmed signups. New signups now join the waitlist.
+- **Food Pantry Donation Sorting** (Nov 16) marked full. First done by
+  lowering spots 4 → 2; switched the same day to the placeholder method:
+  spots back to 4, plus 2 placeholder signups for volunteers who signed up
+  outside the site. Shows 4 of 4.
+- Created 10 reusable placeholder volunteers, "Filled elsewhere 1"–"10"
+  (`filled-elsewhere-N@placeholder.invalid`, church "Placeholder").
 
 ## 2026-11-05 (evening)
 
