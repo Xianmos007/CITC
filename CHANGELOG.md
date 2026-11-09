@@ -6,6 +6,12 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-09
+
+### Database
+- **Food Pantry Donation Sorting** (Nov 16) marked full: `total_spots` 4 → 2
+  to match its 2 confirmed signups. New signups now join the waitlist.
+
 ## 2026-11-05 (evening)
 
 ### Database
