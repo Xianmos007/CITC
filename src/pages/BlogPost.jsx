@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { blogPosts, featuredPost } from '../data/blog.js';
 
 const allPosts = [featuredPost, ...blogPosts];
-const DEFAULT_OG_IMAGE = 'https://thechurchinthecity.org/og-default.jpg';
+const DEFAULT_OG_IMAGE = 'https://thechurchinthecity.org/og-default.jpg?v=2';
 const SITE_URL = 'https://thechurchinthecity.org';
 const markdownBodies = import.meta.glob('../content/blog/*.md', {
   query: '?raw',
