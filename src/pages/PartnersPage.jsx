@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { PhotoCollage } from '../components/PhotoCollage.jsx';
+import { pagePhotos } from '../data/pagePhotos.js';
+import { useReveal } from '../hooks/useReveal.js';
 import { partnersPage } from '../data/partners.js';
 import { becomePartnerHref, emailTeamHref } from '../lib/mailto.js';
 import { Seo } from '../components/Seo.jsx';
@@ -8,6 +11,8 @@ const statusClass = (s) =>
 
 export function PartnersPage({ partners = [], loading = false }) {
   const [filter, setFilter] = useState('all');
+  const rootRef = useRef(null);
+  useReveal(rootRef);
   const ministryPartners = partners.filter((p) => (p.kind || 'ministry') !== 'church');
 
   const filtered = ministryPartners.filter(
@@ -30,13 +35,16 @@ export function PartnersPage({ partners = [], loading = false }) {
   const { hero, cta } = partnersPage;
 
   return (
-    <div className="page">
+    <div className="page" ref={rootRef}>
       <Seo path="/partners" />
-      <section className="page-hero">
+      <section className="page-hero has-photos">
         <div className="container">
+          <div className="page-hero-text">
           <span className="label">{hero.label}</span>
           <h1>{hero.headingLine1} <em>{hero.headingEm}</em> {hero.headingLine2}</h1>
           <p className="sub">{hero.sub}</p>
+          </div>
+          <PhotoCollage photos={pagePhotos.partners} />
         </div>
       </section>
       <section className="section">
@@ -56,7 +64,7 @@ export function PartnersPage({ partners = [], loading = false }) {
               </div>
             )}
             {!loading && filtered.map((p) => (
-              <div key={p.id} className="partner-full">
+              <div key={p.id} className="partner-full reveal">
                 <div>
                   <span className={`status ${statusClass(p.status)}`}>{p.status}</span>
                   <h2 style={{ marginTop: 18 }}>{p.name}</h2>

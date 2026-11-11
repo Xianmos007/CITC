@@ -1,4 +1,8 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { PhotoCollage, PhotoBand } from '../components/PhotoCollage.jsx';
+import { pagePhotos, whoBand } from '../data/pagePhotos.js';
+import { useReveal } from '../hooks/useReveal.js';
 import { who } from '../data/who.js';
 import { Seo } from '../components/Seo.jsx';
 
@@ -8,22 +12,27 @@ const churchInterestHref = `mailto:cristian.m@trinityfla.org?subject=${encodeMai
 export function WhoPage({ partners = [] }) {
   const { hero, foundation, mission, origin, values, weAreNot, cta } = who;
   const churches = partners.filter((p) => p.kind === 'church');
+  const rootRef = useRef(null);
+  useReveal(rootRef);
 
   return (
-    <div className="page">
+    <div className="page" ref={rootRef}>
       <Seo path="/who" />
-      <section className="page-hero">
+      <section className="page-hero has-photos">
         <div className="container">
+          <div className="page-hero-text">
           <span className="label">{hero.label}</span>
           <h1>{hero.headingLine1} <em>{hero.headingEm}</em> {hero.headingLine2}</h1>
           <p className="sub">{hero.sub}</p>
+          </div>
+          <PhotoCollage photos={pagePhotos.who} />
         </div>
       </section>
 
       {/* Jer 29:7 Foundation */}
       <section className="section section-alt">
         <div className="container">
-          <div className="who-split">
+          <div className="who-split reveal">
             <div>
               <span className="eyebrow">{foundation.eyebrow.replace(/^—\s*/, "")}</span>
               <h2>
@@ -50,7 +59,7 @@ export function WhoPage({ partners = [] }) {
      {/* Mission */}
       <section className="section">
         <div className="container">
-          <div className="who-split">
+          <div className="who-split reveal">
             <div>
               <span className="eyebrow">{mission.eyebrow.replace(/^—\s*/, "")}</span>
               <h2>
@@ -71,10 +80,12 @@ export function WhoPage({ partners = [] }) {
         </div>
       </section>
 
+      <PhotoBand photo={whoBand} />
+
       {/* Origin */}
       <section className="section">
         <div className="container">
-          <div className="who-split">
+          <div className="who-split reveal">
             <div>
               <span className="eyebrow">{origin.eyebrow.replace(/^—\s*/, "")}</span>
               <h2>
@@ -98,13 +109,13 @@ export function WhoPage({ partners = [] }) {
       {/* Six Core Values */}
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head reveal">
             <h2>{values.heading}</h2>
             <p>{values.sub}</p>
           </div>
           <div className="values">
             {values.items.map((v, i) => (
-              <div key={i} className="value">
+              <div key={i} className="value reveal" style={{ '--rd': `${(i % 3) * 0.08}s` }}>
                 <div className="vnum">{v.roman}</div>
                 <h3>{v.title}</h3>
                 <p>{v.body}</p>
@@ -117,7 +128,7 @@ export function WhoPage({ partners = [] }) {
       {/* What we are / what we are not */}
       <section className="section section-alt">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head reveal">
             <h2>
               {weAreNot.headingLine1}{' '}
               <em>{weAreNot.headingEm}</em>{' '}
@@ -126,13 +137,13 @@ export function WhoPage({ partners = [] }) {
             <p>{weAreNot.sub}</p>
           </div>
           <div className="isnt">
-            <div className="isnt-col we">
+            <div className="isnt-col we reveal">
               <h3>We are</h3>
               <ul>
                 {weAreNot.weAre.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
             </div>
-            <div className="isnt-col not">
+            <div className="isnt-col not reveal" style={{ '--rd': '.08s' }}>
               <h3>We are not</h3>
               <ul>
                 {weAreNot.weAreNot.map((l, i) => <li key={i}>{l}</li>)}
@@ -144,7 +155,7 @@ export function WhoPage({ partners = [] }) {
 
       <section className="section partner-churches">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head reveal">
             <div>
               <span className="eyebrow">Partner churches</span>
               <h2>The churches who keep <em>showing</em> up.</h2>
@@ -155,7 +166,7 @@ export function WhoPage({ partners = [] }) {
           {churches.length > 0 ? (
             <div className="church-grid">
               {churches.map((church) => (
-                <article key={church.id} className="church-card">
+                <article key={church.id} className="church-card reveal">
                   {church.logo && <img src={church.logo} alt="" />}
                   <h3>{church.name}</h3>
                   {church.location && <span>{church.location}</span>}
