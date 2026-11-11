@@ -6,7 +6,7 @@
 // ============================================================
 
 export const siteUrl = 'https://thechurchinthecity.org';
-export const defaultImage = `${siteUrl}/og-default.jpg`;
+export const defaultImage = `${siteUrl}/og-default.jpg?v=2`;
 export const siteName = 'Church in the City';
 
 const defaultDescription =

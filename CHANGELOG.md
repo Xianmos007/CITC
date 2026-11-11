@@ -6,6 +6,24 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-11 — New link preview image (branch `claude/project-thread-rs09bx`)
+
+### Code
+- `public/og-default.jpg` replaced with a 1200x630 preview in the redesign's
+  look: the Titusville sunrise scene from the homepage hero (frozen with the
+  windows lit), the flame and "Church in the City", the hero headline
+  "Seek the welfare of the city." in Fraunces with "welfare" in gold, and the
+  line "A network of local churches · Titusville, FL" in Figtree.
+- The preview URL is now `og-default.jpg?v=2` in `index.html`,
+  `src/data/pageMeta.js` (used by `Seo.jsx` and the prerender script) and
+  `src/pages/BlogPost.jsx`, so Facebook, iMessage and others fetch the new
+  file instead of a cached copy. Blog posts with their own cover keep it.
+
+### Manual
+- After deploy, rescrape the homepage in Facebook's Sharing Debugger.
+
+---
+
 ## 2026-11-10 — Security hardening (branch `security/hardening`)
 
 From a security review of the site, database, and hosting.
