@@ -6,6 +6,16 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-10 — Fix: Partners page "How we serve together" list
+
+### Code (GitHub)
+- The redesign's hero tags used the class `.need`, which the Partners page
+  already used for each "How we serve together" item, so those items were
+  absolutely positioned and stacked on top of each other on the live site.
+  Hero tags are now `.scene-tag`.
+- Partners page shows one partner per row (the two-up layout squeezed
+  each card's two columns).
+
 ## 2026-11-10 — Visual redesign (branch `redesign/calm-refresh`)
 
 ### Code (GitHub)

@@ -337,7 +337,7 @@ export function HeroScene({ opportunities = [] }) {
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
-    scene.querySelectorAll('.need').forEach((el) => {
+    scene.querySelectorAll('.scene-tag').forEach((el) => {
       const card = el.querySelector('.need-card');
       const left = parseFloat(el.style.left);
       const half = card.offsetWidth / 2;
@@ -382,7 +382,7 @@ export function HeroScene({ opportunities = [] }) {
       {slots.map(({ o, i, p }, k) => (
         <div
           key={o.id}
-          className={`need ${(reduced ? k === 0 : showing && step === k) ? 'on' : ''}`}
+          className={`scene-tag ${(reduced ? k === 0 : showing && step === k) ? 'on' : ''}`}
           style={{ left: p.left, top: p.top, '--stem': `${STEMS[i]}px` }}
         >
           <div className="need-card">
