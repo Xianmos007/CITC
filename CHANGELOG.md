@@ -6,6 +6,33 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-10 — Security hardening (branch `security/hardening`)
+
+From a security review of the site, database, and hosting.
+
+### Database (applied to Supabase)
+- **Migration 0014** (`0014_tighten_gallery_and_functions.sql`): gallery
+  tables and the `gallery` storage folder now require `is_admin()` to
+  write (were open to any signed-in user); the folder accepts only JPEG /
+  PNG / WebP up to 10 MB; `search_path` pinned on `is_admin`,
+  `get_opportunity_signup_count`, `lookup_my_signups`, `touch_updated_at`.
+  Verified: a non-admin signed-in user changes 0 gallery rows; admin and
+  public reads unchanged. Supabase advisors: search-path warnings cleared.
+
+### Code (GitHub)
+- `npm audit fix`: react-router-dom 7.18.5, vite 8.3.7 (and dev tools).
+  Packages the site ships: 0 known vulnerabilities. Remaining: 4 moderate
+  in eslint's `minimatch` (lint tool only, needs a breaking upgrade).
+- CLAUDE.md: standing rule to run `npm audit` and the Supabase security
+  advisors with every update, and the permission rules to keep.
+
+### Manual (Cristian, dashboards)
+- GitHub → Settings → Pages → **Enforce HTTPS** (http:// was not
+  redirecting).
+- Supabase → Authentication → **Leaked password protection** on.
+- Kept: second admin email `cristianmoscoso7@gmail.com` (Cristian's backup;
+  no account yet; safe while public signups stay disabled).
+
 ## 2026-11-10 — Photos on inner pages (branch `design/inner-pages`)
 
 ### Code (GitHub)
