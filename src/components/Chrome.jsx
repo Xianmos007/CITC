@@ -3,20 +3,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { site } from '../data/site.js';
 import flameUrl from '../assets/flame.png';
 
-/* ============ MetaBar ============ */
-export function MetaBar() {
-  return (
-    <div className="meta-bar">
-      <div className="meta-bar-inner">
-        <span className="meta-bar-label">{site.metaBar.label}</span>
-        <div className="meta-bar-right">
-          <span>{site.metaBar.scripture}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ============ SiteNav ============ */
 const linkClass = (base) => ({ isActive }) => `${base} ${isActive ? 'active' : ''}`;
 
@@ -111,7 +97,7 @@ export function Footer() {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="logo-mark">
-              <img src={flameUrl} alt="" style={{ width: 32, height: 'auto' }} />
+              <img src={flameUrl} alt="" />
               <div>
                 <div className="logo-text">{site.brand.name}</div>
                 <div className="logo-sub">{site.brand.locationLong}</div>

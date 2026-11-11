@@ -216,15 +216,8 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
           {/* ERROR STATE */}
           {state === 'error' && (
             <>
-              <div
-                className="success-banner"
-                style={{
-                  marginBottom: 24,
-                  borderColor: '#c5443c',
-                  background: 'rgba(197,68,60,0.06)',
-                }}
-              >
-                <h4 style={{ color: '#a83a32' }}>Hm — something went wrong.</h4>
+              <div className="success-banner error" style={{ marginBottom: 24 }}>
+                <h4>Hm — something went wrong.</h4>
                 <p>{errorMessage}</p>
               </div>
             </>
@@ -294,17 +287,7 @@ export function OppModal({ oppId, opportunities = [], loading = false, close }) 
                 </div>
               </div>
 
-              <p
-                style={{
-                  fontFamily: 'var(--mono)',
-                  fontSize: 12,
-                  letterSpacing: '0.04em',
-                  color: 'var(--fg-3)',
-                  lineHeight: 1.5,
-                  marginTop: 16,
-                  maxWidth: 580,
-                }}
-              >
+              <p className="modal-fineprint">
                 By signing up, your contact info will be shared with the partner
                 ministry so they can coordinate with you. We don’t share it
                 beyond that.
@@ -408,8 +391,8 @@ export function OppModalHead({ o, full = false, titleId }) {
   return (
     <div className="modal-head">
       {o.partner && (
-        <span className="eyebrow" style={{ color: full ? 'var(--citc-sage)' : 'var(--accent-text)' }}>
-          — {o.partner}
+        <span className="eyebrow" style={full ? { color: 'var(--ok-text)' } : undefined}>
+          {o.partner}
         </span>
       )}
       <h2 id={titleId}>{o.title}</h2>
@@ -457,16 +440,7 @@ export function OppDetailsBody({ o }) {
       {notes && (
         <>
           <h4>A note from the coordinator</h4>
-          <p
-            style={{
-              fontFamily: 'var(--serif)',
-              fontStyle: 'italic',
-              fontSize: 18,
-              lineHeight: 1.5,
-              color: 'var(--citc-ink)',
-              maxWidth: 580,
-            }}
-          >
+          <p className="modal-note">
             "{notes}"
           </p>
         </>

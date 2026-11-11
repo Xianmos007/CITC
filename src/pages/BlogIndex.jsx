@@ -43,7 +43,7 @@ export function BlogIndex() {
                 {c.label} <span className="count">{counts[c.key]}</span>
               </button>
             ))}
-            <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 12, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)', alignSelf: 'center' }}>
+            <div className="chips-meta">
               {pieceCount} {pieceCount === 1 ? 'piece' : 'pieces'}
             </div>
           </div>
@@ -59,11 +59,11 @@ export function BlogIndex() {
               </div>
               <div className="bf-body">
                 <div className="bf-meta">
-                  <span className="eyebrow">— {featuredPost.category}</span>
+                  <span className="eyebrow">{featuredPost.category}</span>
                   <span className="dot-sep">·</span>
                   <span className="bf-date">{featuredPost.date}</span>
                   <span className="dot-sep">·</span>
-                  <span className="bf-read">{featuredPost.readtime || featuredPost.read} READ</span>
+                  <span className="bf-read">{featuredPost.readtime || featuredPost.read} read</span>
                 </div>
                 <h2>{featuredPost.title}</h2>
                 <p className="bf-dek">{featuredPost.dek}</p>
@@ -86,7 +86,7 @@ export function BlogIndex() {
               <Link key={p.id} className="blog-row" to={`/blog/${p.id}`}>
                 <div className="br-date">
                   <span className="d">{p.date}</span>
-                  <span className="r">{p.read} READ</span>
+                  <span className="r">{p.read} read</span>
                 </div>
                 <div className="br-body">
                   <span className="br-cat">{p.category}</span>

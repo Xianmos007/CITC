@@ -124,11 +124,11 @@ export function BlogPost() {
             </div>
           )}
           <div className="blog-post-meta">
-            <span className="eyebrow">— {post.category}</span>
+            <span className="eyebrow">{post.category}</span>
             <span className="dot-sep">·</span>
             <span>{post.date}</span>
             <span className="dot-sep">·</span>
-            <span>{read} READ</span>
+            <span>{read} read</span>
           </div>
           <h1>{post.title}</h1>
           <p className="blog-post-dek">{post.dek}</p>

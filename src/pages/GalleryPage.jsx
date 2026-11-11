@@ -61,8 +61,8 @@ export function GalleryPage({ photos: dbPhotos, categories: dbCategories }) {
         <div className="container">
           <div className="gallery-index">
             <div className="gi-row">
-              <span className="eyebrow">— Index</span>
-              <span className="gi-count">{filtered.length} · of {photos.length} frames</span>
+              <span className="eyebrow">Browse by</span>
+              <span className="gi-count">{filtered.length} of {photos.length} photos</span>
             </div>
             <div className="chips">
               {categoryList.filter((c) => c.key === 'all' || counts[c.key] > 0).map((c) => (
@@ -173,7 +173,7 @@ function Lightbox({ photo, label, alt, onClose, onStep }) {
         </div>
         <div className="lb-foot">
           <div>
-            {label && <span className="eyebrow">— {label}</span>}
+            {label && <span className="eyebrow">{label}</span>}
             <h3 id="lightbox-title">{photo.caption || alt}</h3>
             {whenWhere(photo) && <div className="lb-meta">{whenWhere(photo)}</div>}
           </div>

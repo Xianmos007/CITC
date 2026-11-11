@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState, useEffect, useRef } from 'react';
 import { Link, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { MetaBar, SiteNav, Footer } from './components/Chrome.jsx';
+import { SiteNav, Footer } from './components/Chrome.jsx';
 import { Seo } from './components/Seo.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { WhoPage } from './pages/WhoPage.jsx';
@@ -93,7 +93,6 @@ export default function App() {
 function PublicFrame() {
   return (
     <>
-      <MetaBar />
       <SiteNav />
       <Outlet />
       <Footer />

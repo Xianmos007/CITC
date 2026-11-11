@@ -6,12 +6,6 @@
 import { postNeedHref, becomePartnerHref, contactHref } from '../lib/mailto.js';
 
 export const site = {
-  // The top dark bar that runs above the navigation
-  metaBar: {
-    label: 'Church in the City · Titusville, FL · Est. 2019',
-    scripture: 'Jer. 29:7',
-  },
-
   // The brand block (logo + name) used in the nav and footer
   brand: {
     name: 'Church in the City',

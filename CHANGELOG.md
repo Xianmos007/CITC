@@ -6,6 +6,30 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-10 — Visual redesign (branch `redesign/calm-refresh`)
+
+### Code (GitHub)
+- **Visual redesign, no behaviour changes.** New look across all public
+  pages: warm paper / ink / one gold accent, Fraunces + Figtree (the
+  monospace label font is retired), rounded cards, pill buttons, floating
+  pill nav, light footer. The dark top info bar and the scrolling word
+  ticker are removed.
+- **Homepage hero** is an animated illustration of Titusville at sunrise
+  (`src/components/HeroScene.jsx`): Indian River, the Max Brewer Bridge,
+  the beach, 1960s ranch homes, mid-century churches, and a shuttle on the
+  pad across the river. Upcoming needs appear as small tags rising from
+  buildings one at a time (display only). Motion stops for visitors who
+  ask for reduced motion.
+- **Homepage photos**: six Saturdays gallery photos bundled in
+  `src/assets/saturdays/` (`src/data/homePhotos.js`) for a new "Real
+  Saturdays" strip and behind the "From an event to a culture" panel, so
+  edits to the gallery can't leave holes on the homepage. The previous
+  hero photo (`hero-1600/900.webp`) is no longer shown.
+- Merged with everything on `main` through Nov 9 (routing, accessibility
+  pass, shared OppCard, admin split): all of main's markup, links, heading
+  levels and logic are kept; only styles and layout changed. Main's colour
+  tokens `--accent-text`, `--accent-display`, `--ok-text` are kept.
+
 ## 2026-11-09
 
 ### Database

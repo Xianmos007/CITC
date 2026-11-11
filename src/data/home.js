@@ -21,9 +21,6 @@ export const home = {
     },
   },
 
-  // The scrolling marquee bar. These words repeat twice across the page.
-  marqueeWords: ['Welcome', 'Serve', 'Listen', 'Repair', 'Pray', 'Stay'],
-
   howItWorks: {
     headingLine1: 'A posture,',
     headingLine2Em: 'not a program.',
