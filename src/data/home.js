@@ -13,10 +13,12 @@ export const home = {
       '"Seek the welfare of the city where I have sent you, and pray to the Lord on its behalf, for in its welfare you will find your welfare."',
     scriptureAttribution: '— Jeremiah 29:7',
     photoLabel: 'Photo · Saturday on Garden St.',
-    stats: [
-      { num: '5', label: 'Ministry partners' },
-      { num: '12', label: 'Local congregations' },
-    ],
+    // The numbers are counted live from the partners list (active ministry
+    // partners; church partners). Only the labels are set here.
+    statLabels: {
+      ministries: 'Ministry partners',
+      congregations: 'Local congregations',
+    },
   },
 
   howItWorks: {
@@ -58,34 +60,10 @@ export const home = {
     headingLine2End: 'at work.',
     sub:
       "We don't run our own programs. We come alongside the ministries already serving Titusville — slowly, faithfully, often invisibly.",
-    cards: [
-      {
-        status: 'Active',
-        name: 'North Brevard Charities',
-        type: 'Community services · Titusville',
-        body:
-          'Providing hope and help \u2014 empowering individuals to overcome hardships and rebuild stable, healthy lives.',
-      },
-      {
-        status: 'Active',
-        name: 'Better Together',
-        type: 'Family preservation · Volunteer training',
-        body:
-          'Host families for short-term care, job fairs, and mentors who guide and encourage \u2014 so families stay together.',
-      },
-      {
-        status: 'Active',
-        name: 'Hope for North Brevard',
-        type: 'Youth services · Food program',
-        body:
-          'A catalyst for restoring hope and unity to youth and families through counseling, community programs, and food delivery.',
-      },
-    ],
+    // The cards themselves are the first three Active ministry partners,
+    // in display order — edit partners in the admin panel.
   },
 
-  // These previews are shown on the home page — drawn from the full opportunities
-  // list in src/data/opportunities.js. Edit by id there.
-  homeOppPreviewIds: ['yard-dorothy', 'pantry-tue', 'tutoring'],
 
   vision: {
     headingLine1: 'From an',

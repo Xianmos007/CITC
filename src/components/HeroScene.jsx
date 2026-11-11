@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import flameUrl from '../assets/flame.png';
+import { formatWhen } from '../lib/format.js';
 
 /* =====================================================================
    HeroScene — Titusville at sunrise.
@@ -247,12 +248,16 @@ function buildScene() {
   `;
 }
 
-// 'SAT · APR 27' → 'Sat', '8:00AM' → '8:00am'
+// 'SAT · NOV 14' → 'Sat', '8:00 AM' → '8:00am'; labels like 'Every Tuesday' stay whole.
 const shortDay = (date = '') => {
   const d = String(date).split('·')[0].trim();
   return d ? d.charAt(0).toUpperCase() + d.slice(1).toLowerCase() : '';
 };
 const shortTime = (time = '') => String(time).replace(/\s?(AM|PM)$/i, (m) => m.trim().toLowerCase());
+const tagWhen = (o) => {
+  const { date, time } = formatWhen(o);
+  return [shortDay(date), shortTime(time)].filter(Boolean).join(' · ');
+};
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -260,7 +265,9 @@ const prefersReducedMotion = () =>
 export function HeroScene({ opportunities = [] }) {
   const sceneRef = useRef(null);
   const svgRef = useRef(null);
-  const markup = useMemo(() => buildScene(), []);
+  // One stable object: React re-applies innerHTML whenever this prop's
+  // identity changes, which would restart the town's entrance animation.
+  const markup = useMemo(() => ({ __html: buildScene() }), []);
   const reduced = useMemo(() => prefersReducedMotion(), []);
   const [phone, setPhone] = useState(() =>
     typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches
@@ -370,7 +377,7 @@ export function HeroScene({ opportunities = [] }) {
         ref={svgRef}
         viewBox={view}
         preserveAspectRatio="xMidYMax slice"
-        dangerouslySetInnerHTML={{ __html: markup }}
+        dangerouslySetInnerHTML={markup}
       />
       {slots.map(({ o, i, p }, k) => (
         <div
@@ -381,7 +388,7 @@ export function HeroScene({ opportunities = [] }) {
           <div className="need-card">
             <span className="ico"><img src={flameUrl} alt="" /></span>
             <span className="t">{o.title}</span>
-            <small>{[shortDay(o.date), shortTime(o.time)].filter(Boolean).join(' · ')}</small>
+            <small>{tagWhen(o)}</small>
           </div>
           <span className="need-stem" />
           <span className="need-ping" />

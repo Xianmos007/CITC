@@ -62,7 +62,8 @@ Deno.serve(async (req) => {
         opportunity:opportunities (
           id, title, description, date_label, time_label,
           duration_label, bring_list, coordinator_note, total_spots,
-          partner:partners ( id, name, contact_name, contact_email, auto_notify )
+          event_date, start_time, location, is_virtual, is_ongoing,
+          partner:partners ( id, name, contact_name, contact_email, auto_notify, default_location )
         )
       `
       )
@@ -84,15 +85,19 @@ Deno.serve(async (req) => {
       { opp_id: o.id }
     );
 
+    const isWaitlist = signup.status === 'waitlist';
+
     // ----------- Compose & send the volunteer confirmation -----------
     const volunteerEmailResult = await sendEmail({
       to: v.email,
-      subject: `You\u2019re confirmed for ${o.title}`,
+      subject: isWaitlist
+        ? `You\u2019re on the waitlist for ${o.title}`
+        : `You\u2019re confirmed for ${o.title}`,
       html: volunteerConfirmationHTML({
         volunteer: v,
         opportunity: o,
         partner: p,
-        isWaitlist: signup.status === 'waitlist',
+        isWaitlist,
       }),
     });
 
@@ -106,7 +111,7 @@ Deno.serve(async (req) => {
             volunteer: v,
             opportunity: o,
             partner: p,
-            isWaitlist: signup.status === 'waitlist',
+            isWaitlist,
             filledCount: count || 0,
           }),
         })
@@ -227,12 +232,18 @@ function volunteerConfirmationHTML({ volunteer, opportunity, partner, isWaitlist
           ${escapeHtml(opportunity.title)}
         </div>
         <div style="font-family:-apple-system,sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#666;">
-          ${escapeHtml(opportunity.date_label || '')} · ${escapeHtml(opportunity.time_label || '')}
+          ${escapeHtml(whenLine(opportunity))}
         </div>
         <div style="font-family:-apple-system,sans-serif;font-size:13px;color:#666;margin-top:6px;">
-          Hosted by ${escapeHtml(partner?.name || 'a partner ministry')} · Titusville, FL
+          Hosted by ${escapeHtml(partner?.name || 'a partner ministry')} · ${escapeHtml(placeFor(opportunity, partner))}
         </div>
       </div>
+
+      ${
+        !isWaitlist && calendarUrl(opportunity, partner)
+          ? `<p style="margin:0 0 24px 0;"><a href="${escapeHtml(calendarUrl(opportunity, partner))}" style="font-family:-apple-system,sans-serif;font-size:14px;color:#1a1a1a;text-decoration:underline;">Add to Google Calendar</a></p>`
+          : ''
+      }
 
       ${
         bringList
@@ -278,10 +289,10 @@ function adminNotificationHTML({
           ${escapeHtml(opportunity.title)}
         </div>
         <div style="font-family:-apple-system,sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#666;">
-          ${escapeHtml(opportunity.date_label || '')} · ${escapeHtml(opportunity.time_label || '')}
+          ${escapeHtml(whenLine(opportunity))}
         </div>
         <div style="font-family:-apple-system,sans-serif;font-size:13px;color:#666;margin-top:6px;">
-          Partner: ${escapeHtml(partner?.name || 'Unknown')}
+          Partner: ${escapeHtml(partner?.name || 'Unknown')} · ${escapeHtml(placeFor(opportunity, partner))}
         </div>
       </div>
 
@@ -299,6 +310,76 @@ function adminNotificationHTML({
     </td></tr>
   `;
   return emailShell(body);
+}
+
+// ---------------------------------------------------------------------
+// When / where — mirrors formatWhen() in src/lib/format.js
+// ---------------------------------------------------------------------
+function formatEventDate(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+  if (!m) return '';
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  const day = d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
+  const mon = d.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+  return `${day} · ${mon} ${d.getUTCDate()}`.toUpperCase();
+}
+
+function formatStartTime(t) {
+  const m = /^(\d{1,2}):(\d{2})/.exec(t || '');
+  if (!m) return '';
+  const h = +m[1];
+  return `${h % 12 || 12}:${m[2]} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+function whenLine(o) {
+  let date = o.date_label || formatEventDate(o.event_date);
+  if (!date && o.is_ongoing) date = 'Ongoing';
+  const time = o.time_label || formatStartTime(o.start_time);
+  return [date, time].filter(Boolean).join(' · ');
+}
+
+function placeFor(o, p) {
+  if (o.is_virtual) return 'Online';
+  return o.location || p?.default_location || 'Titusville, FL';
+}
+
+// Hours from a duration label like "2 hours", "2.5 hours", "90 minutes",
+// "Half day", "Full day". Defaults to 2 when it can't tell.
+function durationHours(label) {
+  const s = String(label || '').toLowerCase();
+  if (s.includes('half day')) return 4;
+  if (s.includes('full day')) return 8;
+  const n = parseFloat(s);
+  if (!Number.isFinite(n) || n <= 0) return 2;
+  return /min/.test(s) ? n / 60 : n;
+}
+
+// Google Calendar "add event" link, or '' for ongoing / undated needs.
+// Times are local to Titusville (ctz), so no time zone math is needed.
+function calendarUrl(o, p) {
+  if (o.is_ongoing || !o.event_date) return '';
+  const ymd = o.event_date.replace(/-/g, '');
+  let dates;
+  const t = /^(\d{1,2}):(\d{2})/.exec(o.start_time || '');
+  if (t) {
+    const start = new Date(Date.UTC(+ymd.slice(0, 4), +ymd.slice(4, 6) - 1, +ymd.slice(6, 8), +t[1], +t[2]));
+    const end = new Date(start.getTime() + durationHours(o.duration_label) * 3600 * 1000);
+    const fmt = (d) => d.toISOString().replace(/[-:]/g, '').slice(0, 15);
+    dates = `${fmt(start)}/${fmt(end)}`;
+  } else {
+    // No start time: an all-day event.
+    const next = new Date(Date.UTC(+ymd.slice(0, 4), +ymd.slice(4, 6) - 1, +ymd.slice(6, 8) + 1));
+    dates = `${ymd}/${next.toISOString().slice(0, 10).replace(/-/g, '')}`;
+  }
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: o.title || 'Church in the City',
+    dates,
+    ctz: 'America/New_York',
+    details: `With ${p?.name || 'a partner ministry'}. https://thechurchinthecity.org/volunteer/${o.id}`,
+    location: placeFor(o, p),
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 function escapeHtml(s) {

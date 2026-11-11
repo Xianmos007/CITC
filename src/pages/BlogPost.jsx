@@ -102,7 +102,7 @@ export function BlogPost() {
   return (
     <div className="page">
       <Helmet>
-        <title>{post.title} · Church in the City</title>
+        <title>{`${post.title} · Church in the City`}</title>
         <meta name="description" content={description} />
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={description} />

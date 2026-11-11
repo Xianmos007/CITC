@@ -38,9 +38,11 @@
   --bg-card: var(--citc-surface);
   --bg-ink:  var(--citc-ink);
   --accent:  var(--citc-gold);
-  --accent-text: var(--citc-gold-deep);
+  --accent-text: var(--citc-gold-deep);      /* gold for small text on light grounds */
+  --accent-display: var(--citc-gold-deep);   /* gold for large headline words */
   --accent-soft: var(--citc-gold-soft);
   --ok:      var(--citc-sage);
+  --ok-text: var(--citc-sage-deep);   /* sage for small text: passes AA on paper */
   --urgent:  var(--citc-clay);
   --rule:    var(--citc-line);
   --rule-soft: var(--citc-line-soft);

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { partnersPage } from '../data/partners.js';
+import { becomePartnerHref, emailTeamHref } from '../lib/mailto.js';
+import { Seo } from '../components/Seo.jsx';
 
 const statusClass = (s) =>
   s === 'Active' ? 'status-active' : s === 'In conversation' ? 'status-conv' : 'status-soon';
@@ -29,6 +31,7 @@ export function PartnersPage({ partners = [], loading = false }) {
 
   return (
     <div className="page">
+      <Seo path="/partners" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>
@@ -56,7 +59,7 @@ export function PartnersPage({ partners = [], loading = false }) {
               <div key={p.id} className="partner-full">
                 <div>
                   <span className={`status ${statusClass(p.status)}`}>{p.status}</span>
-                  <h3 style={{ marginTop: 18 }}>{p.name}</h3>
+                  <h2 style={{ marginTop: 18 }}>{p.name}</h2>
                   <div className="type-line">{p.type}</div>
                   <p className="mission">{p.mission}</p>
                   <div className="meta">
@@ -67,7 +70,7 @@ export function PartnersPage({ partners = [], loading = false }) {
                 <div className="right">
                   {(p.needs || []).length > 0 ? (
                     <>
-                      <h4>How we serve together</h4>
+                      <h3>How we serve together</h3>
                       {p.needs.map((n, j) => (
                         <div key={j} className="need">
                           <span className="tt">{n.title}</span>
@@ -92,8 +95,8 @@ export function PartnersPage({ partners = [], loading = false }) {
               <p>{cta.body}</p>
             </div>
             <div className="actions">
-              <button className="btn btn-primary">Become a partner <span className="arrow">→</span></button>
-              <button className="btn btn-ghost">Email the team</button>
+              <a className="btn btn-primary" href={becomePartnerHref}>Become a partner <span className="arrow">→</span></a>
+              <a className="btn btn-ghost" href={emailTeamHref}>Email the team</a>
             </div>
           </div>
         </div>

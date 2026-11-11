@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { volunteerPage } from '../../data/opportunities.js';
 import { BrowseTab } from './BrowseTab.jsx';
+import { postNeedHref } from '../../lib/mailto.js';
+import { Seo } from '../../components/Seo.jsx';
 
-const encodeMailto = (value) => encodeURIComponent(value).replace(/'/g, '%27');
-const postNeedHref = `mailto:cristian.m@trinityfla.org?subject=${encodeMailto('New need for the CITC portal')}&body=${encodeMailto("Ministry:\nWhat's the need:\nDate and time:\nVolunteers needed:\nAnything else:")}`;
-
-export function VolunteerPage({ openOpp, opportunities = [], loading = false }) {
+export function VolunteerPage({ opportunities = [], loading = false }) {
   const [tab, setTab] = useState('browse');
   const { hero } = volunteerPage;
   const openCount = opportunities.filter((o) => o.filled < o.total).length;
 
   return (
     <div className="page">
+      <Seo path="/volunteer" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>
@@ -39,7 +39,7 @@ export function VolunteerPage({ openOpp, opportunities = [], loading = false }) 
       </div>
 
       {tab === 'browse' && (
-        <BrowseTab openOpp={openOpp} opportunities={opportunities} loading={loading} />
+        <BrowseTab opportunities={opportunities} loading={loading} />
       )}
     </div>
   );

@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { site } from '../data/site.js';
 import flameUrl from '../assets/flame.png';
 
 /* ============ SiteNav ============ */
-export function SiteNav({ page, setPage }) {
+const linkClass = (base) => ({ isActive }) => `${base} ${isActive ? 'active' : ''}`;
+
+export function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { pathname } = useLocation();
 
   // Navigating always closes the panel, so the next page isn't hidden behind it.
-  const go = (key) => {
-    setPage(key);
+  // Adjusting state during render (not in an effect) when the path changes.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setMenuOpen(false);
-  };
+  }
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -24,24 +30,26 @@ export function SiteNav({ page, setPage }) {
   return (
     <nav className="site-nav">
       <div className="site-nav-inner">
-        <button className="logo-mark" onClick={() => go('home')} aria-label="Home">
+        <Link className="logo-mark" to="/" aria-label="Church in the City, home">
           <img src={flameUrl} alt="" />
-          <div className="logo-text">{site.brand.name}</div>
-        </button>
+          <div>
+            <div className="logo-text">{site.brand.name}</div>
+            <div className="logo-sub">{site.brand.location}</div>
+          </div>
+        </Link>
         <div className="nav-links">
-          {site.navLinks.map(({ key, label }) => (
-            <button
-              key={key}
-              className={`nav-link ${page === key ? 'active' : ''}`}
-              onClick={() => setPage(key)}
-            >
+          {site.navLinks.map(({ to, label }) => (
+            <NavLink key={to} to={to} className={linkClass('nav-link')}>
               {label}
-            </button>
+            </NavLink>
           ))}
         </div>
-        <button className="nav-cta" onClick={() => go('volunteer')}>
+        {/* "Find a need" is the only nav entry for the volunteer page, so it
+            carries the active state there (NavLink adds .active and
+            aria-current, including on /volunteer/<id>). */}
+        <NavLink to="/volunteer" className={linkClass('nav-cta')}>
           Find a need <span className="arrow">→</span>
-        </button>
+        </NavLink>
         <button
           className="nav-toggle"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -58,18 +66,23 @@ export function SiteNav({ page, setPage }) {
       </div>
       {menuOpen && (
         <div className="mobile-nav" id="mobile-nav">
-          {site.navLinks.map(({ key, label }) => (
-            <button
-              key={key}
-              className={`mobile-nav-link ${page === key ? 'active' : ''}`}
-              onClick={() => go(key)}
+          {site.navLinks.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={linkClass('mobile-nav-link')}
+              onClick={() => setMenuOpen(false)}
             >
               {label}
-            </button>
+            </NavLink>
           ))}
-          <button className="mobile-nav-cta" onClick={() => go('volunteer')}>
+          <NavLink
+            to="/volunteer"
+            className={linkClass('mobile-nav-cta')}
+            onClick={() => setMenuOpen(false)}
+          >
             Find a need <span className="arrow">→</span>
-          </button>
+          </NavLink>
         </div>
       )}
     </nav>
@@ -77,7 +90,7 @@ export function SiteNav({ page, setPage }) {
 }
 
 /* ============ Footer ============ */
-export function Footer({ setPage }) {
+export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container">
@@ -97,11 +110,11 @@ export function Footer({ setPage }) {
           </div>
           {site.footer.columns.map((col) => (
             <div key={col.heading} className="footer-col">
-              <h4>{col.heading}</h4>
+              <h2>{col.heading}</h2>
               <ul>
-                {col.links.map((l, i) => (
-                  <li key={i}>
-                    <a onClick={l.page ? () => setPage(l.page) : undefined}>{l.label}</a>
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    {l.to ? <Link to={l.to}>{l.label}</Link> : <a href={l.href}>{l.label}</a>}
                   </li>
                 ))}
               </ul>

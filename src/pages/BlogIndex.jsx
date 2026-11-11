@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { Seo } from '../components/Seo.jsx';
 import { blogPage, blogCategories, featuredPost, blogPosts } from '../data/blog.js';
 
 export function BlogIndex() {
@@ -16,24 +16,13 @@ export function BlogIndex() {
 
   const visible = filter === 'all' ? blogPosts : blogPosts.filter((p) => p.cat === filter);
   const showFeatured = filter === 'all' || filter === featuredPost.cat;
+  const pieceCount = visible.length + (showFeatured ? 1 : 0);
 
-  const { hero, letter } = blogPage;
+  const { hero } = blogPage;
 
   return (
     <div className="page">
-      <Helmet>
-        <title>Blog · Church in the City</title>
-        <meta name="description" content="Stories, reflections, and updates from churches working together across our city." />
-        <meta property="og:title" content="Blog · Church in the City" />
-        <meta property="og:description" content="Stories, reflections, and updates from churches working together across our city." />
-        <meta property="og:url" content="https://thechurchinthecity.org/blog" />
-        <meta property="og:image" content="https://thechurchinthecity.org/og-default.jpg" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Blog · Church in the City" />
-        <meta name="twitter:description" content="Stories, reflections, and updates from churches working together across our city." />
-        <meta name="twitter:image" content="https://thechurchinthecity.org/og-default.jpg" />
-      </Helmet>
+      <Seo path="/blog" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>
@@ -45,7 +34,7 @@ export function BlogIndex() {
       <section className="section">
         <div className="container">
           <div className="chips">
-            {blogCategories.map((c) => (
+            {blogCategories.filter((c) => c.key === 'all' || counts[c.key] > 0).map((c) => (
               <button
                 key={c.key}
                 className={`chip ${filter === c.key ? 'active' : ''}`}
@@ -55,7 +44,7 @@ export function BlogIndex() {
               </button>
             ))}
             <div className="chips-meta">
-              {visible.length + (showFeatured ? 1 : 0)} pieces
+              {pieceCount} {pieceCount === 1 ? 'piece' : 'pieces'}
             </div>
           </div>
 
@@ -123,25 +112,8 @@ export function BlogIndex() {
         </div>
       </section>
 
-      <section className="cta-band">
-        <div className="container">
-          <div className="grid">
-            <div>
-              <h3>{letter.headingLine1} <em>{letter.headingEm}</em></h3>
-              <p>{letter.body}</p>
-            </div>
-            <div className="actions stack">
-              <div className="letter-form">
-                <input type="email" placeholder="your.name@email" />
-                <button className="btn btn-primary">Subscribe <span className="arrow">→</span></button>
-              </div>
-              <span className="cta-note">
-                {letter.note}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* The Saturday letter band is hidden until its signup form is real
+          (SPEC-audit-fixes Phase 6). Its copy is still in data/blog.js. */}
     </div>
   );
 }

@@ -14,6 +14,18 @@ import {
 } from '../lib/content.js';
 import { opportunities as staticOpps } from '../data/opportunities.js';
 import { partners as staticPartners } from '../data/partners.js';
+import { formatWhen } from '../lib/format.js';
+
+// The partners page lists each partner's open needs. Derive them from the
+// same upcoming opportunities the volunteer page shows.
+function withNeeds(partners, opps) {
+  return partners.map((p) => ({
+    ...p,
+    needs: opps
+      .filter((o) => o.partnerId === p.id)
+      .map((o) => ({ title: o.title, cadence: formatWhen(o).date })),
+  }));
+}
 
 export function useContent() {
   const [opportunities, setOpportunities] = useState([]);
@@ -42,7 +54,7 @@ export function useContent() {
         // opportunities are added via the admin panel), so we must NOT
         // treat "zero opportunities" as a reason to fall back to static.
         if (prts.length > 0) {
-          setPartners(prts);
+          setPartners(withNeeds(prts, opps));
           setOpportunities(opps); // may legitimately be []
           setGalleryPhotos(gallery); // may legitimately be []
           setGalleryCategories(galleryCats); // may legitimately be []

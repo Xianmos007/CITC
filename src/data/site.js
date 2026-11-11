@@ -3,6 +3,8 @@
 // Edit anything here to update headers, nav, and footer.
 // ============================================================
 
+import { postNeedHref, becomePartnerHref, contactHref } from '../lib/mailto.js';
+
 export const site = {
   // The brand block (logo + name) used in the nav and footer
   brand: {
@@ -11,14 +13,14 @@ export const site = {
     locationLong: 'Est. 2019 · Titusville, FL',
   },
 
-  // The navigation menu. The 'key' must match a page key in App.jsx.
+  // The navigation menu. `to` is the page's address (see routes in App.jsx).
+  // The logo goes home, and the "Find a need" button is the volunteer link,
+  // so neither appears here.
   navLinks: [
-    { key: 'home', label: 'Home' },
-    { key: 'who', label: 'Who We Are' },
-    { key: 'partners', label: 'Ministry Partners' },
-    { key: 'blog', label: 'Field Notes' },
-    { key: 'gallery', label: 'The Saturdays' },
-    { key: 'volunteer', label: 'Volunteer Now' },
+    { to: '/who', label: 'Who we are' },
+    { to: '/partners', label: 'Partners' },
+    { to: '/blog', label: 'Field notes' },
+    { to: '/gallery', label: 'The Saturdays' },
   ],
 
   // The footer
@@ -27,32 +29,30 @@ export const site = {
       '"May the church in our city become a people who seek its welfare — until its welfare is ours."',
     benedictionAttribution: '— A benediction · Jer. 29:7',
 
+    // Each link has either `to` (a page on this site) or `href`
+    // (a mailto: link, from src/lib/mailto.js).
     columns: [
       {
-        heading: 'The Church',
+        heading: 'The church',
         links: [
-          { label: 'Who we are', page: 'who' },
-          { label: 'Ministry partners', page: 'partners' },
-          { label: 'Sunday gatherings', page: null },
-          { label: 'Leadership', page: null },
+          { label: 'Who we are', to: '/who' },
+          { label: 'Ministry partners', to: '/partners' },
         ],
       },
       {
-        heading: 'The City',
+        heading: 'The city',
         links: [
-          { label: 'Find a need', page: 'volunteer' },
-          { label: 'Post a need', page: 'volunteer' },
-          { label: 'Become a partner', page: null },
-          { label: 'Pray for Titusville', page: null },
+          { label: 'Find a need', to: '/volunteer' },
+          { label: 'Post a need', href: postNeedHref },
+          { label: 'Become a partner', href: becomePartnerHref },
         ],
       },
       {
-        heading: 'Read & See',
+        heading: 'Read & see',
         links: [
-          { label: 'Field notes', page: 'blog' },
-          { label: 'The Saturdays', page: 'gallery' },
-          { label: 'Saturday letter', page: 'blog' },
-          { label: 'Contact', page: null },
+          { label: 'Field notes', to: '/blog' },
+          { label: 'The Saturdays', to: '/gallery' },
+          { label: 'Contact', href: contactHref },
         ],
       },
     ],

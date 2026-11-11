@@ -2,129 +2,64 @@
 // Signup business logic
 //
 // The "I'll be there" flow:
-//   1. Look up volunteer by email (smart auto-fill)
-//   2. If not found, create a new volunteer row
-//   3. Create the signup row linking volunteer to opportunity
-//   4. Trigger the edge function that sends confirmation + admin emails
+//   1. Call submit_signup() (0010_audit.sql). The database finds or
+//      creates the volunteer, decides confirmed vs waitlist, and records
+//      the signup. The browser never reads or writes `volunteers`.
+//   2. Trigger the edge function that sends confirmation + admin emails.
+//   3. Remember the visitor's details on this device so the form is
+//      pre-filled next time (replaces the old email lookup).
 //
 // All errors bubble up so the UI can show a friendly message.
 // =====================================================================
 import { supabase } from './supabase.js';
 
-/**
- * Look up a volunteer by email. Returns the volunteer row if found,
- * or null if not. Used to auto-fill the signup form for returning
- * volunteers — they type their email, we fill in name/phone/church.
- */
-export async function findVolunteerByEmail(email) {
-  if (!email) return null;
-  const normalized = email.trim().toLowerCase();
+// ---- This-device memory ---------------------------------------------
 
-  const { data, error } = await supabase
-    .from('volunteers')
-    .select('id, email, name, phone, church')
-    .eq('email', normalized)
-    .maybeSingle();
+const DEVICE_KEY = 'citc:volunteer';
 
-  if (error) {
-    console.error('[CITC] findVolunteerByEmail error:', error);
+/** The details saved after this device's last successful signup, or null. */
+export function loadSavedVolunteer() {
+  try {
+    const raw = window.localStorage.getItem(DEVICE_KEY);
+    if (!raw) return null;
+    const v = JSON.parse(raw);
+    return v && typeof v.email === 'string' ? v : null;
+  } catch {
     return null;
   }
-  return data;
 }
 
-/**
- * Create a new volunteer row, or update an existing one with new info.
- * The volunteer's email is the unique key.
- */
-async function upsertVolunteer({ name, email, phone, church }) {
-  const normalized = email.trim().toLowerCase();
-
-  // Try update first (preserves first_seen_at). If no row exists, insert.
-  const existing = await findVolunteerByEmail(normalized);
-
-  if (existing) {
-    const { data, error } = await supabase
-      .from('volunteers')
-      .update({
-        name: name.trim(),
-        phone: phone?.trim() || existing.phone,
-        church: church?.trim() || existing.church,
-        last_seen_at: new Date().toISOString(),
-      })
-      .eq('id', existing.id)
-      .select()
-      .single();
-
-    if (error) throw new Error('Could not update volunteer: ' + error.message);
-    return data;
+function saveVolunteer({ name, email, phone, church }) {
+  try {
+    window.localStorage.setItem(
+      DEVICE_KEY,
+      JSON.stringify({ name: name.trim(), email: email.trim(), phone: phone?.trim() || '', church: church?.trim() || '' })
+    );
+  } catch {
+    // Private mode or storage blocked: the form just won't be pre-filled.
   }
-
-  const { data, error } = await supabase
-    .from('volunteers')
-    .insert({
-      name: name.trim(),
-      email: normalized,
-      phone: phone?.trim() || null,
-      church: church?.trim() || null,
-    })
-    .select()
-    .single();
-
-  if (error) throw new Error('Could not create volunteer: ' + error.message);
-  return data;
 }
 
-/**
- * Create a signup row linking the volunteer to an opportunity.
- *
- * IMPORTANT: we do NOT use .select() here. The `signups` table has a
- * public INSERT policy but (by design, for privacy) NO public SELECT
- * policy — volunteers must not be able to read signup rows. Postgres
- * treats an insert-with-RETURNING as also needing SELECT visibility, so
- * calling .select() as an anonymous user fails with an RLS error even
- * though the insert itself is allowed. We avoid that by generating the
- * id client-side and inserting without reading the row back.
- *
- * Returns a minimal signup object (the id is what the email function needs).
- */
-async function createSignup({ opportunityId, volunteerId, isWaitlist }) {
-  const id =
-    (typeof crypto !== 'undefined' && crypto.randomUUID)
-      ? crypto.randomUUID()
-      : undefined; // DB default fills it if crypto is unavailable
-
-  const row = {
-    ...(id ? { id } : {}),
-    opportunity_id: opportunityId,
-    volunteer_id: volunteerId,
-    status: isWaitlist ? 'waitlist' : 'confirmed',
-  };
-
-  const { error } = await supabase.from('signups').insert(row);
-
-  if (error) {
-    // Friendly handling for the duplicate signup case
-    if (error.code === '23505') {
-      throw new Error('You\u2019re already signed up for this one. Check your email.');
-    }
-    throw new Error('Could not create signup: ' + error.message);
+export function clearSavedVolunteer() {
+  try {
+    window.localStorage.removeItem(DEVICE_KEY);
+  } catch {
+    // Nothing to clear.
   }
-  return { id, opportunity_id: opportunityId, volunteer_id: volunteerId, status: row.status };
 }
+
+// ---- Emails ---------------------------------------------------------
 
 /**
  * Trigger the edge function that sends confirmation + admin emails.
  * If the edge function fails, the signup still succeeded — we log
- * the error but don't fail the whole flow. Cristian can chase down
- * any missed emails from the admin panel later.
+ * the error but don't fail the whole flow.
  *
  * We pass the publishable key explicitly in both the apikey and
  * Authorization headers. New-format Supabase projects (sb_publishable_…)
  * require the gateway to see a valid key on the function call; for an
  * anonymous visitor the client may not auto-attach one, which causes a
- * 401 before the function code runs. The publishable key is safe to
- * expose in the browser (it's already baked into the build).
+ * 401 before the function code runs.
  */
 async function triggerEmails(signupId) {
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -144,41 +79,51 @@ async function triggerEmails(signupId) {
   }
 }
 
+// ---- Submit ---------------------------------------------------------
+
 /**
- * The main entry point. Called when a visitor submits the signup form.
- * Returns { signup, volunteer } on success or throws an Error.
+ * Called when a visitor submits the signup form.
+ * Returns { signupId, status } where status is 'confirmed' or 'waitlist',
+ * or throws an Error with a message fit to show the visitor.
  */
-export async function submitSignup({
-  opportunityId,
-  name,
-  email,
-  phone,
-  church,
-  isWaitlist = false,
-}) {
+export async function submitSignup({ opportunityId, name, email, phone, church }) {
   if (!opportunityId) throw new Error('Missing opportunity. Try refreshing.');
   if (!name?.trim()) throw new Error('Please enter your name.');
-  if (!email?.trim() || !email.includes('@'))
-    throw new Error('Please enter a valid email.');
+  if (!email?.trim() || !email.includes('@')) throw new Error('Please enter a valid email.');
 
-  const volunteer = await upsertVolunteer({ name, email, phone, church });
-  const signup = await createSignup({
-    opportunityId,
-    volunteerId: volunteer.id,
-    isWaitlist,
+  const { data, error } = await supabase.rpc('submit_signup', {
+    p_opportunity_id: opportunityId,
+    p_name: name,
+    p_email: email,
+    p_phone: phone || null,
+    p_church: church || null,
   });
 
-  // Fire and forget — emails will go through but we don't make the
-  // user wait on them.
-  triggerEmails(signup.id);
+  if (error) {
+    if (error.code === '23505') {
+      throw new Error('You’re already signed up for this one. Check your email.');
+    }
+    // Messages raised inside submit_signup() (P0001) are written for
+    // visitors ("Please enter your name.") — pass them straight through.
+    if (error.code === 'P0001' && error.message) throw new Error(error.message);
+    console.error('[CITC] submit_signup error:', error);
+    throw new Error('We couldn’t save your signup. Please try again in a minute.');
+  }
 
-  return { signup, volunteer };
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row?.signup_id) throw new Error('We couldn’t save your signup. Please try again in a minute.');
+
+  saveVolunteer({ name, email, phone, church });
+
+  // Fire and forget — emails go out without making the visitor wait.
+  triggerEmails(row.signup_id);
+
+  return { signupId: row.signup_id, status: row.status };
 }
 
 /**
- * Get the live count of confirmed signups for an opportunity.
- * Uses the SECURITY DEFINER function we set up in RLS so we don't
- * expose actual signup rows to public users.
+ * Live count of confirmed signups for one opportunity, via the existing
+ * SECURITY DEFINER function, so signup rows stay private.
  */
 export async function getSignupCount(opportunityId) {
   const { data, error } = await supabase.rpc('get_opportunity_signup_count', {
@@ -189,20 +134,4 @@ export async function getSignupCount(opportunityId) {
     return 0;
   }
   return data || 0;
-}
-
-/**
- * Get a volunteer's signup history by email. Uses the SECURITY DEFINER
- * function so we only return rows matching that email.
- */
-export async function lookupMySignups(email) {
-  if (!email?.trim()) return [];
-  const { data, error } = await supabase.rpc('lookup_my_signups', {
-    lookup_email: email.trim().toLowerCase(),
-  });
-  if (error) {
-    console.error('[CITC] lookupMySignups error:', error);
-    return [];
-  }
-  return data || [];
 }

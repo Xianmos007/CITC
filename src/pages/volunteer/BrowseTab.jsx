@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { deriveFilterOptions } from '../../lib/content.js';
+import { OppCard } from '../../components/OppCard.jsx';
 
-export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
+export function BrowseTab({ opportunities = [], loading = false }) {
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
     partner: new Set(),
@@ -43,42 +44,6 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     [search, filters, opportunities]
   );
 
-  const opportunityCard = (o) => {
-    const filled = Number(o.filled) || 0;
-    const total = Number(o.total) || 1;
-    const isFull = filled >= total;
-    const isFeatured = Boolean(o.is_featured ?? o.isFeatured);
-    const when = [o.date_label || o.date, o.time, o.dur].filter(Boolean).join(' · ');
-
-    return (
-      <article
-        key={o.id}
-        className={`opp-card ${isFeatured ? 'featured' : ''}`}
-        onClick={() => openOpp(o.id)}
-      >
-        {isFeatured && <span className="opp-card-badge">Featured</span>}
-        <div className="opp-card-when">{when}</div>
-        <h4>{o.title}</h4>
-        <span className="opp-card-partner">{o.partner}</span>
-        {o.desc && <p>{o.desc}</p>}
-        <div className={`progress ${isFull ? 'full' : ''}`}>
-          <div className="bar">
-            <div style={{ width: `${Math.min((filled / total) * 100, 100)}%` }}></div>
-          </div>
-          <div className="lbl">
-            <span className="filled">
-              {isFull ? 'Full · waitlist' : `${filled} signed up`}
-            </span>
-            <span>of {total}</span>
-          </div>
-        </div>
-        <span className="opp-cta">
-          {isFull ? 'Waitlist' : 'Sign up'} <span className="arrow">→</span>
-        </span>
-      </article>
-    );
-  };
-
   return (
     <div className="container">
       {isLowCount && (
@@ -106,7 +71,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
             <span className="meta">{filtered.length}</span>
           </div>
           <div className="filter-group">
-            <h5>Partner</h5>
+            <h2>Partner</h2>
             {filterOptions.partners.map((p) => {
               const ct = opportunities.filter((o) => o.partner === p).length;
               if (ct === 0) return null;
@@ -124,7 +89,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
             })}
           </div>
           <div className="filter-group">
-            <h5>Kind of work</h5>
+            <h2>Kind of work</h2>
             {filterOptions.types.map((t) => {
               const ct = opportunities.filter((o) => o.type === t).length;
               if (ct === 0) return null;
@@ -142,7 +107,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
             })}
           </div>
           <div className="filter-group">
-            <h5>Good fit</h5>
+            <h2>Good fit</h2>
             {filterOptions.skills.map((s) => {
               const ct = opportunities.filter((o) => o.skills?.includes(s)).length;
               if (ct === 0) return null;
@@ -163,9 +128,9 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
         )}
         <div>
           <div className="opps-head">
-            <h3>
+            <h2>
               Open this week & next
-            </h3>
+            </h2>
             <span className="meta">
               Sorted by date
             </span>
@@ -192,7 +157,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
                 )}
               </div>
             )}
-            {!loading && filtered.map(opportunityCard)}
+            {!loading && filtered.map((o) => <OppCard key={o.id} o={o} />)}
           </div>
         </div>
       </div>

@@ -1,14 +1,17 @@
+import { Link } from 'react-router-dom';
 import { who } from '../data/who.js';
+import { Seo } from '../components/Seo.jsx';
 
 const encodeMailto = (value) => encodeURIComponent(value).replace(/'/g, '%27');
 const churchInterestHref = `mailto:cristian.m@trinityfla.org?subject=${encodeMailto('Our church is interested in Church in the City')}&body=${encodeMailto('Church name:\nPastor:\nBest contact:\nAnything else:')}`;
 
-export function WhoPage({ setPage, partners = [] }) {
+export function WhoPage({ partners = [] }) {
   const { hero, foundation, mission, origin, values, weAreNot, cta } = who;
   const churches = partners.filter((p) => p.kind === 'church');
 
   return (
     <div className="page">
+      <Seo path="/who" />
       <section className="page-hero">
         <div className="container">
           <span className="label">{hero.label}</span>
@@ -103,7 +106,7 @@ export function WhoPage({ setPage, partners = [] }) {
             {values.items.map((v, i) => (
               <div key={i} className="value">
                 <div className="vnum">{v.roman}</div>
-                <h4>{v.title}</h4>
+                <h3>{v.title}</h3>
                 <p>{v.body}</p>
               </div>
             ))}
@@ -124,13 +127,13 @@ export function WhoPage({ setPage, partners = [] }) {
           </div>
           <div className="isnt">
             <div className="isnt-col we">
-              <h4>We are</h4>
+              <h3>We are</h3>
               <ul>
                 {weAreNot.weAre.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
             </div>
             <div className="isnt-col not">
-              <h4>We are not</h4>
+              <h3>We are not</h3>
               <ul>
                 {weAreNot.weAreNot.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
@@ -180,12 +183,12 @@ export function WhoPage({ setPage, partners = [] }) {
               <p>{cta.body}</p>
             </div>
             <div className="actions">
-              <button className="btn btn-primary" onClick={() => setPage('volunteer')}>
+              <Link className="btn btn-primary" to="/volunteer">
                 Find a need <span className="arrow">→</span>
-              </button>
-              <button className="btn btn-ghost" onClick={() => setPage('partners')}>
+              </Link>
+              <Link className="btn btn-ghost" to="/partners">
                 Meet the partners
-              </button>
+              </Link>
             </div>
           </div>
         </div>
