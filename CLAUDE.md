@@ -64,6 +64,20 @@ work yourself; only stop for him where marked **ask first**.
   exports a roster must skip `@placeholder.invalid` addresses.
 - **Edge functions:** deploy changed functions yourself with
   `deploy_edge_function`, then check `query_logs` for errors after a test.
+- **Security check (every update):** before merging any change, run
+  `npm audit --omit=dev` (packages the site ships). After any change to the
+  database (tables, policies, functions, storage), the admin panel, auth, or
+  an edge function, also run the Supabase security advisors
+  (`get_advisors`, type `security`). Fix anything new before merging, or
+  say why it's acceptable in the PR and CHANGELOG. Known, accepted
+  advisor warnings (don't re-raise): the public site intentionally calls the
+  SECURITY DEFINER functions `submit_signup`, `get_signup_counts`,
+  `get_opportunity_signup_count` and `is_admin` (used by RLS policies).
+  Rules to keep: every table has RLS on; anything beyond public reads and
+  the signup path requires `is_admin()` (never just "signed in"); new
+  SECURITY DEFINER functions get `set search_path = public`; public signups
+  in Supabase Auth stay **disabled** (admin rights come from the email list
+  in `public.admins`).
 - **Git:** work on a branch, commit in small steps, open a PR. When
   `npm run build` and `npm run lint` pass and the change is checked at 375px
   and 1280px, merge the PR yourself, wait for the GitHub Pages deploy, and
