@@ -5,38 +5,8 @@ import { galleryPage } from '../data/gallery.js';
 import { saturdayStrip, visionPhoto } from '../data/homePhotos.js';
 import { Seo } from '../components/Seo.jsx';
 import { HeroScene } from '../components/HeroScene.jsx';
+import { useReveal } from '../hooks/useReveal.js';
 import { formatWhen, todayLocalISO, compareOpportunities, isUpcoming } from '../lib/format.js';
-
-/* Fade sections in as they scroll into view, once. */
-function useReveal(rootRef) {
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return undefined;
-    const reveal = (el) => el.classList.add('in');
-    if (!('IntersectionObserver' in window)) {
-      root.querySelectorAll('.reveal').forEach(reveal);
-      return undefined;
-    }
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => {
-        if (e.isIntersecting) {
-          reveal(e.target);
-          io.unobserve(e.target);
-        }
-      }),
-      { rootMargin: '0px 0px -8% 0px' }
-    );
-    const watch = () => root.querySelectorAll('.reveal:not(.in)').forEach((el) => io.observe(el));
-    watch();
-    // Sections that appear once content loads (partners, needs) get watched too.
-    const mo = new MutationObserver(watch);
-    mo.observe(root, { childList: true, subtree: true });
-    return () => {
-      io.disconnect();
-      mo.disconnect();
-    };
-  }, [rootRef]);
-}
 
 /* Photos in the strip drift at slightly different speeds as you scroll. */
 function useDrift(rootRef) {

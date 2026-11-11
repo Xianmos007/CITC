@@ -6,6 +6,18 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-10 — Photos on inner pages (branch `design/inner-pages`)
+
+### Code (GitHub)
+- Who we are, Partners and Find a need headers now show a collage of three
+  overlapping, slowly drifting Saturdays photos (`PhotoCollage`).
+- Who we are gets a wide photo band between Mission and Origin (the former
+  homepage hero photo of the boy with a rake).
+- Sections on Who we are and Partners fade in as they scroll into view
+  (shared `src/hooks/useReveal.js`, also used by the homepage).
+- Three more gallery photos bundled in `src/assets/saturdays/`; which photo
+  goes on which page is set in `src/data/pagePhotos.js`.
+
 ## 2026-11-10 — Fix: Partners page "How we serve together" list
 
 ### Code (GitHub)
