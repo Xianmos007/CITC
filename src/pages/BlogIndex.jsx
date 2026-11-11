@@ -54,7 +54,7 @@ export function BlogIndex() {
                 {c.label} <span className="count">{counts[c.key]}</span>
               </button>
             ))}
-            <div style={{ marginLeft: 'auto', fontFamily: 'var(--mono)', fontSize: 10.5, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)', alignSelf: 'center' }}>
+            <div className="chips-meta">
               {visible.length + (showFeatured ? 1 : 0)} pieces
             </div>
           </div>
@@ -70,11 +70,11 @@ export function BlogIndex() {
               </div>
               <div className="bf-body">
                 <div className="bf-meta">
-                  <span className="eyebrow">— {featuredPost.category}</span>
+                  <span className="eyebrow">{featuredPost.category}</span>
                   <span className="dot-sep">·</span>
                   <span className="bf-date">{featuredPost.date}</span>
                   <span className="dot-sep">·</span>
-                  <span className="bf-read">{featuredPost.readtime || featuredPost.read} READ</span>
+                  <span className="bf-read">{featuredPost.readtime || featuredPost.read} read</span>
                 </div>
                 <h2>{featuredPost.title}</h2>
                 <p className="bf-dek">{featuredPost.dek}</p>
@@ -97,7 +97,7 @@ export function BlogIndex() {
               <Link key={p.id} className="blog-row" to={`/blog/${p.id}`}>
                 <div className="br-date">
                   <span className="d">{p.date}</span>
-                  <span className="r">{p.read} READ</span>
+                  <span className="r">{p.read} read</span>
                 </div>
                 <div className="br-body">
                   <span className="br-cat">{p.category}</span>
@@ -130,12 +130,12 @@ export function BlogIndex() {
               <h3>{letter.headingLine1} <em>{letter.headingEm}</em></h3>
               <p>{letter.body}</p>
             </div>
-            <div className="actions" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+            <div className="actions stack">
               <div className="letter-form">
                 <input type="email" placeholder="your.name@email" />
                 <button className="btn btn-primary">Subscribe <span className="arrow">→</span></button>
               </div>
-              <span style={{ fontFamily: 'var(--mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
+              <span className="cta-note">
                 {letter.note}
               </span>
             </div>

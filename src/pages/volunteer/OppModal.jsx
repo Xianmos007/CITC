@@ -126,9 +126,9 @@ export function OppModal({ oppId, opportunities = [], close }) {
         <div className="modal-head">
           <span
             className="eyebrow"
-            style={{ color: full ? 'var(--citc-sage)' : 'var(--accent)' }}
+            style={full ? { color: 'var(--citc-sage-deep)' } : undefined}
           >
-            — {o.partner}
+            {o.partner}
           </span>
           <h2>{o.title}</h2>
           <div className="meta-row">
@@ -163,15 +163,8 @@ export function OppModal({ oppId, opportunities = [], close }) {
           {/* ERROR STATE */}
           {state === 'error' && (
             <>
-              <div
-                className="success-banner"
-                style={{
-                  marginBottom: 24,
-                  borderColor: '#c5443c',
-                  background: 'rgba(197,68,60,0.06)',
-                }}
-              >
-                <h4 style={{ color: '#a83a32' }}>Hm — something went wrong.</h4>
+              <div className="success-banner error" style={{ marginBottom: 24 }}>
+                <h4>Hm — something went wrong.</h4>
                 <p>{errorMessage}</p>
               </div>
             </>
@@ -201,10 +194,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
                   <span className="hint">Checking if we&rsquo;ve met before&hellip;</span>
                 )}
                 {knownReturning && !lookingUp && (
-                  <span
-                    className="hint"
-                    style={{ color: 'var(--accent)' }}
-                  >
+                  <span className="hint ok">
                     Welcome back. We filled in what we knew.
                   </span>
                 )}
@@ -244,19 +234,9 @@ export function OppModal({ oppId, opportunities = [], close }) {
                 </div>
               </div>
 
-              <p
-                style={{
-                  fontFamily: 'var(--mono)',
-                  fontSize: 11,
-                  letterSpacing: '0.04em',
-                  color: 'var(--fg-3)',
-                  lineHeight: 1.5,
-                  marginTop: 16,
-                  maxWidth: 580,
-                }}
-              >
+              <p className="modal-fineprint">
                 By signing up, your contact info will be shared with the partner
-                ministry so they can coordinate with you. We don\u2019t share it
+                ministry so they can coordinate with you. We don&rsquo;t share it
                 beyond that.
               </p>
             </form>
@@ -282,16 +262,7 @@ export function OppModal({ oppId, opportunities = [], close }) {
                 ))}
               </ul>
               <h4>A note from the coordinator</h4>
-              <p
-                style={{
-                  fontFamily: 'var(--serif)',
-                  fontStyle: 'italic',
-                  fontSize: 18,
-                  lineHeight: 1.5,
-                  color: 'var(--citc-ink)',
-                  maxWidth: 580,
-                }}
-              >
+              <p className="modal-note">
                 "{o.notes}"
               </p>
             </>

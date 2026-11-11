@@ -48,7 +48,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
     const total = Number(o.total) || 1;
     const isFull = filled >= total;
     const isFeatured = Boolean(o.is_featured ?? o.isFeatured);
-    const when = [o.date_label || o.date, o.time, o.dur?.toUpperCase()].filter(Boolean).join(' · ');
+    const when = [o.date_label || o.date, o.time, o.dur].filter(Boolean).join(' · ');
 
     return (
       <article
@@ -101,7 +101,7 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
       <div className={`browse-grid ${isLowCount ? 'low-count' : ''}`}>
         {!isLowCount && (
         <aside className="filters">
-          <div className="search-bar" style={{ borderBottom: '1px solid var(--rule)', marginBottom: 0 }}>
+          <div className="search-bar">
             <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search needs…" />
             <span className="meta">{filtered.length}</span>
           </div>
@@ -162,23 +162,23 @@ export function BrowseTab({ openOpp, opportunities = [], loading = false }) {
         </aside>
         )}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8, paddingBottom: 18, borderBottom: '1px solid var(--rule)' }}>
-            <h3 style={{ fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 500, letterSpacing: '-0.015em' }}>
+          <div className="opps-head">
+            <h3>
               Open this week & next
             </h3>
-            <span className="meta" style={{ fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
-              Sort · Date ↓
+            <span className="meta">
+              Sorted by date
             </span>
           </div>
           <div className="opps">
             {loading && (
-              <div className="empty-state" style={{ marginTop: 24 }}>
+              <div className="empty-state">
                 <h4>Loading needs…</h4>
                 <p>One moment while we pull the latest from the city.</p>
               </div>
             )}
             {!loading && filtered.length === 0 && (
-              <div className="empty-state" style={{ marginTop: 24 }}>
+              <div className="empty-state">
                 {opportunities.length === 0 ? (
                   <>
                     <h4>No needs posted just yet.</h4>

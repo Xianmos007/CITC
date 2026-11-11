@@ -2,20 +2,6 @@ import { useEffect, useState } from 'react';
 import { site } from '../data/site.js';
 import flameUrl from '../assets/flame.png';
 
-/* ============ MetaBar ============ */
-export function MetaBar() {
-  return (
-    <div className="meta-bar">
-      <div className="meta-bar-inner">
-        <span className="meta-bar-label">{site.metaBar.label}</span>
-        <div className="meta-bar-right">
-          <span>{site.metaBar.scripture}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ============ SiteNav ============ */
 export function SiteNav({ page, setPage }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -40,10 +26,7 @@ export function SiteNav({ page, setPage }) {
       <div className="site-nav-inner">
         <button className="logo-mark" onClick={() => go('home')} aria-label="Home">
           <img src={flameUrl} alt="" />
-          <div>
-            <div className="logo-text">{site.brand.name}</div>
-            <div className="logo-sub">{site.brand.location}</div>
-          </div>
+          <div className="logo-text">{site.brand.name}</div>
         </button>
         <div className="nav-links">
           {site.navLinks.map(({ key, label }) => (
@@ -101,7 +84,7 @@ export function Footer({ setPage }) {
         <div className="footer-grid">
           <div className="footer-brand">
             <div className="logo-mark">
-              <img src={flameUrl} alt="" style={{ width: 32, height: 'auto' }} />
+              <img src={flameUrl} alt="" />
               <div>
                 <div className="logo-text">{site.brand.name}</div>
                 <div className="logo-sub">{site.brand.locationLong}</div>

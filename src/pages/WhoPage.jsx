@@ -22,20 +22,20 @@ export function WhoPage({ setPage, partners = [] }) {
         <div className="container">
           <div className="who-split">
             <div>
-              <span className="eyebrow">{foundation.eyebrow}</span>
-              <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
+              <span className="eyebrow">{foundation.eyebrow.replace(/^—\s*/, "")}</span>
+              <h2>
                 {foundation.heading}
               </h2>
             </div>
             <div>
-              <blockquote style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: '30px', lineHeight: 1.4, borderLeft: '2px solid var(--accent)', paddingLeft: 32, color: 'var(--citc-ink)', marginBottom: 32 }}>
+              <blockquote className="who-quote">
                 {foundation.quote}
-                <span style={{ display: 'block', fontStyle: 'normal', fontFamily: 'var(--mono)', fontSize: '11px', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--fg-3)', marginTop: 24 }}>
+                <span className="attr">
                   {foundation.quoteAttribution}
                 </span>
               </blockquote>
               {foundation.paragraphs.map((p, i) => (
-                <p key={i} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--citc-ink-soft)', maxWidth: 620, marginTop: i === 0 ? 0 : 14 }}>
+                <p key={i} className="who-body">
                   {p}
                 </p>
               ))}
@@ -49,17 +49,17 @@ export function WhoPage({ setPage, partners = [] }) {
         <div className="container">
           <div className="who-split">
             <div>
-              <span className="eyebrow">{mission.eyebrow}</span>
-              <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
+              <span className="eyebrow">{mission.eyebrow.replace(/^—\s*/, "")}</span>
+              <h2>
                 {mission.heading}
               </h2>
             </div>
             <div>
-              <p style={{ fontFamily: 'var(--serif)', fontSize: '21px', lineHeight: 1.55, color: 'var(--citc-ink)', marginBottom: 24, maxWidth: 620 }}>
+              <p className="who-lede">
                 {mission.lede}
               </p>
               {mission.paragraphs.map((p, i) => (
-                <p key={i} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--citc-ink-soft)', maxWidth: 620, marginTop: 14 }}>
+                <p key={i} className="who-body">
                   {p}
                 </p>
               ))}
@@ -73,17 +73,17 @@ export function WhoPage({ setPage, partners = [] }) {
         <div className="container">
           <div className="who-split">
             <div>
-              <span className="eyebrow">{origin.eyebrow}</span>
-              <h2 style={{ fontFamily: 'var(--serif)', fontSize: '44px', lineHeight: 1.05, letterSpacing: '-0.015em', fontWeight: 500, marginTop: 20 }}>
+              <span className="eyebrow">{origin.eyebrow.replace(/^—\s*/, "")}</span>
+              <h2>
                 {origin.heading}
               </h2>
             </div>
             <div>
-              <p style={{ fontFamily: 'var(--serif)', fontSize: '21px', lineHeight: 1.55, color: 'var(--citc-ink)', marginBottom: 24, maxWidth: 620 }}>
+              <p className="who-lede">
                 {origin.lede}
               </p>
               {origin.paragraphs.map((p, i) => (
-                <p key={i} style={{ fontSize: 15.5, lineHeight: 1.7, color: 'var(--citc-ink-soft)', maxWidth: 620, marginTop: 14 }}>
+                <p key={i} className="who-body">
                   {p}
                 </p>
               ))}
@@ -117,22 +117,20 @@ export function WhoPage({ setPage, partners = [] }) {
           <div className="section-head">
             <h2>
               {weAreNot.headingLine1}{' '}
-              <em style={{ color: 'var(--accent)', fontStyle: 'italic', fontWeight: 400 }}>
-                {weAreNot.headingEm}
-              </em>{' '}
+              <em>{weAreNot.headingEm}</em>{' '}
               {weAreNot.headingLine2}
             </h2>
             <p>{weAreNot.sub}</p>
           </div>
           <div className="isnt">
             <div className="isnt-col we">
-              <h4>+ We are</h4>
+              <h4>We are</h4>
               <ul>
                 {weAreNot.weAre.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
             </div>
             <div className="isnt-col not">
-              <h4>− We are not</h4>
+              <h4>We are not</h4>
               <ul>
                 {weAreNot.weAreNot.map((l, i) => <li key={i}>{l}</li>)}
               </ul>
@@ -145,7 +143,7 @@ export function WhoPage({ setPage, partners = [] }) {
         <div className="container">
           <div className="section-head">
             <div>
-              <span className="eyebrow">— Partner churches</span>
+              <span className="eyebrow">Partner churches</span>
               <h2>The churches who keep <em>showing</em> up.</h2>
             </div>
             <p>Local congregations learning to seek Titusville's welfare together, one ordinary act of faithfulness at a time.</p>

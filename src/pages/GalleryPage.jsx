@@ -49,8 +49,8 @@ export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategorie
         <div className="container">
           <div className="gallery-index">
             <div className="gi-row">
-              <span className="eyebrow">— Index</span>
-              <span className="gi-count">{filtered.length} · of {photos.length} frames</span>
+              <span className="eyebrow">Browse by</span>
+              <span className="gi-count">{filtered.length} of {photos.length} photos</span>
             </div>
             <div className="chips">
               {categoryList.map((c) => (
@@ -127,7 +127,7 @@ export function GalleryPage({ setPage, photos: dbPhotos, categories: dbCategorie
             </div>
             <div className="lb-foot">
               <div>
-                <span className="eyebrow">— {categoryList.find((c) => c.key === active.cat)?.label}</span>
+                <span className="eyebrow">{categoryList.find((c) => c.key === active.cat)?.label}</span>
                 <h3>{active.caption}</h3>
                 <div className="lb-meta">{active.when} · {active.place}</div>
               </div>

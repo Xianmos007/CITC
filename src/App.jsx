@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { MetaBar, SiteNav, Footer } from './components/Chrome.jsx';
+import { SiteNav, Footer } from './components/Chrome.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { WhoPage } from './pages/WhoPage.jsx';
 import { PartnersPage } from './pages/PartnersPage.jsx';
@@ -134,7 +134,6 @@ export default function App() {
 function PublicFrame({ page, setPage, children }) {
   return (
     <>
-      <MetaBar />
       <SiteNav page={page} setPage={setPage} />
       {children}
       <Footer setPage={setPage} />
