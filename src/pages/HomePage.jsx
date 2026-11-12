@@ -6,7 +6,7 @@ import { saturdayStrip, visionPhoto } from '../data/homePhotos.js';
 import { Seo } from '../components/Seo.jsx';
 import { HeroScene } from '../components/HeroScene.jsx';
 import { useReveal } from '../hooks/useReveal.js';
-import { formatWhen, todayLocalISO, compareOpportunities, isUpcoming } from '../lib/format.js';
+import { formatWhen, todayLocalISO, compareOpportunities, isUpcoming, isFeatured } from '../lib/format.js';
 
 /* Photos in the strip drift at slightly different speeds as you scroll. */
 function useDrift(rootRef) {
@@ -53,7 +53,7 @@ function Hero({ partners = [], opportunities = [], loading = false }) {
         },
       ].filter((st) => st.num > 0);
 
-  // Tags in the scene: upcoming needs, soonest first.
+  // Tags in the scene: upcoming needs, featured first, then soonest.
   const today = todayLocalISO();
   const upcoming = [...opportunities].filter((o) => isUpcoming(o, today)).sort(compareOpportunities);
 
@@ -217,17 +217,23 @@ const addDays = (iso, n) => {
   return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
 };
 
-// Next 3 dated needs in the coming two weeks; else the next 3 dated
-// needs at all; else ongoing / undated ones.
+// Up to 3 needs: featured upcoming ones lead, whatever their date. Then
+// dated needs in the coming two weeks; else the next dated needs at all;
+// else ongoing / undated ones.
 function pickPreview(opportunities) {
   const today = todayLocalISO();
   const soon = addDays(today, 14);
   const sorted = [...opportunities].sort(compareOpportunities);
-  const dated = sorted.filter((o) => !o.isOngoing && o.eventDate && o.eventDate >= today);
+  const featured = sorted.filter((o) => isFeatured(o) && isUpcoming(o, today));
+  const rest = sorted.filter((o) => !featured.includes(o));
+  const dated = rest.filter((o) => !o.isOngoing && o.eventDate && o.eventDate >= today);
   const within = dated.filter((o) => o.eventDate <= soon);
-  if (within.length) return within.slice(0, 3);
-  if (dated.length) return dated.slice(0, 3);
-  return sorted.filter((o) => o.isOngoing || !o.eventDate).slice(0, 3);
+  const fill = within.length
+    ? within
+    : dated.length
+      ? dated
+      : rest.filter((o) => o.isOngoing || !o.eventDate);
+  return [...featured, ...fill].slice(0, 3);
 }
 
 // 'SAT · NOV 14' -> { top: 'SAT', day: 'Nov 14' }; labels like

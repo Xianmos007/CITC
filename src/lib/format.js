@@ -73,8 +73,14 @@ export function isUpcoming(o, today = todayLocalISO()) {
   return o.eventDate >= today;
 }
 
-// Dated needs first (soonest first), then ongoing / undated ones.
+// Featured needs first, even when their date is later. Within each group:
+// dated needs first (soonest first), then ongoing / undated ones.
+export const isFeatured = (o) => Boolean(o.is_featured ?? o.isFeatured);
+
 export function compareOpportunities(a, b) {
+  const af = isFeatured(a);
+  const bf = isFeatured(b);
+  if (af !== bf) return af ? -1 : 1;
   const ad = a.isOngoing ? null : a.eventDate;
   const bd = b.isOngoing ? null : b.eventDate;
   if (ad && bd) return ad < bd ? -1 : ad > bd ? 1 : 0;
