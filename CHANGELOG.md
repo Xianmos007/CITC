@@ -6,6 +6,22 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-12 — Hero landscape exported for email (branch `export/hero-landscape`)
+
+### Code
+- New `scripts/export-hero-scene.mjs`: builds the homepage hero landscape from
+  `src/components/HeroScene.jsx` as a static, standalone image (animations
+  frozen at rest, windows lit, no site CSS needed). Run
+  `node scripts/export-hero-scene.mjs` again if the scene changes; the PNG
+  step needs `rsvg-convert`.
+- New `public/assets/email/hero-landscape.svg` (1440x618, transparent) and
+  `public/assets/email/hero-landscape.png` (1200x515, on paper `#FAF7F0`, for
+  display at 600px wide in email). Once deployed the PNG is at
+  `https://thechurchinthecity.org/assets/email/hero-landscape.png`.
+- No change to the site itself.
+
+---
+
 ## 2026-11-11 — New link preview image (branch `claude/project-thread-rs09bx`)
 
 ### Code
