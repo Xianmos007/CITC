@@ -6,6 +6,32 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-12 — Featured volunteer needs listed first (branch `claude/project-thread-r382yy`)
+
+### Code
+- `compareOpportunities` in `src/lib/format.js` now puts featured
+  opportunities (`is_featured`) ahead of the rest, even when their date is
+  later. Within each group the order is unchanged: dated needs soonest
+  first, then ongoing / undated. This sets the order on the volunteer page,
+  the homepage hero tags and the homepage list.
+- Homepage "This week's open hands" (`pickPreview` in `HomePage.jsx`): upcoming
+  featured needs now lead the three-item list whatever their date, then the
+  usual next-two-weeks needs fill the rest.
+- Admin panel unchanged.
+
+---
+
+## 2026-11-12 — Volunteer data updates (database only, no code)
+
+### Database (via `execute_sql`)
+- Nov 14 "Boy Scout Food Drive" and "Titusville Turkey Giveaway" marked full
+  with confirmed "Filled elsewhere" placeholder signups; placeholder
+  volunteers "Filled elsewhere 11"–"17" added
+  (`filled-elsewhere-N@placeholder.invalid`). No emails sent.
+- New opportunity: "Church in the City Serve Day", Jan 23, 2027, 8 AM,
+  4 hours, 50 spots, North Brevard Charities partner, featured. Location left
+  blank for now.
+
 ## 2026-11-12 — Hero landscape exported for email (branch `export/hero-landscape`)
 
 ### Code

@@ -95,7 +95,8 @@ async function fetchSignupCounts() {
 /**
  * Fetch upcoming published opportunities with their partner joined in.
  * Public rule: published AND (ongoing OR undated OR on/after today in
- * Titusville). Sorted: dated needs soonest first, then ongoing/undated.
+ * Titusville). Sorted: featured first; within each group, dated needs
+ * soonest first, then ongoing/undated.
  * Returns [] on any failure (caller decides whether to use fallback).
  */
 export async function fetchOpportunities() {
