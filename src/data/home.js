@@ -5,7 +5,7 @@
 
 export const home = {
   hero: {
-    eyebrow: 'A network of local churches · Titusville, FL',
+    eyebrow: 'Local churches serving Titusville, Florida',
     // The headline animates word by word. One word is highlighted in gold.
     headlineWords: ['Seek', 'the', 'welfare', 'of', 'the', 'city.'],
     goldWord: 'welfare',
@@ -22,10 +22,10 @@ export const home = {
   },
 
   howItWorks: {
-    headingLine1: 'A posture,',
-    headingLine2Em: 'not a program.',
+    headingLine1: 'How a Saturday',
+    headingLine2Em: 'comes together.',
     sub:
-      'One portal bridges the ministries already doing the work with the people who can lend a hand. No app to download. No movement to join.',
+      "Local ministries post what they need on this site, and people from our partner churches sign up to help. You don't need an account or an app.",
     steps: [
       {
         num: '01',
@@ -33,14 +33,14 @@ export const home = {
         tag: 'POST',
         heading: 'A ministry posts a need',
         body:
-          'A ministry posts a real need — a yard cleanup, a Saturday meal, a tutoring shift.',
+          'A ministry posts something it needs help with, like a yard cleanup, a Saturday meal or a tutoring shift.',
       },
       {
         num: '02',
         label: 'Neighbors',
         tag: 'BROWSE',
         heading: 'Neighbors sign up',
-        body: 'You browse open opportunities, pick one that fits, and sign up.',
+        body: 'You look through the open needs and sign up for one that fits your week.',
       },
       {
         num: '03',
@@ -48,7 +48,7 @@ export const home = {
         tag: 'SERVE',
         heading: 'We show up on Saturday',
         body:
-          'You show up. Quietly, faithfully, often. The same people, the same place.',
+          'You show up and serve. We hope you come back, so the same people keep serving in the same places.',
       },
     ],
   },
@@ -59,7 +59,7 @@ export const home = {
     headingLine2Em: 'already',
     headingLine2End: 'at work.',
     sub:
-      "We don't run our own programs. We come alongside the ministries already serving Titusville — slowly, faithfully, often invisibly.",
+      "We don't run programs of our own. We send volunteers to the ministries that already serve Titusville and try to be help they can count on.",
     // The cards themselves are the first three Active ministry partners,
     // in display order — edit partners in the admin panel.
   },
@@ -71,7 +71,7 @@ export const home = {
     headingLine1End: 'to a',
     headingLine2Em: 'culture.',
     body:
-      "For years, mission was the thing the church did on a Saturday morning. We're trying to be something different — a people whose week is shaped by the welfare of the place we live.",
+      "For years, mission was something the church did on a Saturday morning. We want it to shape our whole week, so that caring for Titusville becomes part of how we live.",
     fromLabel: 'From',
     fromText: 'Event-based outreach',
     toLabel: 'To',

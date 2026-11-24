@@ -5,16 +5,16 @@
 export const galleryPage = {
   hero: {
     label: '06 · The Saturdays',
-    headingLine1: 'Real hands. Real porches.',
-    headingEm: 'Real Saturdays.',
+    headingLine1: 'Photos from',
+    headingEm: 'our Saturdays.',
     sub:
-      'A small archive of the work, mostly taken on phones, by whoever wasn\u2019t holding a shovel. Documentary, not stock. No models, no staging.',
+      'Most of these were taken on phones by whoever wasn\u2019t holding a shovel. They show the real work and the real people who did it.',
   },
   cta: {
     headingLine1: 'Were you',
     headingEm: 'there?',
     body:
-      'If you took a frame at a Saturday — or any of the weekday shifts — send it our way. We file the good ones here, with credit, with a small caption written by someone who was there.',
+      'If you took a photo at a Saturday or a weekday shift, please send it to us. We add the good ones here with your name and a short caption from someone who was there.',
   },
 };
 

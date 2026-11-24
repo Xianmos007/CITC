@@ -105,15 +105,15 @@
 
   /* ---------- Radius ---------- */
   --radius-0:    0px;
-  --radius-1:    12px;   /* inputs, small surfaces */
-  --radius-2:    20px;   /* cards */
-  --radius-3:    32px;   /* large panels */
+  --radius-1:    4px;    /* inputs, small surfaces */
+  --radius-2:    4px;    /* cards */
+  --radius-3:    0px;    /* large panels and photos: square */
   --radius-full: 9999px;
 
   /* ---------- Shadow ---------- */
   --shadow-0: none;
-  --shadow-1: 0 1px 2px rgba(28, 26, 22, 0.04), 0 8px 24px rgba(28, 26, 22, 0.05);
-  --shadow-2: 0 2px 4px rgba(28, 26, 22, 0.05), 0 18px 44px rgba(28, 26, 22, 0.09);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 1px rgba(28, 26, 22, 0.22);  /* hairline, used on hover */
   --shadow-3: 0 4px 8px rgba(28, 26, 22, 0.06), 0 30px 70px rgba(28, 26, 22, 0.16);
 
   /* ---------- Motion ---------- */

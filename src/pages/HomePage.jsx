@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { home } from '../data/home.js';
 import { galleryPage } from '../data/gallery.js';
-import { saturdayStrip, visionPhoto } from '../data/homePhotos.js';
+import { saturdayStrip, visionPhoto, serveDayStack } from '../data/homePhotos.js';
 import { Seo } from '../components/Seo.jsx';
 import { HeroScene } from '../components/HeroScene.jsx';
 import { useReveal } from '../hooks/useReveal.js';
@@ -174,6 +174,28 @@ function Saturdays() {
 }
 
 /* ============ FeaturedPartners ============ */
+/* ============ Serve Day stack: photos pin and stack as you scroll ============ */
+function ServeDayStack() {
+  const { heading, headingEm, sub, photos } = serveDayStack;
+  return (
+    <section className="section stack-section">
+      <div className="container stack-grid">
+        <div className="stack-head section-head reveal">
+          <h2>{heading} <em>{headingEm}</em></h2>
+          <p>{sub}</p>
+        </div>
+        <div className="stack">
+          {photos.map((p, i) => (
+            <figure key={p.src} className="stack-card" style={{ '--i': i }}>
+              <img src={p.src} alt={p.alt} loading="lazy" />
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FeaturedPartners({ partners = [] }) {
   const { featuredPartners } = home;
   // First three active ministry partners, in their display order.
@@ -251,8 +273,8 @@ function CurrentOpportunities({ opportunities = [], loading = false }) {
     <section className="section">
       <div className="container">
         <div className="section-head center reveal">
-          <h2>This week's open hands.</h2>
-          <p>A handful of small, specific ways to show up in Titusville this week.</p>
+          <h2>Open needs this week.</h2>
+          <p>Specific ways to help in Titusville over the next few days.</p>
         </div>
         {isEmpty ? (
           <div className="empty-state">
@@ -363,6 +385,7 @@ export function HomePage({ opportunities = [], partners = [], loading = false })
       <Hero partners={partners} opportunities={opportunities} loading={loading} />
       <HowItWorks />
       <Saturdays />
+      <ServeDayStack />
       <FeaturedPartners partners={partners} />
       <CurrentOpportunities opportunities={opportunities} loading={loading} />
       <Vision />
