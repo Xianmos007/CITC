@@ -251,8 +251,8 @@ function CurrentOpportunities({ opportunities = [], loading = false }) {
     <section className="section">
       <div className="container">
         <div className="section-head center reveal">
-          <h2>This week's open hands.</h2>
-          <p>A handful of small, specific ways to show up in Titusville this week.</p>
+          <h2>Open needs this week.</h2>
+          <p>Specific ways to help in Titusville over the next few days.</p>
         </div>
         {isEmpty ? (
           <div className="empty-state">

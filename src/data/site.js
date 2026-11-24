@@ -26,7 +26,7 @@ export const site = {
   // The footer
   footer: {
     benediction:
-      '"May the church in our city become a people who seek its welfare — until its welfare is ours."',
+      '"May the church in our city seek its welfare, until its welfare is ours."',
     benedictionAttribution: '— A benediction · Jer. 29:7',
 
     // Each link has either `to` (a page on this site) or `href`
