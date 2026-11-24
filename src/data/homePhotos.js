@@ -24,3 +24,26 @@ export const saturdayStrip = [
 
 // Behind the "From an event to a culture" panel.
 export const visionPhoto = teamPraying;
+
+// Serve Day, September 2026: the photos that stack on top of each other
+// as you scroll the home page. From the "Serve Day Sept 2026" folder in
+// Drive (Church in the City). To swap one, replace the file in
+// src/assets/serve-day-sept/ and keep the same name.
+import sdGroup from '../assets/serve-day-sept/group.jpg';
+import sdCrew from '../assets/serve-day-sept/crew.jpg';
+import sdTrimming from '../assets/serve-day-sept/trimming.jpg';
+import sdMowing from '../assets/serve-day-sept/mowing.jpg';
+import sdHelpers from '../assets/serve-day-sept/helpers.jpg';
+
+export const serveDayStack = {
+  heading: 'Serve Day,',
+  headingEm: 'September 2026.',
+  sub: 'People from our partner churches spent the day mowing, trimming and clearing yards together.',
+  photos: [
+    { src: sdGroup, alt: 'Volunteers in Church in the City shirts standing together on a lawn.' },
+    { src: sdCrew, alt: 'Volunteers talking on a driveway between jobs.' },
+    { src: sdTrimming, alt: 'A volunteer trimming weeds along a fence line.' },
+    { src: sdMowing, alt: 'A volunteer mowing a front yard on a riding mower.' },
+    { src: sdHelpers, alt: 'Two young volunteers in work gloves smiling in a backyard.' },
+  ],
+};

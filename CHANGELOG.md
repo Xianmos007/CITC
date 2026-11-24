@@ -6,6 +6,27 @@ Claude Code: add an entry at the end of every phase or manual change.
 
 ---
 
+## 2026-11-24 — Take the AI-generated look out of the site (branch `claude/citc-deslop-opfn6w`, preview, not merged)
+
+### Code
+- Design: square corners and no soft shadows (`tokens.css`), glows, gradient
+  washes and breathing/floating animations removed, hero and centered section
+  heads left-aligned, dark vision panel and CTA band full width.
+- New home section: Serve Day, September 2026 photos that pin and stack as you
+  scroll (`ServeDayStack`, photos in `src/assets/serve-day-sept/`, from the
+  "Serve Day Sept 2026" Drive folder; the group photo is cropped to drop a
+  house number).
+- Gold underline slides in on link hover; how-it-works icons turn gold on
+  hover; headlines rise in before their text on scroll (off under reduced
+  motion).
+- Copy rewritten in `home.js`, `who.js`, `gallery.js`, `site.js` and
+  `HomePage.jsx` without stock AI phrasing. Scripture and motto unchanged.
+
+### Database / services
+- None.
+
+---
+
 ## 2026-11-12 — Featured volunteer needs listed first (branch `claude/project-thread-r382yy`)
 
 ### Code
